@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import BackgroundImage from "../assets/images/bg-signup.jpg";
 import { Link } from "react-router-dom";
+import logo from "../assets/images/signup-logo.svg";
 
 const Background = styled.div`
   background-image: url(${BackgroundImage});
   background-size: cover;
-  background-position: center;
   background-position: center;
   height: 100vh;
   display: flex;
@@ -14,13 +14,22 @@ const Background = styled.div`
 `;
 
 const SignupBox = styled.div`
-  background: rgba(255, 255, 255, 0.9);
+  background-color: white;
   padding: 20px;
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   max-width: 400px;
   width: 100%;
-  margin-left: 70px;
+  margin-left: 70px; /* Initial margin on larger screens */
+  margin-top: 20px; /* Adjust as needed for spacing */
+
+  @media (max-width: 1024px) {
+    margin: 20px auto; /* Center horizontally when below tablet size */
+  }
+
+  @media (max-width: 768px) {
+    margin: 0 auto; /* Full centering on smaller screens */
+  }
 `;
 
 const CenteredButton = styled.button`
@@ -43,13 +52,34 @@ const AlreadyAccountLink = styled(Link)`
   }
 `;
 
+const TitleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const SignupLogo = styled.img`
+  max-width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+`;
+
+const GroupomaniaText = styled.h1`
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #fa8a00;
+`;
+
 const SignupPage = () => {
   return (
     <Background>
-      <SignupBox className="container">
-        <h2 className="text-center" style={{ color: "#fa8a00" }}>
-          Groupomania
-        </h2>
+      <SignupBox>
+        <TitleContainer>
+          <SignupLogo src={logo} alt="signup logo" />
+          <GroupomaniaText>Groupomania</GroupomaniaText>
+        </TitleContainer>
         <form>
           <div className="form-group">
             <label htmlFor="familyName">Family Name</label>
@@ -109,25 +139,3 @@ const SignupPage = () => {
 };
 
 export default SignupPage;
-
-// import { Link } from "react-router-dom";
-
-// EXAMPLE
-// import React from "react";
-// import Header from "../components/Header";
-// import Footer from "../components/Footer";
-
-// function HomePage() {
-//   return (
-//     <div>
-//       <Header />
-//       <main>
-//         <h1>Welcome to the Home Page</h1>
-//         {/* Other components and logic for the HomePage */}
-//       </main>
-//       <Footer />
-//     </div>
-//   );
-// }
-
-// export default HomePage;
