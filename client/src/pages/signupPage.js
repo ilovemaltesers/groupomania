@@ -1,76 +1,15 @@
-import styled from "styled-components";
-import BackgroundImage from "../assets/images/bg-signup.jpg";
-import { Link } from "react-router-dom";
+import React from "react";
+import {
+  Background,
+  SignupBox,
+  SignupButton,
+  AlreadyAccountLink,
+  TitleContainer,
+  SignupLogo,
+  GroupomaniaText,
+} from "../styles/stylesSignupPage";
+
 import logo from "../assets/images/signup-logo.svg";
-
-const Background = styled.div`
-  background-image: url(${BackgroundImage});
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const SignupBox = styled.div`
-  background-color: white;
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 100%;
-  margin-left: 70px; /* Initial margin on larger screens */
-  margin-top: 20px; /* Adjust as needed for spacing */
-
-  @media (max-width: 1024px) {
-    margin: 20px auto; /* Center horizontally when below tablet size */
-  }
-
-  @media (max-width: 768px) {
-    margin: 0 auto; /* Full centering on smaller screens */
-  }
-`;
-
-const CenteredButton = styled.button`
-  display: block;
-  width: 100%;
-  margin-top: 20px;
-  background-color: #fa8a00;
-  border: none;
-`;
-
-const AlreadyAccountLink = styled(Link)`
-  display: block;
-  text-align: center;
-  margin-top: 10px;
-  color: #fa8a00;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const TitleContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const SignupLogo = styled.img`
-  max-width: 100px;
-  height: auto;
-  margin-bottom: 10px;
-`;
-
-const GroupomaniaText = styled.h1`
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  color: #fa8a00;
-`;
 
 const SignupPage = () => {
   return (
@@ -126,9 +65,9 @@ const SignupPage = () => {
               placeholder="Confirm password"
             />
           </div>
-          <CenteredButton type="submit" className="btn btn-primary">
+          <SignupButton type="submit" className="btn btn-primary">
             Sign Up
-          </CenteredButton>
+          </SignupButton>
         </form>
         <AlreadyAccountLink to="/login">
           Already have an account?
