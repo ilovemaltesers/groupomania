@@ -1,7 +1,7 @@
 const { Client } = require("pg");
 require("dotenv").config();
 
-module.exports.getClient = () => {
+module.exports.db = () => {
   return new Promise((resolve, reject) => {
     const client = new Client({
       user: "postgres",

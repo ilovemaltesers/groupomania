@@ -16,18 +16,18 @@ export const SignupBox = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 100%;
-  margin-left: 70px; /* Initial margin on larger screens */
-  margin-top: 20px; /* Adjust as needed for spacing */
-
-  @media (max-width: 1024px) {
-    margin: 20px auto; /* Center horizontally when below tablet size */
+  box-shadow: 0 10px 10px rgba(0, 56, 28, 0.5);
+  max-width: 600px;
+  width: 90%;
+  margin: 20px auto;
+  @media (min-width: 768px) {
+    width: 70%;
   }
 
-  @media (max-width: 768px) {
-    margin: 0 auto; /* Full centering on smaller screens */
+  @media (min-width: 1024px) {
+    width: 50%;
+    margin-left: 20%;
+    margin-right: 20%;
   }
 `;
 
@@ -37,6 +37,15 @@ export const SignupButton = styled.button`
   margin-top: 20px;
   background-color: #fa8a00;
   border: none;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #e37700;
+  }
 `;
 
 export const AlreadyAccountLink = styled(Link)`
@@ -45,6 +54,7 @@ export const AlreadyAccountLink = styled(Link)`
   margin-top: 10px;
   color: #fa8a00;
   text-decoration: none;
+  font-size: 0.9rem;
 
   &:hover {
     text-decoration: underline;
@@ -65,7 +75,7 @@ export const SignupLogo = styled.img`
 `;
 
 export const GroupomaniaText = styled.h1`
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: bold;
   text-align: center;
   color: #fa8a00;
