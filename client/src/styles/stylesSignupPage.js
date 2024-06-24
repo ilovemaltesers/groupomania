@@ -29,22 +29,27 @@ export const SignupBox = styled.div`
     margin-left: 20%;
     margin-right: 20%;
   }
+
+  // Add styles for input and select elements with the input-error class
+  input.input-error,
+  select.input-error {
+    border: 3px solid darkcyan;
+  }
 `;
 
 export const SignupButton = styled.button`
   display: block;
   width: 100%;
   margin-top: 20px;
-  background-color: #fa8a00;
+  background-color: darkcyan;
   border: none;
   color: white;
   padding: 12px 20px;
   font-size: 1rem;
   cursor: pointer;
   border-radius: 5px;
-
   &:hover {
-    background-color: #e37700;
+    background-color: #5da370;
   }
 `;
 
@@ -52,10 +57,9 @@ export const AlreadyAccountLink = styled(Link)`
   display: block;
   text-align: center;
   margin-top: 10px;
-  color: #fa8a00;
+  color: forestgreen;
   text-decoration: none;
   font-size: 0.9rem;
-
   &:hover {
     text-decoration: underline;
   }
@@ -78,5 +82,5 @@ export const GroupomaniaText = styled.h1`
   font-size: 3rem;
   font-weight: bold;
   text-align: center;
-  color: #fa8a00;
+  color: darkcyan;
 `;

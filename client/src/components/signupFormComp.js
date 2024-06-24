@@ -8,17 +8,18 @@ const onSubmit = () => {
 };
 
 function SignupFormComp() {
-  const { values, errors, handleChange, handleBlur, handleSubmit } = useFormik({
-    initialValues: {
-      familyName: "",
-      givenName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    },
-    validationSchema: signupSchema,
-    onSubmit: onSubmit,
-  });
+  const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
+    useFormik({
+      initialValues: {
+        familyName: "",
+        givenName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      },
+      validationSchema: signupSchema,
+      onSubmit: onSubmit,
+    });
 
   console.log(errors);
 
@@ -32,10 +33,15 @@ function SignupFormComp() {
             onChange={handleChange}
             onBlur={handleBlur}
             type="text"
-            className="form-control"
+            className={`form-control ${
+              errors.familyName && touched.familyName ? "input-error" : ""
+            }`}
             id="familyName"
             placeholder="Enter family name"
           />
+          {errors.familyName && touched.familyName && (
+            <p className="error">{errors.familyName}</p>
+          )}
         </div>
         <div className="form-group">
           <label htmlFor="givenName">Given Name</label>
@@ -44,10 +50,15 @@ function SignupFormComp() {
             onChange={handleChange}
             onBlur={handleBlur}
             type="text"
-            className="form-control"
+            className={`form-control ${
+              errors.givenName && touched.givenName ? "input-error" : ""
+            }`}
             id="givenName"
             placeholder="Enter given name"
           />
+          {errors.givenName && touched.givenName && (
+            <p className="error">{errors.givenName}</p>
+          )}
         </div>
         <div className="form-group">
           <label htmlFor="email">Email address</label>
@@ -56,10 +67,15 @@ function SignupFormComp() {
             onChange={handleChange}
             onBlur={handleBlur}
             type="email"
-            className="form-control"
+            className={`form-control ${
+              errors.email && touched.email ? "input-error" : ""
+            }`}
             id="email"
             placeholder="Enter email"
           />
+          {errors.email && touched.email && (
+            <p className="error">{errors.email}</p>
+          )}
         </div>
         <div className="form-group">
           <label htmlFor="password">Password</label>
@@ -68,10 +84,15 @@ function SignupFormComp() {
             onChange={handleChange}
             onBlur={handleBlur}
             type="password"
-            className="form-control"
+            className={`form-control ${
+              errors.password && touched.password ? "input-error" : ""
+            }`}
             id="password"
             placeholder="Enter password"
           />
+          {errors.password && touched.password && (
+            <p className="error">{errors.password}</p>
+          )}
         </div>
         <div className="form-group">
           <label htmlFor="confirmPassword">Confirm Password</label>
@@ -79,10 +100,17 @@ function SignupFormComp() {
             value={values.confirmPassword}
             onChange={handleChange}
             type="password"
-            className="form-control"
+            className={`form-control ${
+              errors.confirmPassword && touched.confirmPassword
+                ? "input-error"
+                : ""
+            }`}
             id="confirmPassword"
             placeholder="Confirm password"
           />
+          {errors.confirmPassword && touched.confirmPassword && (
+            <p className="error">{errors.confirmPassword}</p>
+          )}
         </div>
         <SignupButton type="submit" className="btn btn-primary">
           Sign Up
