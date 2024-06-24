@@ -67,9 +67,14 @@ export const AlreadyAccountLink = styled(Link)`
 
 export const TitleContainer = styled.div`
   display: flex;
+  flex-direction: column; /* Ensure items stack vertically on smaller screens */
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px; /* Add padding for smaller screens */
+  }
 `;
 
 export const SignupLogo = styled.img`
