@@ -23,7 +23,14 @@ export const signupSchema = yup.object().shape({
 
 export const loginSchema = yup.object().shape({
   email: yup.string().email().required("Email is required"),
-  password: yup.string().required("Password is required"),
+  password: yup
+    .string()
+    .min(6)
+    .matches(passwordRules, {
+      message:
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
+    })
+    .required("Password is required"),
 });
 
 // export const createPostSchema = yup.object().shape({

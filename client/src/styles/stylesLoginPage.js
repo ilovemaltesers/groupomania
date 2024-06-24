@@ -1,8 +1,7 @@
 import styled from "styled-components";
-
 import BackgroundImage from "../assets/images/bg-signup.jpg";
 
-export const Background = styled.div`
+const Background = styled.div`
   background-image: url(${BackgroundImage});
   background-size: cover;
   background-position: center;
@@ -12,7 +11,7 @@ export const Background = styled.div`
   align-items: center;
 `;
 
-export const LoginBox = styled.div`
+const LoginBox = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 20px;
@@ -23,10 +22,49 @@ export const LoginBox = styled.div`
   @media (min-width: 768px) {
     width: 70%;
   }
+`;
 
-  @media (min-width: 1024px) {
-    width: 50%;
-    margin-left: 20%;
-    margin-right: 20%;
+const LoginButton = styled.button`
+  display: block;
+  width: 100%;
+  margin-top: 30px;
+  background-color: #fa8a00;
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #e37700;
   }
 `;
+
+const TitleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const GroupomaniaText = styled.h1`
+  color: #fa8a00;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-left: 10px;
+`;
+
+const LoginLogo = styled.img`
+  width: 50px;
+  height: 60px;
+`;
+
+export {
+  Background,
+  LoginBox,
+  LoginButton,
+  TitleContainer,
+  LoginLogo,
+  GroupomaniaText,
+};
