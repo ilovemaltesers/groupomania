@@ -3,23 +3,33 @@ import { useFormik } from "formik";
 import { SignupButton } from "../styles/stylesSignupPage";
 import { signupSchema } from "../schemas/index";
 
-const onSubmit = () => {
-  console.log("submitted");
+const onSubmit = async (values, actions) => {
+  console.log(values);
+  console.log(actions);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  actions.resetForm();
 };
 
 function SignupFormComp() {
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
-    useFormik({
-      initialValues: {
-        familyName: "",
-        givenName: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-      },
-      validationSchema: signupSchema,
-      onSubmit: onSubmit,
-    });
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+  } = useFormik({
+    initialValues: {
+      familyName: "",
+      givenName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: signupSchema,
+    onSubmit: onSubmit,
+  });
 
   console.log(errors);
 
@@ -112,7 +122,11 @@ function SignupFormComp() {
             <p className="error">{errors.confirmPassword}</p>
           )}
         </div>
-        <SignupButton type="submit" className="btn btn-primary">
+        <SignupButton
+          disabled={isSubmitting}
+          type="submit"
+          className="btn btn-primary"
+        >
           Sign Up
         </SignupButton>
       </form>
