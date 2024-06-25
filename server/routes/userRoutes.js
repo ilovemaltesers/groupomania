@@ -9,6 +9,6 @@ router.post("/signup", userContr.signup);
 // or you can write it like this:
 // router.post('/signup', signup);
 
-router.post("/login", userContr.login);
+// router.post("/login", userContr.login);
 
 module.exports = router;
