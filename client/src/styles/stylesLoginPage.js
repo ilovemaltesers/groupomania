@@ -22,6 +22,10 @@ const LoginBox = styled.div`
   @media (min-width: 768px) {
     width: 70%;
   }
+  input.input-error,
+  select.input-error {
+    border: 3px solid darkcyan;
+  }
 `;
 
 const LoginButton = styled.button`

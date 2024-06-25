@@ -3,5 +3,8 @@
     "dotenv": "^16.4.5",
     "formik": "^2.4.6",
     "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }

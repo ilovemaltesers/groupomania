@@ -27,8 +27,7 @@ export const loginSchema = yup.object().shape({
     .string()
     .min(6)
     .matches(passwordRules, {
-      message:
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number.",
+      message: "Please enter your account password.",
     })
     .required("Password is required"),
 });

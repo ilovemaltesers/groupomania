@@ -8,7 +8,7 @@ import {
   GroupomaniaText,
 } from "../styles/stylesSignupPage";
 
-import SignupFormComp from "../components/signupFormComp";
+import SignupFormComp from "../components/SignupFormComp";
 
 import logo from "../assets/images/signup-logo.svg";
 
