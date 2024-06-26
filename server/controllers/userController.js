@@ -1,15 +1,12 @@
-const { db } = require("../connect.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { db } = require("../connect.js");
 
 const JWT_SECRET = "blablabla";
-
-const { Client } = require("pg");
 
 const signup = async (req, res) => {
   const { familyName, givenName, email, password, confirmPassword } = req.body;
 
-  // Check if password and confirmPassword match
   if (password !== confirmPassword) {
     return res.status(400).send("Passwords do not match");
   }
@@ -17,16 +14,16 @@ const signup = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new client instance and connect
-    const client = new Client();
-    await client.connect();
+    const client = await db();
+    console.log("Connected to the database.");
 
     try {
       // Check if user already exists
       const userExists = await client.query(
-        "SELECT * FROM users WHERE email = $1",
+        "SELECT * FROM public.users WHERE email = $1",
         [email]
       );
+      console.log("User exists query executed.", userExists.rows);
 
       if (userExists.rows.length > 0) {
         return res.status(400).send("User already exists");
@@ -34,9 +31,10 @@ const signup = async (req, res) => {
 
       // Insert user into database
       const result = await client.query(
-        "INSERT INTO users (family_name, given_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
+        "INSERT INTO public.users (family_name, given_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
         [familyName, givenName, email, hashedPassword]
       );
+      console.log("User insertion query executed.", result.rows);
 
       const userId = result.rows[0].id;
 
@@ -45,8 +43,8 @@ const signup = async (req, res) => {
 
       res.status(201).json({ token });
     } finally {
-      // Ensure the client is closed
       await client.end();
+      console.log("Database connection closed.");
     }
   } catch (error) {
     console.error("Error during signup:", error);
@@ -56,5 +54,4 @@ const signup = async (req, res) => {
 
 module.exports = {
   signup,
-  // login,
 };
