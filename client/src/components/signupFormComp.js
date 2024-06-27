@@ -1,13 +1,38 @@
 import React from "react";
 import { useFormik } from "formik";
+import axios from "axios"; // Import axios for HTTP requests
 import { SignupButton } from "../styles/stylesSignupPage";
 import { signupSchema } from "../schemas/index";
 
 const onSubmit = async (values, actions) => {
-  console.log(values);
-  console.log(actions);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  actions.resetForm();
+  try {
+    // Axios POST request
+    const response = await axios.post(
+      "http://localhost:3000/api/user/signup",
+      values
+    );
+    console.log("Signup successful", response.data);
+    actions.resetForm();
+  } catch (error) {
+    if (error.response) {
+      // Server responded with a status code outside the 2xx range
+      console.log(error.response.data);
+      console.log(error.response.status);
+      console.log(error.response.headers);
+      if (error.response.status === 400) {
+        actions.setErrors({ submit: "Email already exists" });
+      }
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.log(error.request);
+    } else {
+      console.log(
+        "Something else went wrong we can't explain to you right now!",
+        error.message
+      );
+    }
+    actions.setSubmitting(false);
+  }
 };
 
 function SignupFormComp() {
@@ -28,10 +53,8 @@ function SignupFormComp() {
       confirmPassword: "",
     },
     validationSchema: signupSchema,
-    onSubmit: onSubmit,
+    onSubmit,
   });
-
-  console.log(errors);
 
   return (
     <>
@@ -109,6 +132,7 @@ function SignupFormComp() {
           <input
             value={values.confirmPassword}
             onChange={handleChange}
+            onBlur={handleBlur}
             type="password"
             className={`form-control ${
               errors.confirmPassword && touched.confirmPassword
@@ -129,6 +153,8 @@ function SignupFormComp() {
         >
           Sign Up
         </SignupButton>
+        {errors.submit && <p className="error">{errors.submit}</p>}{" "}
+        {/* Display server-side submission error */}
       </form>
     </>
   );
