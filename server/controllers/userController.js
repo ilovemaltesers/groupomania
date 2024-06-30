@@ -4,7 +4,7 @@ const { db } = require("../connect.js");
 
 const JWT_SECRET = "blablabla";
 
-// signup function
+// Signup function
 const signup = async (req, res) => {
   const { familyName, givenName, email, password, confirmPassword } = req.body;
 
@@ -12,9 +12,10 @@ const signup = async (req, res) => {
     return res.status(400).send("Passwords do not match");
   }
 
+  let client;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const client = await db();
+    client = await db();
     console.log("Connected to the database.");
 
     // Check if user already exists
@@ -22,40 +23,34 @@ const signup = async (req, res) => {
       "SELECT * FROM public.users WHERE email = $1",
       [email]
     );
-    console.log("User exists query executed.", userExists.rows);
 
     if (userExists.rows.length > 0) {
       return res.status(400).send("User already exists");
     }
 
-    // Insert user into database
-    const result = await client.query(
-      "INSERT INTO public.users (family_name, given_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
+    // Insert user into the database
+    await client.query(
+      "INSERT INTO public.users (family_name, given_name, email, password) VALUES ($1, $2, $3, $4)",
       [familyName, givenName, email, hashedPassword]
     );
-    console.log("User insertion query executed.", result.rows);
 
-    const userId = result.rows[0].id;
-
-    // Generate JWT token
-    const token = jwt.sign({ userId }, JWT_SECRET, { expiresIn: "24h" });
-
-    res.status(201).json({ token });
+    res.status(201).send("User successfully registered");
   } catch (error) {
     console.error("Error during signup:", error);
-    res.status(500).send(`Error during signup: ${error.message}`);
+    res.status(500).send("Error during signup");
   } finally {
     if (client) await client.end();
     console.log("Database connection closed.");
   }
 };
 
-// login function
+// Login function
 const login = async (req, res) => {
   const { email, password } = req.body;
 
+  let client;
   try {
-    const client = await db();
+    client = await db();
     console.log("Connected to the database.");
 
     // Check if user exists
@@ -63,7 +58,6 @@ const login = async (req, res) => {
       "SELECT id, password FROM public.users WHERE email = $1",
       [email]
     );
-    console.log("User lookup query executed.", userResult.rows);
 
     if (userResult.rows.length === 0) {
       return res.status(400).send("User does not exist");
@@ -86,7 +80,7 @@ const login = async (req, res) => {
     res.status(200).json({ token });
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).send(`Error during login: ${error.message}`);
+    res.status(500).send("Error during login");
   } finally {
     if (client) await client.end();
     console.log("Database connection closed.");
@@ -94,6 +88,6 @@ const login = async (req, res) => {
 };
 
 module.exports = {
-  login,
   signup,
+  login,
 };
