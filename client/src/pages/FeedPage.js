@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-import { useAuth } from "../contexts/AuthContext";
-import { Navigate } from "react-router-dom";
+// import { useAuth } from "../contexts/AuthContext";
+// import { Navigate } from "react-router-dom";
 
 // To move styling to seperate it's file afterwards
 
@@ -15,8 +15,8 @@ const FeedPageContainer = styled.div`
 `;
 
 const FeedPage = () => {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) <Navigate to="/login" replace />;
+  // const { isAuthenticated } = useAuth();
+  // if (!isAuthenticated) <Navigate to="/login" replace />;
 
   return (
     <>

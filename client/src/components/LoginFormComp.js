@@ -1,80 +1,83 @@
 import React from "react";
-import { LoginButton } from "../styles/stylesLoginPage";
 import { useFormik } from "formik";
+import { LoginButton } from "../styles/stylesLoginPage";
 import { loginSchema } from "../schemas/index";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
 
-// Function to handle login
-async function login(email, password) {
-  try {
-    const response = await axios.post("http://localhost:3000/api/user/login", {
-      email,
-      password,
-    });
-
-    const { token } = response.data;
-    localStorage.setItem("token", token);
-    alert("Login successful");
-  } catch (error) {
-    alert(`Login failed: ${error.response.data}`);
-    throw error;
-  }
-}
-
 const LoginFormComp = () => {
-  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
-    useFormik({
-      initialValues: {
-        email: "",
-        password: "",
-      },
-      validationSchema: loginSchema, // Validation schema using Yup
-      onSubmit: async (values) => {
-        try {
-          await login(values.email, values.password); // Call login function with form values
-        } catch (error) {
-          console.error("Login error:", error);
-        }
-      },
-    });
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  console.log(errors);
+  const handleSubmit = async (values) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/user/login",
+        {
+          email: values.email,
+          password: values.password,
+        }
+      );
+
+      const { token } = response.data;
+      login(token); // Update auth token in context
+      alert("Login successful");
+      navigate("/feed"); // Redirect to feed page on successful login
+    } catch (error) {
+      console.error("Login error:", error);
+      alert(`Login failed: ${error.response.data}`);
+    }
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: loginSchema, // Validation schema using Yup
+    onSubmit: handleSubmit,
+  });
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={formik.handleSubmit}>
       {/* Form inputs for email and password */}
       <div className="form-group">
         <label htmlFor="email">Email address</label>
         <input
-          value={values.email}
-          onChange={handleChange}
-          onBlur={handleBlur}
+          id="email"
+          name="email"
           type="email"
           className={`form-control ${
-            errors.email && touched.email ? "input-error" : ""
+            formik.errors.email && formik.touched.email ? "input-error" : ""
           }`}
-          id="email"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.email}
           placeholder="Enter email"
         />
-        {errors.email && touched.email && (
-          <p className="error">{errors.email}</p>
+        {formik.errors.email && formik.touched.email && (
+          <p className="error">{formik.errors.email}</p>
         )}
       </div>
       <div className="form-group">
         <label htmlFor="password">Password</label>
         <input
-          value={values.password}
-          onChange={handleChange}
-          onBlur={handleBlur}
+          id="password"
+          name="password"
           type="password"
           className={`form-control ${
-            errors.password && touched.password ? "input-error" : ""
+            formik.errors.password && formik.touched.password
+              ? "input-error"
+              : ""
           }`}
-          id="password"
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          value={formik.values.password}
           placeholder="Enter password"
         />
-        {errors.password && touched.password && (
-          <p className="error">{errors.password}</p>
+        {formik.errors.password && formik.touched.password && (
+          <p className="error">{formik.errors.password}</p>
         )}
       </div>
       {/* Login button */}

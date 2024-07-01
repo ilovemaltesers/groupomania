@@ -72,7 +72,7 @@ const login = async (req, res) => {
       return res.status(400).send("Incorrect password");
     }
 
-    // Generate JWT token
+    // sign method takes three arguments: payload(user's id), secret key, and options
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
       expiresIn: "24h",
     });
