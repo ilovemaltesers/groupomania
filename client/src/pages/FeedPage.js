@@ -8,21 +8,31 @@ import { IoIosLogOut } from "react-icons/io";
 import { SlMagnifier } from "react-icons/sl";
 
 const CustomNavbar = styled(Navbar)`
-  background-color: #dceaf5; /* Set the background color to #9effb8 */
+  background-color: #dceaf5;
 `;
 
 const SearchContainer = styled(Form)`
   flex-grow: 1;
   display: flex;
-  justify-content: center;
+  align-items: center;
   margin-left: 20px;
-  max-width: 300px;
+  max-width: 80%; /* Adjusted for responsiveness */
   border-radius: 10px;
+  position: relative; /* Ensure the search icon stays aligned */
 `;
 
 const StyledFormControl = styled(FormControl)`
-  flex-grow: 1;
-  width: auto;
+  width: 100%;
+  padding-right: 40px; /* Space for the icon */
+`;
+
+const SearchIcon = styled(SlMagnifier)`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  cursor: pointer;
 `;
 
 const ProfileImage = styled.img`
@@ -30,14 +40,6 @@ const ProfileImage = styled.img`
   width: 40px;
   border-radius: 50%;
   object-fit: cover;
-  margin-left: 20px;
-`;
-
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  font-size: 24px;
 `;
 
 const LogoutIcon = styled(IoIosLogOut)`
@@ -60,20 +62,18 @@ const MyNavbar = () => {
           <StyledFormControl
             type="search"
             placeholder="Search"
-            className="mr-2"
             aria-label="Search"
           />
+          <SearchIcon />
         </SearchContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ml-auto">
-            <IconWrapper>
-              <SlMagnifier />
-            </IconWrapper>
-            <IconWrapper>
-              <LogoutIcon />
-            </IconWrapper>
+        <Navbar.Collapse
+          id="basic-navbar-nav"
+          className="justify-content-center"
+        >
+          <Nav className="ml-auto align-items-center">
             <ProfileImage src={profilePic} alt="Profile" />
+            <LogoutIcon style={{ marginLeft: "10px" }} />
           </Nav>
         </Navbar.Collapse>
       </Container>
