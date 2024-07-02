@@ -1,5 +1,6 @@
 
 .env
-/images/
+
 node_modules/
+images/
 

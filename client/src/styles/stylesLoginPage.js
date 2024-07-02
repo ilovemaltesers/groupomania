@@ -32,7 +32,7 @@ const LoginButton = styled.button`
   display: block;
   width: 100%;
   margin-top: 30px;
-  background-color: #fa8a00;
+  background-color: darkcyan;
   border: none;
   color: white;
   padding: 12px 20px;
@@ -53,7 +53,7 @@ const TitleContainer = styled.div`
 `;
 
 const GroupomaniaText = styled.h1`
-  color: #fa8a00;
+  color: darkcyan;
   font-size: 2.5rem;
   font-weight: bold;
   margin-left: 10px;
