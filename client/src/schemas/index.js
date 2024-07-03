@@ -1,3 +1,5 @@
+// schema for signup and login
+
 import * as yup from "yup";
 
 const passwordRules = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
