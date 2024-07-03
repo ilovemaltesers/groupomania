@@ -1,50 +1,35 @@
 import React from "react";
 import { useFormik } from "formik";
-import axios from "axios"; // Import axios for HTTP requests
+import axios from "axios";
 import { SignupButton } from "../styles/stylesSignupPage";
 import { signupSchema } from "../schemas/index";
-
-const onSubmit = async (values, actions) => {
-  try {
-    // Axios POST request
-    const response = await axios.post(
-      "http://localhost:3000/api/user/signup",
-      values
-    );
-    console.log("Signup successful", response.data);
-    actions.resetForm();
-  } catch (error) {
-    if (error.response) {
-      // Server responded with a status code outside the 2xx range
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-      if (error.response.status === 400) {
-        actions.setErrors({ submit: "Email already exists" });
-      }
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.log(error.request);
-    } else {
-      console.log(
-        "Something else went wrong we can't explain to you right now!",
-        error.message
-      );
-    }
-    actions.setSubmitting(false);
-  }
-};
+import { useNavigate } from "react-router-dom";
 
 function SignupFormComp() {
-  const {
-    values,
-    errors,
-    touched,
-    isSubmitting,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-  } = useFormik({
+  const navigate = useNavigate();
+  const onSubmit = async (values, actions) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/user/signup",
+        values
+      );
+      console.log("Signup successful", response.data);
+      actions.resetForm();
+      navigate("/login");
+    } catch (error) {
+      console.error("Signup error", error);
+      if (error.response && error.response.status === 400) {
+        actions.setErrors({ submit: "Email already exists" });
+      } else {
+        actions.setErrors({
+          submit: "An unexpected error occurred. Please try again later.",
+        });
+      }
+      actions.setSubmitting(false);
+    }
+  };
+
+  const formik = useFormik({
     initialValues: {
       familyName: "",
       givenName: "",
@@ -57,106 +42,110 @@ function SignupFormComp() {
   });
 
   return (
-    <>
-      <form onSubmit={handleSubmit} autoComplete="off">
-        <div className="form-group">
-          <label htmlFor="familyName">Family Name</label>
-          <input
-            value={values.familyName}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="text"
-            className={`form-control ${
-              errors.familyName && touched.familyName ? "input-error" : ""
-            }`}
-            id="familyName"
-            placeholder="Enter family name"
-          />
-          {errors.familyName && touched.familyName && (
-            <p className="error">{errors.familyName}</p>
-          )}
-        </div>
-        <div className="form-group">
-          <label htmlFor="givenName">Given Name</label>
-          <input
-            value={values.givenName}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="text"
-            className={`form-control ${
-              errors.givenName && touched.givenName ? "input-error" : ""
-            }`}
-            id="givenName"
-            placeholder="Enter given name"
-          />
-          {errors.givenName && touched.givenName && (
-            <p className="error">{errors.givenName}</p>
-          )}
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">Email address</label>
-          <input
-            value={values.email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="email"
-            className={`form-control ${
-              errors.email && touched.email ? "input-error" : ""
-            }`}
-            id="email"
-            placeholder="Enter email"
-          />
-          {errors.email && touched.email && (
-            <p className="error">{errors.email}</p>
-          )}
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            value={values.password}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="password"
-            className={`form-control ${
-              errors.password && touched.password ? "input-error" : ""
-            }`}
-            id="password"
-            placeholder="Enter password"
-          />
-          {errors.password && touched.password && (
-            <p className="error">{errors.password}</p>
-          )}
-        </div>
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            value={values.confirmPassword}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="password"
-            className={`form-control ${
-              errors.confirmPassword && touched.confirmPassword
-                ? "input-error"
-                : ""
-            }`}
-            id="confirmPassword"
-            placeholder="Confirm password"
-          />
-          {errors.confirmPassword && touched.confirmPassword && (
-            <p className="error">{errors.confirmPassword}</p>
-          )}
-        </div>
-        <SignupButton
-          disabled={isSubmitting}
-          type="submit"
-          className="btn btn-primary"
-        >
-          Sign Up
-        </SignupButton>
-        {errors.submit && <p className="error">{errors.submit}</p>}{" "}
-        {/* Display server-side submission error */}
-      </form>
-    </>
+    <form onSubmit={formik.handleSubmit} autoComplete="off">
+      {/* Family Name Field */}
+      <div className="form-group">
+        <label htmlFor="familyName">Family Name</label>
+        <input
+          id="familyName"
+          type="text"
+          {...formik.getFieldProps("familyName")}
+          className={`form-control ${
+            formik.touched.familyName && formik.errors.familyName
+              ? "input-error"
+              : ""
+          }`}
+          placeholder="Enter family name"
+        />
+        {formik.touched.familyName && formik.errors.familyName && (
+          <p className="error">{formik.errors.familyName}</p>
+        )}
+      </div>
+
+      {/* Given Name Field */}
+      <div className="form-group">
+        <label htmlFor="givenName">Given Name</label>
+        <input
+          id="givenName"
+          type="text"
+          {...formik.getFieldProps("givenName")}
+          className={`form-control ${
+            formik.touched.givenName && formik.errors.givenName
+              ? "input-error"
+              : ""
+          }`}
+          placeholder="Enter given name"
+        />
+        {formik.touched.givenName && formik.errors.givenName && (
+          <p className="error">{formik.errors.givenName}</p>
+        )}
+      </div>
+
+      {/* Email Field */}
+      <div className="form-group">
+        <label htmlFor="email">Email address</label>
+        <input
+          id="email"
+          type="email"
+          {...formik.getFieldProps("email")}
+          className={`form-control ${
+            formik.touched.email && formik.errors.email ? "input-error" : ""
+          }`}
+          placeholder="Enter email"
+        />
+        {formik.touched.email && formik.errors.email && (
+          <p className="error">{formik.errors.email}</p>
+        )}
+      </div>
+
+      {/* Password Field */}
+      <div className="form-group">
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          {...formik.getFieldProps("password")}
+          className={`form-control ${
+            formik.touched.password && formik.errors.password
+              ? "input-error"
+              : ""
+          }`}
+          placeholder="Enter password"
+        />
+        {formik.touched.password && formik.errors.password && (
+          <p className="error">{formik.errors.password}</p>
+        )}
+      </div>
+
+      {/* Confirm Password Field */}
+      <div className="form-group">
+        <label htmlFor="confirmPassword">Confirm Password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          {...formik.getFieldProps("confirmPassword")}
+          className={`form-control ${
+            formik.touched.confirmPassword && formik.errors.confirmPassword
+              ? "input-error"
+              : ""
+          }`}
+          placeholder="Confirm password"
+        />
+        {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+          <p className="error">{formik.errors.confirmPassword}</p>
+        )}
+      </div>
+
+      {/* Submit Button */}
+      <SignupButton
+        disabled={formik.isSubmitting}
+        type="submit"
+        className="btn btn-primary"
+      >
+        Sign Up
+      </SignupButton>
+      {formik.errors.submit && <p className="error">{formik.errors.submit}</p>}
+    </form>
   );
 }
 
