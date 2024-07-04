@@ -23,7 +23,7 @@ const TellMeText = styled.h4`
   font-size: 1.25em; /* Adjust the size as needed */
 `;
 
-const CommentTextarea = styled.textarea`
+const NewPostTextarea = styled.textarea`
   width: 100%;
   min-height: 3em;
   padding: 10px;
@@ -32,14 +32,14 @@ const CommentTextarea = styled.textarea`
   resize: vertical; /* Allow vertical resizing */
 `;
 
-const NewCommentButtonContainer = styled.div`
+const NewPostButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   justify-content: space-between;
   margin-top: 10px;
 `;
 
-const SubmitNewCommentButton = styled.button`
+const SubmitNewPostButton = styled.button`
   background-color: #bdebff;
   color: black;
   padding: 10px 20px;
@@ -69,17 +69,16 @@ const FeedMain = () => {
   return (
     <FeedMainContainer>
       <NewPostBody>
-        <TellMeText>So what do you want to tell me?</TellMeText>
-        <CommentTextarea
+        <TellMeText>So what do you wish to publish today?</TellMeText>
+        <NewPostTextarea
           placeholder="Write your comment..."
           value={comment}
           onChange={handleCommentChange}
         />
-        {/* Optionally, you can add a submit button or handle form submission */}
-        <NewCommentButtonContainer>
+        <NewPostButtonContainer>
           <UploadImageButton type="submit">Upload Image</UploadImageButton>
-          <SubmitNewCommentButton type="submit">Submit</SubmitNewCommentButton>
-        </NewCommentButtonContainer>
+          <SubmitNewPostButton type="submit">Submit</SubmitNewPostButton>
+        </NewPostButtonContainer>
       </NewPostBody>
     </FeedMainContainer>
   );
