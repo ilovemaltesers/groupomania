@@ -85,7 +85,7 @@ const CommentInput = styled.textarea`
   margin-top: 10px;
 `;
 
-const AddCommentButton = styled.button`
+const PublishCommentButton = styled.button`
   background-color: #bdebff;
   color: black;
   padding: 5px 10px;
@@ -189,6 +189,17 @@ const NewPost = () => {
                 }
               }}
             />
+            <PublishCommentButton
+              onClick={(e) => {
+                const input = e.target.previousSibling;
+                if (input && input.value.trim()) {
+                  handleAddComment(index, input.value);
+                  input.value = "";
+                }
+              }}
+            >
+              Publish Comment
+            </PublishCommentButton>
           </CommentSection>
         </PostCard>
       ))}
