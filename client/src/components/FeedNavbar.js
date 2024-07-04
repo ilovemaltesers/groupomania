@@ -8,7 +8,7 @@ import { IoIosLogOut } from "react-icons/io";
 import { SlMagnifier } from "react-icons/sl";
 
 const CustomNavbar = styled(Navbar)`
-  background-color: #dceaf5;
+  background-color: #bdebff;
 `;
 
 const SearchContainer = styled(Form)`

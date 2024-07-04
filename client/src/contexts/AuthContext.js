@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
     if (token !== authToken) {
       setAuthToken(token);
     }
+    // eslint-disable-next-line
   }, []); // Runs only once on component mount
 
   const login = (token) => {
