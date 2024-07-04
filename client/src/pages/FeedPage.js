@@ -1,12 +1,12 @@
 import React from "react";
 import { FeedNavbar } from "../components/FeedNavbar";
-import FeedMain from "../components/FeedMain";
+import NewPost from "../components/NewPostComp";
 
 const FeedPage = () => {
   return (
     <>
       <FeedNavbar />
-      <FeedMain />
+      <NewPost />
     </>
   );
 };
