@@ -55,7 +55,7 @@ const login = async (req, res) => {
 
     // Check if user exists
     const userResult = await client.query(
-      "SELECT id, password FROM public.users WHERE email = $1",
+      "SELECT _id, password FROM public.users WHERE email = $1",
       [email]
     );
 
