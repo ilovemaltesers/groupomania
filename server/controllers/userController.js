@@ -73,11 +73,11 @@ const login = async (req, res) => {
     }
 
     // sign method takes three arguments: payload(user's id), secret key, and options
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
       expiresIn: "24h",
     });
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, userId: user._id });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).send("Error during login");

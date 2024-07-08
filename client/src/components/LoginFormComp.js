@@ -20,8 +20,9 @@ const LoginFormComp = () => {
         }
       );
 
-      const { token } = response.data;
-      login(token); // Update auth token in context
+      const { token, userId } = response.data; // Assuming userId is returned from backend
+      login(token, userId); // Update auth token and userId in context
+
       alert("Login successful");
       navigate("/feed"); // Redirect to feed page on successful login
     } catch (error) {
