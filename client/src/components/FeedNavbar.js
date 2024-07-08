@@ -6,6 +6,7 @@ import profilePic from "../assets/images/edina2.webp";
 import { Navbar, Nav, Form, FormControl } from "react-bootstrap";
 import { IoIosLogOut } from "react-icons/io";
 import { SlMagnifier } from "react-icons/sl";
+import { useAuth } from "../contexts/AuthContext";
 
 const CustomNavbar = styled(Navbar)`
   background-color: #bdebff;
@@ -44,9 +45,17 @@ const ProfileImage = styled.img`
 
 const LogoutIcon = styled(IoIosLogOut)`
   font-size: 32px;
+  cursor: pointer;
 `;
 
 const FeedNavbar = () => {
+  // logout function from useAuth hook
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <CustomNavbar expand="lg">
       <Container>
@@ -73,7 +82,7 @@ const FeedNavbar = () => {
         >
           <Nav className="ml-auto align-items-center">
             <ProfileImage src={profilePic} alt="Profile" />
-            <LogoutIcon style={{ marginLeft: "10px" }} />
+            <LogoutIcon style={{ marginLeft: "10px" }} onClick={handleLogout} />
           </Nav>
         </Navbar.Collapse>
       </Container>

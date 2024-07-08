@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Card from "react-bootstrap/Card";
+import { useAuth } from "../contexts/AuthContext";
 
 const FeedMainContainer = styled.div`
   display: flex;
