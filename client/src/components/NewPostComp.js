@@ -99,10 +99,24 @@ const PublishCommentButton = styled.button`
   }
 `;
 
+const RemovePostButton = styled.button`
+  background-color: #f08080;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 5px;
+  &:hover {
+    background-color: #e74c3c;
+  }
+`;
+
 const NewPost = () => {
   const [comment, setComment] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
+  const { isAuthenticated, auth } = useAuth(); // Get authentication status and auth object
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
@@ -117,7 +131,10 @@ const NewPost = () => {
 
   const handleSubmit = () => {
     if (comment || image) {
-      setPosts([...posts, { comment, image, comments: [] }]);
+      setPosts([
+        ...posts,
+        { comment, image, comments: [], userId: auth.userId },
+      ]);
       setComment("");
       setImage(null);
     }
@@ -131,6 +148,17 @@ const NewPost = () => {
       return post;
     });
     setPosts(updatedPosts);
+  };
+
+  const handleRemovePost = (postIndex) => {
+    if (posts[postIndex].userId === auth.userId) {
+      // Check if current user is the post owner
+      const updatedPosts = [...posts];
+      updatedPosts.splice(postIndex, 1); // Remove the post from the array
+      setPosts(updatedPosts); // Update state to reflect the removal
+    } else {
+      console.log("You are not authorized to remove this post.");
+    }
   };
 
   return (
@@ -180,6 +208,11 @@ const NewPost = () => {
             {post.comments.map((cmt, cmtIndex) => (
               <p key={cmtIndex}>{cmt}</p>
             ))}
+            {isAuthenticated && post.userId === auth.userId && (
+              <RemovePostButton onClick={() => handleRemovePost(index)}>
+                Remove Post
+              </RemovePostButton>
+            )}
             <CommentInput
               placeholder="Write a comment..."
               onKeyDown={(e) => {
