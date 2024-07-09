@@ -13,7 +13,13 @@ function SignupFormComp() {
         "http://localhost:3000/api/user/signup",
         values
       );
+
       console.log("Signup successful", response.data);
+
+      // Store familyName and givenName in local storage
+      localStorage.setItem("familyName", values.familyName);
+      localStorage.setItem("givenName", values.givenName);
+
       actions.resetForm();
       navigate("/login");
     } catch (error) {
