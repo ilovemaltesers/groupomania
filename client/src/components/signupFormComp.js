@@ -16,10 +16,6 @@ function SignupFormComp() {
 
       console.log("Signup successful", response.data);
 
-      // Store familyName and givenName in local storage
-      localStorage.setItem("familyName", values.familyName);
-      localStorage.setItem("givenName", values.givenName);
-
       actions.resetForm();
       navigate("/login");
     } catch (error) {

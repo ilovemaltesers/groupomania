@@ -53,9 +53,9 @@ const login = async (req, res) => {
     client = await db();
     console.log("Connected to the database.");
 
-    // Check if user exists
+    // Retrieve user details including familyName and givenName
     const userResult = await client.query(
-      "SELECT _id, password FROM public.users WHERE email = $1",
+      "SELECT _id, family_name, given_name, password FROM public.users WHERE email = $1",
       [email]
     );
 
@@ -72,12 +72,18 @@ const login = async (req, res) => {
       return res.status(400).send("Incorrect password");
     }
 
-    // sign method takes three arguments: payload(user's id), secret key, and options
+    // Generate JWT token
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
       expiresIn: "24h",
     });
 
-    res.status(200).json({ token, userId: user._id });
+    // Return userId, token, familyName, and givenName
+    res.status(200).json({
+      token,
+      userId: user._id,
+      familyName: user.family_name,
+      givenName: user.given_name,
+    });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).send("Error during login");

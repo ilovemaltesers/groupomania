@@ -1,10 +1,10 @@
 import React from "react";
 import { useFormik } from "formik";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { LoginButton } from "../styles/stylesLoginPage";
 import { loginSchema } from "../schemas/index";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import axios from "axios";
 
 const LoginFormComp = () => {
   const navigate = useNavigate();
@@ -20,8 +20,11 @@ const LoginFormComp = () => {
         }
       );
 
-      const { token, userId } = response.data; // Assuming userId is returned from backend
-      login(token, userId); // Update auth token and userId in context
+      const { token, userId, familyName, givenName } = response.data; // Assuming userId, familyName, and givenName are returned from backend
+      login(token, userId, familyName, givenName); // Update auth token, userId, familyName, and givenName in context
+
+      localStorage.setItem("familyName", familyName); // Store familyName in local storage
+      localStorage.setItem("givenName", givenName); // Store givenName in local storage
 
       alert("Login successful");
       navigate("/feed"); // Redirect to feed page on successful login
