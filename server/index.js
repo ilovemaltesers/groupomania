@@ -11,24 +11,20 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-// routes
-//test response
+// Routes
+const userRoutes = require("./routes/userRoutes");
+
+// Test response
 app.get("/", (req, res) => {
   res.send("Working! 🌸");
 });
 
-// hiding for now
-// app.use("/api/hello", userRoutes);
-
-const userRoutes = require("./routes/userRoutes");
-
+// Use routes
 app.use("/api/user", userRoutes);
-app.use("/api/post", postRoutes);
 
 // Start the server
 app.listen(port, () => {
   console.log(`✨Server is running on http://localhost:${port}✨`);
 });
 
-//export app
 module.exports = app;

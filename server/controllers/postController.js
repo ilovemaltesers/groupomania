@@ -26,7 +26,7 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-const creatPost = async (req, res) => {
+const createPost = async (req, res) => {
   const { title, content } = req.body;
   const imageUrl = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
@@ -51,4 +51,9 @@ const creatPost = async (req, res) => {
     if (client) await client.end();
     console.log("Database connection closed.");
   }
+};
+
+module.exports = {
+  getAllPosts,
+  createPost,
 };
