@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 const userRoutes = require("./routes/userRoutes");
 
 app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
 
 // Start the server
 app.listen(port, () => {

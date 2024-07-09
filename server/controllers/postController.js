@@ -7,6 +7,25 @@ const { db } = require("../connect.js");
 
 const JWT_SECRET = "blablabla";
 
+const getAllPosts = async (req, res) => {
+  let client;
+  try {
+    client = await db();
+    console.log("Connected to the database.");
+
+    // Get all posts from the database
+    const posts = await client.query("SELECT * FROM public.posts");
+
+    res.status(200).send(posts.rows);
+  } catch (error) {
+    console.error("Error during post retrieval:", error);
+    res.status(500).send("Error during post retrieval");
+  } finally {
+    if (client) await client.end();
+    console.log("Database connection closed.");
+  }
+};
+
 const creatPost = async (req, res) => {
   const { title, content } = req.body;
   const imageUrl = req.file
