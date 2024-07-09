@@ -1,8 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const auth = require("../middleware/authMiddleware");
+const verifyToken = require("../middleware/authMiddleware"); // Importing the auth middleware
+
 const multer = require("../middleware/multer-config");
+const postController = require("../controllers/postController");
 
-const postContr = require("../controllers/postController");
+// Example route: Create a new post
+router.post("/", verifyToken, multer, postController.createPost);
 
-router.post("/", auth, multer, postContr.createPost);
+// Example route: Get all posts
+router.get("/", verifyToken, postController.getAllPosts);
+
+module.exports = router;

@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 
 // Routes
 const userRoutes = require("./routes/userRoutes");
+// const postRoutes = require("./routes/postRoutes");
 
 // Test response
 app.get("/", (req, res) => {
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 
 // Use routes
 app.use("/api/user", userRoutes);
+// app.use("/api/post", postRoutes);
 
 // Start the server
 app.listen(port, () => {
