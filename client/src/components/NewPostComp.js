@@ -114,7 +114,7 @@ const PublishCommentButton = styled.button`
 
 const RemoveEditButtonsContainer = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   margin-top: 5px;
   margin-bottom: 10px;
 `;
@@ -122,7 +122,7 @@ const RemoveEditButtonsContainer = styled.div`
 const RemovePostButton = styled.button`
   background-color: bisque;
   color: black;
-  padding: 5px 10px;
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -134,13 +134,14 @@ const RemovePostButton = styled.button`
 
 const RemovePostIcon = styled(RiDeleteBin6Fill)`
   font-size: 1.25em;
-  margin-left 7px;
+  margin-left: 10px;
+  margin-bottom: 5px;
 `;
 
 const EditPostButton = styled.button`
   background-color: #bdebff;
   color: black;
-  padding: 5px 10px;
+  padding: 10px 20px;
   border: none;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
