@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Card from "react-bootstrap/Card";
 import { FaTelegramPlane } from "react-icons/fa";
+import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useAuth } from "../contexts/AuthContext";
 
 const FeedMainContainer = styled.div`
@@ -80,6 +81,8 @@ const PostCard = styled(Card)`
 `;
 
 const CommentSection = styled.div`
+  display: flex;
+  flex-direction: column;
   margin-top: 10px;
 `;
 
@@ -106,16 +109,38 @@ const PublishCommentButton = styled.button`
   }
 `;
 
+const RemoveEditButtonsContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 5px;
+`;
+
 const RemovePostButton = styled.button`
-  background-color: #f08080;
-  color: white;
+  background-color: bisque;
+  color: black;
   padding: 5px 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 5px;
   &:hover {
     background-color: #e74c3c;
+  }
+`;
+
+const RemovePostIcon = styled(RiDeleteBin6Fill)`
+  font-size: 1.25em;
+  margin-left: 7px;
+`;
+
+const EditPostButton = styled.button`
+  background-color: #bdebff;
+  color: black;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: bisque;
   }
 `;
 
@@ -178,6 +203,11 @@ const NewPost = () => {
     }
   };
 
+  const handleEditPost = (postIndex) => {
+    // Placeholder for edit post functionality
+    console.log(`Editing post ${postIndex}`);
+  };
+
   return (
     <FeedMainContainer>
       <NewPostBody>
@@ -227,9 +257,15 @@ const NewPost = () => {
               <p key={cmtIndex}>{cmt}</p>
             ))}
             {isAuthenticated && post.userId === auth.userId && (
-              <RemovePostButton onClick={() => handleRemovePost(index)}>
-                Remove Post
-              </RemovePostButton>
+              <RemoveEditButtonsContainer>
+                <RemovePostButton onClick={() => handleRemovePost(index)}>
+                  Remove Post
+                  <RemovePostIcon />
+                </RemovePostButton>
+                <EditPostButton onClick={() => handleEditPost(index)}>
+                  Edit Post
+                </EditPostButton>
+              </RemoveEditButtonsContainer>
             )}
             <CommentInput
               placeholder="Write a comment..."
