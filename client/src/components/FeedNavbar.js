@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import logo from "../assets/images/feed-logo.svg";
 import { Navbar, Nav, Container } from "react-bootstrap";
@@ -13,6 +14,7 @@ const CustomNavbar = styled(Navbar)`
 
 const ProfileIcon = styled(GiEgyptianProfile)`
   font-size: 32px;
+  color: black;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 
@@ -83,7 +85,11 @@ const FeedNavbar = () => {
           <Popup />
         </Navbar.Brand>
         <Nav className="ml-auto align-items-center">
-          <ProfileIcon />
+          <Link to="/profile">
+            {" "}
+            {/* Replace "/profile" with your actual profile page route */}
+            <ProfileIcon />
+          </Link>
           <LogoutIcon style={{ marginLeft: "10px" }} onClick={handleLogout} />
         </Nav>
       </Container>
