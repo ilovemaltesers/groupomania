@@ -49,6 +49,7 @@ const SubmitNewPostButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   margin-top: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   &:hover {
     background-color: bisque;
   }
@@ -62,6 +63,7 @@ const UploadImageButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   margin-top: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   &:hover {
     background-color: bisque;
   }
@@ -102,8 +104,9 @@ const PublishCommentButton = styled.button`
   padding: 5px 10px;
   border: none;
   border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  margin-top: 5px;
+  margin-top: 10px;
   &:hover {
     background-color: bisque;
   }
@@ -113,6 +116,7 @@ const RemoveEditButtonsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   margin-top: 5px;
+  margin-bottom: 10px;
 `;
 
 const RemovePostButton = styled.button`
@@ -121,6 +125,7 @@ const RemovePostButton = styled.button`
   padding: 5px 10px;
   border: none;
   border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   &:hover {
     background-color: #e74c3c;
@@ -129,7 +134,7 @@ const RemovePostButton = styled.button`
 
 const RemovePostIcon = styled(RiDeleteBin6Fill)`
   font-size: 1.25em;
-  margin-left: 7px;
+  margin-left 7px;
 `;
 
 const EditPostButton = styled.button`
@@ -138,6 +143,7 @@ const EditPostButton = styled.button`
   padding: 5px 10px;
   border: none;
   border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   &:hover {
     background-color: bisque;
