@@ -46,7 +46,7 @@ const Popup = () => {
   if (isAuthenticated && auth?.givenName && visible) {
     return (
       <PopupContainer>
-        <p style={{ margin: 0 }}>Hello {auth.givenName}! 🩷 ✨</p>
+        <p style={{ margin: 0 }}>Hello {auth.givenName}! 💙 </p>
       </PopupContainer>
     );
   }
