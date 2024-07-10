@@ -20,11 +20,8 @@ const LoginFormComp = () => {
         }
       );
 
-      const { token, userId, familyName, givenName } = response.data; // Assuming userId, familyName, and givenName are returned from backend
-      login(token, userId, familyName, givenName); // Update auth token, userId, familyName, and givenName in context
-
-      localStorage.setItem("familyName", familyName); // Store familyName in local storage
-      localStorage.setItem("givenName", givenName); // Store givenName in local storage
+      const { token, userId, givenName } = response.data;
+      login(token, userId, givenName);
 
       alert("Login successful");
       navigate("/feed"); // Redirect to feed page on successful login

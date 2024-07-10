@@ -1,6 +1,5 @@
 import axios from "axios";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Card from "react-bootstrap/Card";
 import { useAuth } from "../contexts/AuthContext";
@@ -118,7 +117,18 @@ const NewPost = () => {
   const [comment, setComment] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
-  const { isAuthenticated, auth } = useAuth(); // Get authentication status and auth object
+  const { isAuthenticated, auth } = useAuth();
+
+  useEffect(() => {
+    // Load posts from local storage when the component mounts
+    const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+    setPosts(savedPosts);
+  }, []);
+
+  useEffect(() => {
+    // Save posts to local storage whenever posts state changes
+    localStorage.setItem("posts", JSON.stringify(posts));
+  }, [posts]);
 
   const handleCommentChange = (event) => {
     setComment(event.target.value);
@@ -154,10 +164,9 @@ const NewPost = () => {
 
   const handleRemovePost = (postIndex) => {
     if (posts[postIndex].userId === auth.userId) {
-      // Check if current user is the post owner
       const updatedPosts = [...posts];
-      updatedPosts.splice(postIndex, 1); // Remove the post from the array
-      setPosts(updatedPosts); // Update state to reflect the removal
+      updatedPosts.splice(postIndex, 1);
+      setPosts(updatedPosts);
     } else {
       console.log("You are not authorized to remove this post.");
     }

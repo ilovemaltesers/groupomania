@@ -2,51 +2,47 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 
 const AuthContext = createContext();
 
-// Custom hook
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(() => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
-    // If token exists, return an object with token and userId, otherwise return null
-    return token ? { token, userId } : null;
+    const givenName = localStorage.getItem("givenName");
+    return token ? { token, userId, givenName } : null;
   });
 
-  // Effect to sync auth state with localStorage values
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
-    // Update auth state if token or userId changes in localStorage
+    const givenName = localStorage.getItem("givenName");
     if (
       (token && (!auth || token !== auth.token)) ||
-      (userId && (!auth || userId !== auth.userId))
+      (userId && (!auth || userId !== auth.userId)) ||
+      (givenName && (!auth || givenName !== auth.givenName))
     ) {
-      setAuth({ token, userId });
+      setAuth({ token, userId, givenName });
     }
     // eslint-disable-next-line
-  }, []); // Runs only once on component mount
+  }, []);
 
-  const login = (token, userId) => {
+  const login = (token, userId, givenName) => {
     localStorage.setItem("token", token);
     localStorage.setItem("userId", userId);
-
-    setAuth({ token, userId });
+    localStorage.setItem("givenName", givenName);
+    setAuth({ token, userId, givenName });
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
-    localStorage.removeItem("familyName");
     localStorage.removeItem("givenName");
-
+    localStorage.removeItem("posts");
     setAuth(null);
   };
 
-  // Determine if the user is authenticated based on the presence of a token
   const isAuthenticated = !!auth?.token;
 
-  // Render the AuthContext Provider with value containing authentication state and functions
   return (
     <AuthContext.Provider value={{ isAuthenticated, auth, login, logout }}>
       {children}

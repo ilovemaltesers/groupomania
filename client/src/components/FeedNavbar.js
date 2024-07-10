@@ -1,12 +1,13 @@
 import React from "react";
-import Container from "react-bootstrap/Container";
+
 import styled from "styled-components";
 import logo from "../assets/images/feed-logo.svg";
 import profilePic from "../assets/images/edina2.webp";
-import { Navbar, Nav, Form, FormControl } from "react-bootstrap";
+import { Navbar, Nav, Form, FormControl, Container } from "react-bootstrap";
 import { IoIosLogOut } from "react-icons/io";
 import { SlMagnifier } from "react-icons/sl";
 import { useAuth } from "../contexts/AuthContext";
+import Popup from "./PopUp";
 
 const CustomNavbar = styled(Navbar)`
   background-color: #bdebff;
@@ -66,6 +67,7 @@ const FeedNavbar = () => {
             className="d-inline-block align-top"
             alt="My Logo"
           />
+          <Popup />
         </Navbar.Brand>
         <SearchContainer>
           <StyledFormControl
@@ -75,6 +77,7 @@ const FeedNavbar = () => {
           />
           <SearchIcon />
         </SearchContainer>
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse
           id="basic-navbar-nav"
