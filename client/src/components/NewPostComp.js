@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Card from "react-bootstrap/Card";
+import { FaTelegramPlane } from "react-icons/fa";
 import { useAuth } from "../contexts/AuthContext";
 
 const FeedMainContainer = styled.div`
@@ -63,6 +64,11 @@ const UploadImageButton = styled.button`
   &:hover {
     background-color: bisque;
   }
+`;
+
+const PlaneIcon = styled(FaTelegramPlane)`
+  margin-left: 7px;
+  font-size: 1.25em;
 `;
 
 const PostCard = styled(Card)`
@@ -193,6 +199,7 @@ const NewPost = () => {
             onClick={() => document.getElementById("upload-image").click()}
           >
             Upload Image
+            <PlaneIcon />
           </UploadImageButton>
           <SubmitNewPostButton onClick={handleSubmit}>
             Submit
