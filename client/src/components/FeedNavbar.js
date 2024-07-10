@@ -1,11 +1,9 @@
 import React from "react";
-
 import styled from "styled-components";
 import logo from "../assets/images/feed-logo.svg";
-import profilePic from "../assets/images/edina2.webp";
-import { Navbar, Nav, Form, FormControl, Container } from "react-bootstrap";
+import { Navbar, Nav, Container } from "react-bootstrap";
 import { IoIosLogOut } from "react-icons/io";
-import { SlMagnifier } from "react-icons/sl";
+import { GiEgyptianProfile } from "react-icons/gi";
 import { useAuth } from "../contexts/AuthContext";
 import Popup from "./PopUp";
 
@@ -13,44 +11,59 @@ const CustomNavbar = styled(Navbar)`
   background-color: #bdebff;
 `;
 
-const SearchContainer = styled(Form)`
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  margin-left: 20px;
-  max-width: 80%; /* Adjusted for responsiveness */
-  border-radius: 10px;
-  position: relative; /* Ensure the search icon stays aligned */
-`;
-
-const StyledFormControl = styled(FormControl)`
-  width: 100%;
-  padding-right: 40px; /* Space for the icon */
-`;
-
-const SearchIcon = styled(SlMagnifier)`
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 20px;
+const ProfileIcon = styled(GiEgyptianProfile)`
+  font-size: 32px;
   cursor: pointer;
-`;
+  transition: transform 0.2s ease-in-out;
 
-const ProfileImage = styled.img`
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  object-fit: cover;
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    z-index: 1000;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
 `;
 
 const LogoutIcon = styled(IoIosLogOut)`
   font-size: 32px;
   cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  &[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    z-index: 1000;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
 `;
 
 const FeedNavbar = () => {
-  // logout function from useAuth hook
   const { logout } = useAuth();
 
   const handleLogout = () => {
@@ -69,25 +82,10 @@ const FeedNavbar = () => {
           />
           <Popup />
         </Navbar.Brand>
-        <SearchContainer>
-          <StyledFormControl
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <SearchIcon />
-        </SearchContainer>
-
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse
-          id="basic-navbar-nav"
-          className="justify-content-center"
-        >
-          <Nav className="ml-auto align-items-center">
-            <ProfileImage src={profilePic} alt="Profile" />
-            <LogoutIcon style={{ marginLeft: "10px" }} onClick={handleLogout} />
-          </Nav>
-        </Navbar.Collapse>
+        <Nav className="ml-auto align-items-center">
+          <ProfileIcon />
+          <LogoutIcon style={{ marginLeft: "10px" }} onClick={handleLogout} />
+        </Nav>
       </Container>
     </CustomNavbar>
   );
