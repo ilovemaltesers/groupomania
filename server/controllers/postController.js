@@ -27,28 +27,35 @@ const getAllPosts = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
-  const { title, content } = req.body;
-  const imageUrl = req.file
+  const { content, userId } = req.body;
+  const mediaUpload = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
 
-  let client;
+  const client = await pool.connect();
+
   try {
-    client = await db();
     console.log("Connected to the database.");
 
-    // Insert post into the database
-    await client.query(
-      "INSERT INTO public.posts (title, content, image_url) VALUES ($1, $2, $3)",
-      [title, content, imageUrl]
-    );
+    const query = `
+      INSERT INTO public.posts (content, media_upload, user_id, created_at, updated_at)
+      VALUES ($1, $2, $3, NOW(), NOW())
+      RETURNING *;
+    `;
 
-    res.status(201).send("Post successfully created");
+    const values = [content, mediaUpload, userId];
+
+    const result = await client.query(query, values);
+    const newPost = result.rows[0];
+
+    res
+      .status(201)
+      .json({ message: "Post successfully created", post: newPost });
   } catch (error) {
     console.error("Error during post creation:", error);
-    res.status(500).send("Error during post creation");
+    res.status(500).json({ message: "Error during post creation", error });
   } finally {
-    if (client) await client.end();
+    client.release();
     console.log("Database connection closed.");
   }
 };
