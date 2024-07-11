@@ -1,6 +1,8 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+
 import { useAuth } from "../contexts/AuthContext";
+
 import {
   FeedMainContainer,
   NewPostBody,
@@ -9,15 +11,15 @@ import {
   NewPostButtonContainer,
   SubmitNewPostButton,
   UploadImageButton,
-  PlaneIcon,
   PostCard,
   CommentSection,
-  CommentInput,
-  PublishCommentButton,
   RemoveEditButtonsContainer,
   RemovePostButton,
   RemovePostIcon,
+  PlaneIcon,
   EditPostButton,
+  CommentInput,
+  PublishCommentButton,
 } from "../styles/stylesFeedPage";
 
 const NewPost = () => {
