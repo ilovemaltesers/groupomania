@@ -32,7 +32,7 @@ const createPost = async (req, res) => {
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
 
-  const client = await pool.connect();
+  const client = await db();
 
   try {
     console.log("Connected to the database.");
@@ -55,7 +55,7 @@ const createPost = async (req, res) => {
     console.error("Error during post creation:", error);
     res.status(500).json({ message: "Error during post creation", error });
   } finally {
-    client.release();
+    // client.end();
     console.log("Database connection closed.");
   }
 };

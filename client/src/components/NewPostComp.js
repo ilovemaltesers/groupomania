@@ -23,7 +23,7 @@ import {
 } from "../styles/stylesFeedPage";
 
 const NewPost = () => {
-  const [comment, setComment] = useState("");
+  const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
   const { isAuthenticated, auth } = useAuth();
@@ -40,7 +40,7 @@ const NewPost = () => {
   }, [posts]);
 
   const handleCommentChange = (event) => {
-    setComment(event.target.value);
+    setContent(event.target.value);
   };
 
   const handleImageUpload = (event) => {
@@ -51,13 +51,30 @@ const NewPost = () => {
   };
 
   const handleSubmit = () => {
-    if (comment || image) {
-      setPosts([
-        ...posts,
-        { comment, image, comments: [], userId: auth.userId },
-      ]);
-      setComment("");
-      setImage(null);
+    if (content || image) {
+      const imageUrl = image;
+      const newPost = {
+        content: content,
+        image: imageUrl,
+        userId: auth.userId,
+      };
+
+      // Make Axios POST request
+      axios
+        .post("http://localhost:3000/api/post", newPost, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then((response) => {
+          console.log("Post created successfully:", response.data);
+          // setPosts([...posts, response.data]); // Update state with the new post from the response
+          setContent("");
+          setImage(null);
+        })
+        .catch((error) => {
+          console.error("Error creating post:", error);
+        });
     }
   };
 
@@ -92,7 +109,7 @@ const NewPost = () => {
         <TellMeText>So what do you wish to publish today?</TellMeText>
         <NewPostTextarea
           placeholder="Write your comment..."
-          value={comment}
+          value={content}
           onChange={handleCommentChange}
         />
         <NewPostButtonContainer>
@@ -126,14 +143,14 @@ const NewPost = () => {
 
       {posts.map((post, index) => (
         <PostCard key={index}>
-          {post.comment && <p>{post.comment}</p>}
+          {post.content && <p>{post.content}</p>}
           {post.image && (
             <img src={post.image} alt="Post" style={{ maxWidth: "100%" }} />
           )}
           <CommentSection>
-            {post.comments.map((cmt, cmtIndex) => (
+            {/* {post.comments.map((cmt, cmtIndex) => (
               <p key={cmtIndex}>{cmt}</p>
-            ))}
+            ))} */}
             {isAuthenticated && post.userId === auth.userId && (
               <RemoveEditButtonsContainer>
                 <RemovePostButton onClick={() => handleRemovePost(index)}>
