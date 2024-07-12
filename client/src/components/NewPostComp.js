@@ -55,9 +55,10 @@ const NewPost = () => {
       const imageUrl = image;
       const newPost = {
         content: content,
-        image: imageUrl,
+        image: image,
         userId: auth.userId,
       };
+      setPosts([...posts, newPost]);
 
       // Make Axios POST request
       axios
