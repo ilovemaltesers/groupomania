@@ -60,7 +60,40 @@ const createPost = async (req, res) => {
   }
 };
 
+// Delete a post
+const deletePost = async (req, res) => {
+  const { postId } = req.params;
+
+  const client = await db();
+
+  try {
+    console.log("Connected to the database.");
+
+    const query = `
+      DELETE FROM public.posts
+      WHERE post_id = $1
+      RETURNING *;
+    `;
+
+    const values = [postId];
+
+    const result = await client.query(query, values);
+    const deletedPost = result.rows[0];
+
+    res
+      .status(200)
+      .json({ message: "Post successfully deleted", post: deletedPost });
+  } catch (error) {
+    console.error("Error during post deletion:", error);
+    res.status(500).json({ message: "Error during post deletion", error });
+  } finally {
+    // client.end();
+    console.log("Database connection closed.");
+  }
+};
+
 module.exports = {
   getAllPosts,
   createPost,
+  deletePost,
 };

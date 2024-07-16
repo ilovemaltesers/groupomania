@@ -9,7 +9,7 @@ router.post("/", verifyToken, multer, postController.createPost);
 
 router.get("/", verifyToken, postController.getAllPosts);
 
-// router.delete("/:post_id", verifyToken, postController.deletePost);
+router.delete("/:post_id", verifyToken, postController.deletePost);
 
 // router.put("/:post_id", verifyToken, multer, postController.updatePost);
 

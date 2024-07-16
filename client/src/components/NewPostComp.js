@@ -52,10 +52,10 @@ const NewPost = () => {
 
   const handleSubmit = () => {
     if (content || image) {
-      const imageUrl = image;
+      const imageUrl = image; // This is the URL set earlier
       const newPost = {
         content: content,
-        image: image,
+        image: imageUrl, // Use imageUrl here
         userId: auth.userId,
       };
       setPosts([...posts, newPost]);
@@ -69,7 +69,6 @@ const NewPost = () => {
         })
         .then((response) => {
           console.log("Post created successfully:", response.data);
-          // setPosts([...posts, response.data]); // Update state with the new post from the response
           setContent("");
           setImage(null);
         })
@@ -78,7 +77,6 @@ const NewPost = () => {
         });
     }
   };
-
   const handleAddComment = (postIndex, newComment) => {
     const updatedPosts = posts.map((post, index) => {
       if (index === postIndex) {
