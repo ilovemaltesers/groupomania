@@ -5,10 +5,16 @@ const verifyToken = require("../middleware/authMiddleware"); // Importing the au
 const multer = require("../middleware/multer-config");
 const postController = require("../controllers/postController");
 
-// Example route: Create a new post
 router.post("/", verifyToken, multer, postController.createPost);
 
-// Example route: Get all posts
 router.get("/", verifyToken, postController.getAllPosts);
+
+// router.delete("/:post_id", verifyToken, postController.deletePost);
+
+// router.put("/:post_id", verifyToken, multer, postController.updatePost);
+
+// router.post("/:post_id/like", verifyToken, postController.likePost);
+
+// module.exports = router;
 
 module.exports = router;
