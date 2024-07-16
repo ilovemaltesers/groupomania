@@ -1,8 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-
 import { useAuth } from "../contexts/AuthContext";
-
 import {
   FeedMainContainer,
   NewPostBody,
@@ -23,19 +21,19 @@ import {
 } from "../styles/stylesFeedPage";
 
 const NewPost = () => {
+  const { isAuthenticated, auth } = useAuth();
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
-  const { isAuthenticated, auth } = useAuth();
 
+  // Load posts from local storage on component mount
   useEffect(() => {
-    // Load posts from local storage when the component mounts
     const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
     setPosts(savedPosts);
   }, []);
 
+  // Update local storage when posts state changes
   useEffect(() => {
-    // Save posts to local storage whenever posts state changes
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
 
@@ -44,6 +42,7 @@ const NewPost = () => {
   };
 
   const handleImageUpload = (event) => {
+    // Retrieve the uploaded file from the input field
     const file = event.target.files[0];
     if (file) {
       setImage(URL.createObjectURL(file));
@@ -55,12 +54,12 @@ const NewPost = () => {
       const imageUrl = image; // This is the URL set earlier
       const newPost = {
         content: content,
-        image: imageUrl, // Use imageUrl here
+        image: imageUrl,
         userId: auth.userId,
+        comments: [],
       };
       setPosts([...posts, newPost]);
 
-      // Make Axios POST request
       axios
         .post("http://localhost:3000/api/post", newPost, {
           headers: {
@@ -77,13 +76,10 @@ const NewPost = () => {
         });
     }
   };
+
   const handleAddComment = (postIndex, newComment) => {
-    const updatedPosts = posts.map((post, index) => {
-      if (index === postIndex) {
-        return { ...post, comments: [...post.comments, newComment] };
-      }
-      return post;
-    });
+    const updatedPosts = [...posts];
+    updatedPosts[postIndex].comments.push(newComment);
     setPosts(updatedPosts);
   };
 
@@ -98,7 +94,6 @@ const NewPost = () => {
   };
 
   const handleEditPost = (postIndex) => {
-    // Placeholder for edit post functionality
     console.log(`Editing post ${postIndex}`);
   };
 
@@ -140,6 +135,8 @@ const NewPost = () => {
         )}
       </NewPostBody>
 
+      {/* Display all posts/comments */}
+
       {posts.map((post, index) => (
         <PostCard key={index}>
           {post.content && <p>{post.content}</p>}
@@ -147,9 +144,7 @@ const NewPost = () => {
             <img src={post.image} alt="Post" style={{ maxWidth: "100%" }} />
           )}
           <CommentSection>
-            {/* {post.comments.map((cmt, cmtIndex) => (
-              <p key={cmtIndex}>{cmt}</p>
-            ))} */}
+            {/* Buttons for removing/editing a post (if authenticated and owner) */}
             {isAuthenticated && post.userId === auth.userId && (
               <RemoveEditButtonsContainer>
                 <RemovePostButton onClick={() => handleRemovePost(index)}>
@@ -172,6 +167,7 @@ const NewPost = () => {
               }}
             />
             <PublishCommentButton
+              // note that the previous sibling is the input field
               onClick={(e) => {
                 const input = e.target.previousSibling;
                 if (input && input.value.trim()) {
