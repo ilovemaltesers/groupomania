@@ -15,6 +15,4 @@ router.delete("/:post_id", verifyToken, postController.deletePost);
 
 // router.post("/:post_id/like", verifyToken, postController.likePost);
 
-// module.exports = router;
-
 module.exports = router;

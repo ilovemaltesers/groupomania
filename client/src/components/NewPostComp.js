@@ -42,38 +42,50 @@ const NewPost = () => {
   };
 
   const handleImageUpload = (event) => {
-    // Retrieve the uploaded file from the input field
     const file = event.target.files[0];
     if (file) {
-      setImage(URL.createObjectURL(file));
+      setImage(file);
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (content || image) {
-      const imageUrl = image; // This is the URL set earlier
-      const newPost = {
-        content: content,
-        image: imageUrl,
-        userId: auth.userId,
-        comments: [],
-      };
-      setPosts([...posts, newPost]);
+      try {
+        // Create FormData object
+        const formData = new FormData();
+        formData.append("content", content);
+        if (image) {
+          formData.append("image", image);
+        }
 
-      axios
-        .post("http://localhost:3000/api/post", newPost, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
-        .then((response) => {
-          console.log("Post created successfully:", response.data);
-          setContent("");
-          setImage(null);
-        })
-        .catch((error) => {
-          console.error("Error creating post:", error);
-        });
+        // Send FormData to backend API
+        const response = await axios.post(
+          "http://localhost:3000/api/post",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "multipart/form-data", // Important for sending files
+            },
+          }
+        );
+
+        // Handle response
+        console.log("Post created successfully:", response.data);
+        setContent("");
+        setImage(null);
+
+        // Update local state with new post
+        const newPost = {
+          content: content,
+          image: image ? URL.createObjectURL(image) : null,
+          userId: auth.userId,
+          comments: [],
+        };
+        setPosts([...posts, newPost]);
+      } catch (error) {
+        console.error("Error creating post:", error);
+      }
     }
   };
 
@@ -127,7 +139,7 @@ const NewPost = () => {
         {image && (
           <div>
             <img
-              src={image}
+              src={URL.createObjectURL(image)}
               alt="Uploaded"
               style={{ maxWidth: "100%", marginTop: "10px" }}
             />
@@ -136,7 +148,6 @@ const NewPost = () => {
       </NewPostBody>
 
       {/* Display all posts/comments */}
-
       {posts.map((post, index) => (
         <PostCard key={index}>
           {post.content && <p>{post.content}</p>}
@@ -167,7 +178,6 @@ const NewPost = () => {
               }}
             />
             <PublishCommentButton
-              // note that the previous sibling is the input field
               onClick={(e) => {
                 const input = e.target.previousSibling;
                 if (input && input.value.trim()) {

@@ -5,6 +5,8 @@ const app = express();
 const cors = require("cors");
 const port = process.env.PORT || 3000;
 const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use("/images", express.static("images")); // Serve static files from the images directory
 
 // middleware
 app.use(cors());
