@@ -2,8 +2,11 @@
 const { create } = require("domain");
 const fs = require("fs");
 const path = require("path");
+const jwt = require("jsonwebtoken");
 
 const { db } = require("../connect.js");
+const { connect } = require("http2");
+const { ImUser } = require("react-icons/im");
 
 const JWT_SECRET = "blablabla";
 
@@ -27,11 +30,19 @@ const getAllPosts = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
-  const { content, userId } = req.body;
+  const { content } = req.body;
+  const token = req.headers.authorization.split(" ")[1];
+  const decoded = jwt.verify(token, "blablabla");
+
+  const userId = decoded.id;
+
+  console.log(content);
+
+  console.log(userId);
   const mediaUpload = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
-
+  console.log(mediaUpload);
   const client = await db();
 
   try {
@@ -46,6 +57,7 @@ const createPost = async (req, res) => {
     const values = [content, mediaUpload, userId];
 
     const result = await client.query(query, values);
+
     const newPost = result.rows[0];
 
     res
@@ -55,7 +67,7 @@ const createPost = async (req, res) => {
     console.error("Error during post creation:", error);
     res.status(500).json({ message: "Error during post creation", error });
   } finally {
-    // client.end();
+    client.end();
     console.log("Database connection closed.");
   }
 };
