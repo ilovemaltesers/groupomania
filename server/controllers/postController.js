@@ -30,24 +30,56 @@ const getAllPosts = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
+  // Extract content from request body
   const { content } = req.body;
-  const token = req.headers.authorization.split(" ")[1];
-  const decoded = jwt.verify(token, "blablabla");
 
-  const userId = decoded.id;
+  // Extract and verify the token
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    console.error("Authorization token is missing.");
+    return res.status(401).json({ message: "Authorization token is missing" });
+  }
 
-  console.log(content);
+  let userId;
+  try {
+    // Verify the token and extract user ID
+    const decoded = jwt.verify(token, JWT_SECRET); // Use the secret defined as JWT_SECRET
+    console.log("Decoded Token:", decoded);
+    userId = decoded.userId; // Use the correct key from the token payload
+  } catch (error) {
+    console.error("Token verification error:", error); // Log token errors
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
 
-  console.log(userId);
+  // Check if userId was extracted successfully
+  if (!userId) {
+    console.error("User ID is null or undefined after token decoding.");
+    return res.status(400).json({ message: "User ID could not be determined" });
+  }
+
+  console.log("Content:", content);
+  console.log("User ID:", userId);
+
+  // Determine the media upload URL if a file is provided
   const mediaUpload = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
-  console.log(mediaUpload);
-  const client = await db();
+
+  console.log("Media Upload URL:", mediaUpload);
+
+  // Connect to the database
+  let client;
+  try {
+    client = await db();
+    console.log("Successfully connected to PostgreSQL database.");
+  } catch (dbError) {
+    console.error("Database connection error:", dbError);
+    return res
+      .status(500)
+      .json({ message: "Database connection error", error: dbError });
+  }
 
   try {
-    console.log("Connected to the database.");
-
     const query = `
       INSERT INTO public.posts (content, media_upload, user_id, created_at, updated_at)
       VALUES ($1, $2, $3, NOW(), NOW())
@@ -55,8 +87,11 @@ const createPost = async (req, res) => {
     `;
 
     const values = [content, mediaUpload, userId];
+    console.log("Executing Query:", query);
+    console.log("Query Values:", values);
 
     const result = await client.query(query, values);
+    console.log("Query Result:", result.rows[0]);
 
     const newPost = result.rows[0];
 
@@ -67,8 +102,10 @@ const createPost = async (req, res) => {
     console.error("Error during post creation:", error);
     res.status(500).json({ message: "Error during post creation", error });
   } finally {
-    client.end();
-    console.log("Database connection closed.");
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
   }
 };
 
