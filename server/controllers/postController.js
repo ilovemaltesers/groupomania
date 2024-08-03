@@ -113,9 +113,10 @@ const createPost = async (req, res) => {
 const deletePost = async (req, res) => {
   const { postId } = req.params;
 
-  const client = await db();
-
+  let client;
   try {
+    // Connect to the database
+    client = await db();
     console.log("Connected to the database.");
 
     const query = `
@@ -123,21 +124,28 @@ const deletePost = async (req, res) => {
       WHERE post_id = $1
       RETURNING *;
     `;
-
     const values = [postId];
 
+    // Execute the query
     const result = await client.query(query, values);
     const deletedPost = result.rows[0];
 
-    res
-      .status(200)
-      .json({ message: "Post successfully deleted", post: deletedPost });
+    if (deletedPost) {
+      res
+        .status(200)
+        .json({ message: "Post successfully deleted", post: deletedPost });
+    } else {
+      res.status(404).json({ message: "Post not found" });
+    }
   } catch (error) {
     console.error("Error during post deletion:", error);
     res.status(500).json({ message: "Error during post deletion", error });
   } finally {
-    // client.end();
-    console.log("Database connection closed.");
+    // Ensure the database connection is closed
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
   }
 };
 

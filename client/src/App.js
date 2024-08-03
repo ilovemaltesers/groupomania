@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import FeedPage from "./pages/FeedPage";
 import ProfilePage from "./pages/ProfilePage";
 import { AuthProvider } from "./contexts/AuthContext";
+// Importing the PrivateRoute component, which protects routes that require authentication.
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
