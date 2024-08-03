@@ -65,7 +65,7 @@ const NewPost = () => {
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "multipart/form-data", // Important for sending files
+              "Content-Type": "multipart/form-data",
             },
           }
         );
@@ -80,6 +80,7 @@ const NewPost = () => {
           content: content,
           image: image ? URL.createObjectURL(image) : null,
           userId: auth.userId,
+          id: response.data.post.post_id, // Assuming post_id is returned from the backend
           comments: [],
         };
         setPosts([...posts, newPost]);
@@ -95,13 +96,36 @@ const NewPost = () => {
     setPosts(updatedPosts);
   };
 
-  const handleRemovePost = (postIndex) => {
-    if (posts[postIndex].userId === auth.userId) {
-      const updatedPosts = [...posts];
-      updatedPosts.splice(postIndex, 1);
-      setPosts(updatedPosts);
-    } else {
+  const handleRemovePost = async (postIndex) => {
+    const postToDelete = posts[postIndex];
+
+    if (postToDelete.userId !== auth.userId) {
       console.log("You are not authorized to remove this post.");
+      return;
+    }
+
+    const url = `http://localhost:3000/api/post/${postToDelete.id}`;
+    console.log("Deleting post with URL:", url);
+
+    try {
+      const response = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      console.log("Response status:", response.status);
+      console.log("Response data:", response.data);
+
+      if (response.status === 200) {
+        const updatedPosts = posts.filter((_, index) => index !== postIndex);
+        setPosts(updatedPosts);
+        console.log("Post removed successfully:", response.data);
+      } else {
+        console.error("Failed to remove post:", response.data);
+      }
+    } catch (error) {
+      console.error("Error removing post:", error);
     }
   };
 

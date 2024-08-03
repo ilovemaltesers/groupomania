@@ -111,29 +111,62 @@ const createPost = async (req, res) => {
 
 // Delete a post
 const deletePost = async (req, res) => {
-  const { postId } = req.params;
+  // Use the correct parameter name from the route
+  const { post_id } = req.params;
+  console.log("Received request to delete post with ID:", post_id);
+
+  const token = req.headers.authorization?.split(" ")[1];
+  console.log("Authorization token:", token);
+
+  if (!token) {
+    console.error("Authorization token is missing.");
+    return res.status(401).json({ message: "Authorization token is missing" });
+  }
+
+  let userId;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    userId = decoded.userId;
+    console.log("Decoded user ID from token:", userId);
+  } catch (error) {
+    console.error("Token verification error:", error);
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
 
   let client;
   try {
-    // Connect to the database
     client = await db();
     console.log("Connected to the database.");
 
-    const query = `
+    const findPostQuery = `
+      SELECT * FROM public.posts
+      WHERE post_id = $1 AND user_id = $2;
+    `;
+    const findPostValues = [post_id, userId];
+    const postResult = await client.query(findPostQuery, findPostValues);
+    console.log("Post query result:", postResult.rows);
+
+    if (postResult.rows.length === 0) {
+      return res.status(403).json({
+        message:
+          "You do not have permission to delete this post or post not found",
+      });
+    }
+
+    const deleteQuery = `
       DELETE FROM public.posts
       WHERE post_id = $1
       RETURNING *;
     `;
-    const values = [postId];
+    const deleteValues = [post_id];
+    const deleteResult = await client.query(deleteQuery, deleteValues);
+    console.log("Delete query result:", deleteResult.rows);
 
-    // Execute the query
-    const result = await client.query(query, values);
-    const deletedPost = result.rows[0];
-
-    if (deletedPost) {
-      res
-        .status(200)
-        .json({ message: "Post successfully deleted", post: deletedPost });
+    if (deleteResult.rows.length > 0) {
+      res.status(200).json({
+        message: "Post successfully deleted",
+        post: deleteResult.rows[0],
+      });
     } else {
       res.status(404).json({ message: "Post not found" });
     }
@@ -141,7 +174,6 @@ const deletePost = async (req, res) => {
     console.error("Error during post deletion:", error);
     res.status(500).json({ message: "Error during post deletion", error });
   } finally {
-    // Ensure the database connection is closed
     if (client) {
       await client.end();
       console.log("Database connection closed.");
