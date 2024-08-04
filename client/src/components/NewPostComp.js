@@ -113,7 +113,7 @@ const NewPost = () => {
           id: response.data.post.post_id,
           comments: [],
         };
-        setPosts([...posts, newPost]);
+        setPosts([newPost, ...posts]); // Add new post at the beginning of the array
       } catch (error) {
         console.error("Error creating post:", error);
       }
@@ -206,52 +206,55 @@ const NewPost = () => {
       </NewPostBody>
 
       {/* Display the list of posts */}
-      {posts.map((post, index) => (
-        <PostCard key={index}>
-          {post.content && <p>{post.content}</p>}
-          {post.media_upload && (
-            <img
-              src={post.media_upload} // Use `media_upload` URL for image source
-              alt="Post"
-              style={{ maxWidth: "100%" }}
-            />
-          )}
-          <CommentSection>
-            {isAuthenticated && post.userId === auth.userId && (
-              <RemoveEditButtonsContainer>
-                <RemovePostButton onClick={() => handleRemovePost(index)}>
-                  Remove Post
-                  <RemovePostIcon />
-                </RemovePostButton>
-                <EditPostButton onClick={() => handleEditPost(index)}>
-                  Edit Post
-                </EditPostButton>
-              </RemoveEditButtonsContainer>
+      {posts
+        .slice()
+        .reverse()
+        .map((post, index) => (
+          <PostCard key={post.id}>
+            {post.content && <p>{post.content}</p>}
+            {post.media_upload && (
+              <img
+                src={post.media_upload} // Use `media_upload` URL for image source
+                alt="Post"
+                style={{ maxWidth: "100%" }}
+              />
             )}
-            <CommentInput
-              placeholder="Write a comment..."
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleAddComment(index, e.target.value);
-                  e.target.value = "";
-                }
-              }}
-            />
-            <PublishCommentButton
-              onClick={(e) => {
-                const input = e.target.previousSibling;
-                if (input && input.value.trim()) {
-                  handleAddComment(index, input.value);
-                  input.value = "";
-                }
-              }}
-            >
-              Publish Comment
-            </PublishCommentButton>
-          </CommentSection>
-        </PostCard>
-      ))}
+            <CommentSection>
+              {isAuthenticated && post.userId === auth.userId && (
+                <RemoveEditButtonsContainer>
+                  <RemovePostButton onClick={() => handleRemovePost(index)}>
+                    Remove Post
+                    <RemovePostIcon />
+                  </RemovePostButton>
+                  <EditPostButton onClick={() => handleEditPost(index)}>
+                    Edit Post
+                  </EditPostButton>
+                </RemoveEditButtonsContainer>
+              )}
+              <CommentInput
+                placeholder="Write a comment..."
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleAddComment(index, e.target.value);
+                    e.target.value = "";
+                  }
+                }}
+              />
+              <PublishCommentButton
+                onClick={(e) => {
+                  const input = e.target.previousSibling;
+                  if (input && input.value.trim()) {
+                    handleAddComment(index, input.value);
+                    input.value = "";
+                  }
+                }}
+              >
+                Publish Comment
+              </PublishCommentButton>
+            </CommentSection>
+          </PostCard>
+        ))}
     </FeedMainContainer>
   );
 };
