@@ -18,6 +18,7 @@ const getAllPosts = async (req, res) => {
 
     // Get all posts from the database
     const posts = await client.query("SELECT * FROM public.posts");
+    console.log("Retrieved posts:", posts.rows);
 
     res.status(200).send(posts.rows);
   } catch (error) {
@@ -125,6 +126,7 @@ const deletePost = async (req, res) => {
 
   let userId;
   try {
+    // function from the jwt library to verify the token
     const decoded = jwt.verify(token, JWT_SECRET);
     userId = decoded.userId;
     console.log("Decoded user ID from token:", userId);

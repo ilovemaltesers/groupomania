@@ -21,44 +21,76 @@ import {
 } from "../styles/stylesFeedPage";
 
 const NewPost = () => {
+  // Extract authentication details from context
   const { isAuthenticated, auth } = useAuth();
+
+  // State hooks for post content, image, and list of posts
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
 
-  // Load posts from local storage on component mount
+  // Fetch posts from the server
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/post", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      // Update posts state
+      setPosts(response.data);
+      // Optionally, store posts in local storage
+      localStorage.setItem("posts", JSON.stringify(response.data));
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  // Initial fetch and set up polling
   useEffect(() => {
+    // Retrieve posts from local storage if available
     const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
-    setPosts(savedPosts);
+    if (savedPosts.length > 0) {
+      setPosts(savedPosts);
+    } else {
+      fetchPosts(); // Initial fetch if no saved posts
+    }
+
+    // Set up polling every 5 seconds
+    const intervalId = setInterval(fetchPosts, 1000);
+
+    // Cleanup on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
-  // Update local storage when posts state changes
+  // Update local storage whenever the posts state changes
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
 
+  // Handler for changes in the post content textarea
   const handleCommentChange = (event) => {
     setContent(event.target.value);
   };
 
+  // Handler for uploading an image
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(file);
+      setImage(file); // Set image state to the selected file
     }
   };
 
+  // Function to submit a new post
   const handleSubmit = async () => {
     if (content || image) {
       try {
-        // Create FormData object
         const formData = new FormData();
         formData.append("content", content);
         if (image) {
           formData.append("image", image);
         }
 
-        // Send FormData to backend API
         const response = await axios.post(
           "http://localhost:3000/api/post",
           formData,
@@ -70,17 +102,15 @@ const NewPost = () => {
           }
         );
 
-        // Handle response
         console.log("Post created successfully:", response.data);
         setContent("");
         setImage(null);
 
-        // Update local state with new post
         const newPost = {
           content: content,
-          image: image ? URL.createObjectURL(image) : null,
+          image: response.data.post.media_upload,
           userId: auth.userId,
-          id: response.data.post.post_id, // Assuming post_id is returned from the backend
+          id: response.data.post.post_id,
           comments: [],
         };
         setPosts([...posts, newPost]);
@@ -90,12 +120,14 @@ const NewPost = () => {
     }
   };
 
+  // Function to add a comment to a post
   const handleAddComment = (postIndex, newComment) => {
     const updatedPosts = [...posts];
     updatedPosts[postIndex].comments.push(newComment);
     setPosts(updatedPosts);
   };
 
+  // Function to remove a post
   const handleRemovePost = async (postIndex) => {
     const postToDelete = posts[postIndex];
 
@@ -129,12 +161,14 @@ const NewPost = () => {
     }
   };
 
+  // Function to initiate editing a post (placeholder)
   const handleEditPost = (postIndex) => {
     console.log(`Editing post ${postIndex}`);
   };
 
   return (
     <FeedMainContainer>
+      {/* Section for creating a new post */}
       <NewPostBody>
         <TellMeText>So what do you wish to publish today?</TellMeText>
         <NewPostTextarea
@@ -163,7 +197,7 @@ const NewPost = () => {
         {image && (
           <div>
             <img
-              src={URL.createObjectURL(image)}
+              src={URL.createObjectURL(image)} // Display the selected image before upload
               alt="Uploaded"
               style={{ maxWidth: "100%", marginTop: "10px" }}
             />
@@ -171,15 +205,18 @@ const NewPost = () => {
         )}
       </NewPostBody>
 
-      {/* Display all posts/comments */}
+      {/* Display the list of posts */}
       {posts.map((post, index) => (
         <PostCard key={index}>
           {post.content && <p>{post.content}</p>}
-          {post.image && (
-            <img src={post.image} alt="Post" style={{ maxWidth: "100%" }} />
+          {post.media_upload && (
+            <img
+              src={post.media_upload} // Use `media_upload` URL for image source
+              alt="Post"
+              style={{ maxWidth: "100%" }}
+            />
           )}
           <CommentSection>
-            {/* Buttons for removing/editing a post (if authenticated and owner) */}
             {isAuthenticated && post.userId === auth.userId && (
               <RemoveEditButtonsContainer>
                 <RemovePostButton onClick={() => handleRemovePost(index)}>
