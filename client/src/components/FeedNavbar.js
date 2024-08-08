@@ -4,7 +4,8 @@ import styled from "styled-components";
 import logo from "../assets/images/feed-logo.svg";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { IoIosLogOut } from "react-icons/io";
-import { GiEgyptianProfile } from "react-icons/gi";
+
+import { BsFillPersonVcardFill } from "react-icons/bs";
 import { useAuth } from "../contexts/AuthContext";
 import Popup from "./PopUp";
 
@@ -12,7 +13,7 @@ const CustomNavbar = styled(Navbar)`
   background-color: #bdebff;
 `;
 
-const ProfileIcon = styled(GiEgyptianProfile)`
+const ProfileIcon = styled(BsFillPersonVcardFill)`
   font-size: 32px;
   color: black;
   cursor: pointer;

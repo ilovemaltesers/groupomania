@@ -10,6 +10,7 @@ import {
   SubmitNewPostButton,
   UploadImageButton,
   PostCard,
+  StyledImage,
   CommentSection,
   RemoveEditButtonsContainer,
   RemovePostButton,
@@ -213,7 +214,7 @@ const NewPost = () => {
           <PostCard key={post.id}>
             {post.content && <p>{post.content}</p>}
             {post.media_upload && (
-              <img
+              <StyledImage
                 src={post.media_upload} // Use `media_upload` URL for image source
                 alt="Post"
                 style={{ maxWidth: "100%" }}

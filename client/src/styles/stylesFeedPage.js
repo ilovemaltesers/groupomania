@@ -19,6 +19,7 @@ const NewPostBody = styled(Card)`
   margin: 20px 0;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 3%;
 `;
 
 const TellMeText = styled.h4`
@@ -79,12 +80,18 @@ const PostCard = styled(Card)`
   margin: 10px 0;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 3%;
+`;
+
+const StyledImage = styled.img`
+  border-radius: 3%;
 `;
 
 const CommentSection = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+  border-radius: 50%;
 `;
 
 const CommentInput = styled.textarea`
@@ -160,6 +167,7 @@ export {
   UploadImageButton,
   PlaneIcon,
   PostCard,
+  StyledImage,
   CommentSection,
   CommentInput,
   PublishCommentButton,
