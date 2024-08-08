@@ -7,6 +7,7 @@ import {
 } from "../styles/stylesProfilePage";
 import logo from "../assets/images/feed-logo.svg";
 import { Container, Row, Col } from "react-bootstrap";
+import TitleLoggedUser from "../components/TitleLoggedUser";
 
 const ProfilePage = () => {
   return (
@@ -17,15 +18,16 @@ const ProfilePage = () => {
             src={logo}
             height="30"
             className="d-inline-block align-top"
-            alt="My Logo"
+            alt="placeholder"
           />
           <LogoutIcon />
         </NavContainer>
       </ProfileNavbar>
-      <Container>
+      <TitleLoggedUser />
+      <Container fluid>
         <Row className="">
           <Col
-            md={6}
+            md={12}
             className="d-flex justify-content-center align-items-center"
           >
             <ProfileCard />

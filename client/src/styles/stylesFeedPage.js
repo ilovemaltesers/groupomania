@@ -18,7 +18,7 @@ const NewPostBody = styled(Card)`
   max-width: 500px;
   margin: 20px 0;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(175, 228, 236);
   border-radius: 3%;
 `;
 
@@ -79,7 +79,7 @@ const PostCard = styled(Card)`
   max-width: 500px;
   margin: 10px 0;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(175, 228, 236);
   border-radius: 3%;
 `;
 
