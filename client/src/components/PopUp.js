@@ -43,6 +43,7 @@ const Popup = () => {
     }
   }, [isAuthenticated, auth]);
 
+  console.log("Rendering Popup");
   if (isAuthenticated && auth?.givenName && visible) {
     return (
       <PopupContainer>

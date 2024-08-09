@@ -1,10 +1,16 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+} from "react";
 
 // Create a new context for authentication
 const AuthContext = createContext();
 
 // Custom hook to use the AuthContext
-// allows components to access the authentication context more easily
+// Allows components to access the authentication context more easily
 export const useAuth = () => useContext(AuthContext);
 
 // Provider component that wraps around the part of the app that needs access to auth context
@@ -34,8 +40,7 @@ export const AuthProvider = ({ children }) => {
       // Update the auth state with new values if they are different
       setAuth({ token, userId, givenName });
     }
-    // eslint-disable-next-line
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, [auth]); // Dependency array includes auth to check if state needs update
 
   // Function to handle user login
   const login = (token, userId, givenName) => {
@@ -61,10 +66,17 @@ export const AuthProvider = ({ children }) => {
   // Determine if the user is authenticated based on the presence of a token
   const isAuthenticated = !!auth?.token;
 
+  // Memoize the context value to avoid unnecessary re-renders
+  const value = useMemo(
+    () => ({
+      isAuthenticated,
+      auth,
+      login,
+      logout,
+    }),
+    [auth, isAuthenticated]
+  ); // Recalculate only if auth or isAuthenticated changes
+
   // Provide auth context values to the children components
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, auth, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

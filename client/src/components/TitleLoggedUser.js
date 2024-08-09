@@ -1,15 +1,17 @@
 import React from "react";
+
 import { useAuth } from "../contexts/AuthContext";
 import styled from "styled-components";
 
 const UserText = styled.h1`
-  font-family: "Mooli", sans-serif;
   font-size: 1.5em;
-  margin: 0;
+
+  color: darkslategray;
 `;
 
 const TitleLoggedUser = () => {
   const { isAuthenticated, auth } = useAuth();
+  console.log("Rendering TitleLoggedUser");
 
   return (
     <UserText>
