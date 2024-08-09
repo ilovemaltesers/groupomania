@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 // Import useAuth hook from the authentication context to access authentication state.
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "./AuthContext";
 
 // Define the PrivateRoute component that wraps around the child comps that need authentication.
 const PrivateRoute = ({ children }) => {

@@ -1,12 +1,12 @@
 import React from "react";
 
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import styled from "styled-components";
 
 const UserText = styled.h1`
   font-size: 1.5em;
 
-  color: darkslategray;
+  color: dar;
 `;
 
 const TitleLoggedUser = () => {

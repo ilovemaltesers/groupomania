@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   FeedMainContainer,
   NewPostBody,
@@ -19,7 +19,7 @@ import {
   EditPostButton,
   CommentInput,
   PublishCommentButton,
-} from "../styles/stylesFeedPage";
+} from "../../styles/stylesFeedPage";
 
 const NewPost = () => {
   // Extract authentication details from context

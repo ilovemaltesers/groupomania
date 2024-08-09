@@ -6,8 +6,8 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import { IoIosLogOut } from "react-icons/io";
 
 import { BsFillPersonVcardFill } from "react-icons/bs";
-import { useAuth } from "../contexts/AuthContext";
-import Popup from "./PopUp";
+import { useAuth } from "../../contexts/AuthContext";
+import Popup from "../PopUp";
 
 const CustomNavbar = styled(Navbar)`
   background-color: #bdebff;
