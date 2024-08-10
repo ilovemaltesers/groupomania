@@ -7,7 +7,6 @@ import { IoIosLogOut } from "react-icons/io";
 
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { useAuth } from "../contexts/AuthContext";
-import Popup from "./PopUp";
 
 const CustomNavbar = styled(Navbar)`
   background-color: #bdebff;
@@ -83,7 +82,6 @@ const FeedNavbar = () => {
             className="d-inline-block align-top"
             alt="My Logo"
           />
-          <Popup />
         </Navbar.Brand>
         <Nav className="ml-auto align-items-center">
           <Link to="/profile">
