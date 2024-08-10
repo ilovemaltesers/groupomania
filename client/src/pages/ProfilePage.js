@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import ProfileCard from "../components/ProfileCard";
 import {
   ProfileNavbar,
@@ -9,6 +10,12 @@ import logo from "../assets/images/feed-logo.svg";
 import { Container, Row, Col } from "react-bootstrap";
 
 const ProfilePage = () => {
+  const leavePage = useNavigate();
+
+  const handleLeavePage = () => {
+    leavePage("/feed");
+  };
+
   return (
     <>
       <ProfileNavbar>
@@ -19,7 +26,7 @@ const ProfilePage = () => {
             className="d-inline-block align-top"
             alt="placeholder"
           />
-          <LogoutIcon />
+          <LogoutIcon onClick={handleLeavePage} />
         </NavContainer>
       </ProfileNavbar>
 
