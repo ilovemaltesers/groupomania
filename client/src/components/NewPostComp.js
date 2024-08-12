@@ -205,17 +205,16 @@ const NewPost = () => {
           </div>
         )}
       </NewPostBody>
-
       {/* Display the list of posts */}
       {posts
         .slice()
         .reverse()
         .map((post, index) => (
-          <PostCard key={post.id}>
+          <PostCard key={`${post.id}-${index}`}>
             {post.content && <p>{post.content}</p>}
             {post.media_upload && (
               <StyledImage
-                src={post.media_upload} // Use `media_upload` URL for image source
+                src={post.media_upload}
                 alt="Post"
                 style={{ maxWidth: "100%" }}
               />
@@ -232,6 +231,11 @@ const NewPost = () => {
                   </EditPostButton>
                 </RemoveEditButtonsContainer>
               )}
+              {/* Render comments */}
+              {post.comments &&
+                post.comments.map((comment, commentIndex) => (
+                  <p key={`${comment.id}-${commentIndex}`}>{comment.text}</p>
+                ))}
               <CommentInput
                 placeholder="Write a comment..."
                 onKeyDown={(e) => {
