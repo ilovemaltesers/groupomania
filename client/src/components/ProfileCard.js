@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
 import { MdFace2 } from "react-icons/md";
 import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import TitleLoggedUser from "./TitleLoggedUser";
 
-// Styled component for the icon
+// Styled components
 const ImagePlaceholderIcon = styled(MdFace2)`
   font-size: 10em;
   margin: 20px 0;
@@ -84,6 +85,40 @@ const ProfileCard = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setImage(imageUrl);
+      saveImage(file); // Call saveImage with the selected file
+    }
+  };
+
+  const saveImage = async (file) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("Token is not available");
+      return;
+    }
+
+    console.log("Token:", token); // Debug token
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await axios.post(
+        "http://localhost:3000/api/user/upload-profile-picture", // Ensure this URL matches your server setup
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Use the token retrieved from localStorage
+          },
+        }
+      );
+
+      console.log("Response data:", response.data);
+    } catch (error) {
+      console.error(
+        "Error uploading image:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -118,10 +153,9 @@ const ProfileCard = () => {
                   id="file-input"
                   type="file"
                   accept="image/*"
-                  onChange={handleFileChange}
+                  onChange={handleFileChange} // Call handleFileChange on file selection
                 />
 
-                {/* Moved Role/Title Field Here */}
                 <Form.Group controlId="formRoleTitle" className="mt-4">
                   <Form.Label>Edit Role/Title</Form.Label>
                   <Form.Control
@@ -149,7 +183,6 @@ const ProfileCard = () => {
                     Save Changes
                   </ButtonSaveChanges>
 
-                  {/* Change Password Section */}
                   <hr className="my-4" />
                   <Form.Group controlId="formCurrentPassword">
                     <Form.Label>Current Password</Form.Label>
