@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { db } = require("../connect.js");
+const path = require("path");
 
 const JWT_SECRET = "blablabla";
 
@@ -93,7 +94,47 @@ const login = async (req, res) => {
   }
 };
 
+// Upload profile picture function
+const uploadProfilePicture = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send("No file uploaded");
+  }
+
+  const userId = req.userId; // Ensure req.userId is set by verifyToken
+
+  if (!userId) {
+    return res.status(401).send({ message: "User not authenticated" });
+  }
+
+  try {
+    const filePath = path.join("images", req.file.filename);
+
+    const client = await db();
+    await client.query(
+      "UPDATE public.users SET profile_picture = $1 WHERE _id = $2",
+      [filePath, userId]
+    );
+
+    res.status(200).json({
+      message: "Profile picture uploaded successfully!",
+      file: {
+        filename: req.file.filename,
+        path: filePath,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+      },
+    });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    res.status(500).send("Error uploading profile picture");
+  } finally {
+    if (client) await client.end();
+    console.log("Database connection closed.");
+  }
+};
+
 module.exports = {
   signup,
   login,
+  uploadProfilePicture,
 };
