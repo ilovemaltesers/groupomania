@@ -19,18 +19,16 @@ import {
   EditPostButton,
   CommentInput,
   PublishCommentButton,
+  EmptyAvatarIcon,
+  Avatar,
 } from "../styles/stylesFeedPage";
 
 const NewPost = () => {
-  // Extract authentication details from context
   const { isAuthenticated, auth } = useAuth();
-
-  // State hooks for post content, image, and list of posts
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
 
-  // Fetch posts from the server
   const fetchPosts = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
@@ -38,51 +36,42 @@ const NewPost = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      // Update posts state
+
+      console.log("Posts data:", response.data);
       setPosts(response.data);
-      // Optionally, store posts in local storage
       localStorage.setItem("posts", JSON.stringify(response.data));
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
 
-  // Initial fetch and set up polling
   useEffect(() => {
-    // Retrieve posts from local storage if available
     const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
     if (savedPosts.length > 0) {
       setPosts(savedPosts);
     } else {
-      fetchPosts(); // Initial fetch if no saved posts
+      fetchPosts();
     }
 
-    // Set up polling every 5 seconds
-    const intervalId = setInterval(fetchPosts, 1000);
-
-    // Cleanup on component unmount
+    const intervalId = setInterval(fetchPosts, 5000);
     return () => clearInterval(intervalId);
   }, []);
 
-  // Update local storage whenever the posts state changes
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
 
-  // Handler for changes in the post content textarea
   const handleCommentChange = (event) => {
     setContent(event.target.value);
   };
 
-  // Handler for uploading an image
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(file); // Set image state to the selected file
+      setImage(file);
     }
   };
 
-  // Function to submit a new post
   const handleSubmit = async () => {
     if (content || image) {
       try {
@@ -109,26 +98,25 @@ const NewPost = () => {
 
         const newPost = {
           content: content,
-          image: response.data.post.media_upload,
+          media_upload: response.data.post.media_upload,
+          profile_picture: auth.profile_picture,
           userId: auth.userId,
           id: response.data.post.post_id,
           comments: [],
         };
-        setPosts([newPost, ...posts]); // Add new post at the beginning of the array
+        setPosts([newPost, ...posts]);
       } catch (error) {
         console.error("Error creating post:", error);
       }
     }
   };
 
-  // Function to add a comment to a post
   const handleAddComment = (postIndex, newComment) => {
     const updatedPosts = [...posts];
     updatedPosts[postIndex].comments.push(newComment);
     setPosts(updatedPosts);
   };
 
-  // Function to remove a post
   const handleRemovePost = async (postIndex) => {
     const postToDelete = posts[postIndex];
 
@@ -162,14 +150,12 @@ const NewPost = () => {
     }
   };
 
-  // Function to initiate editing a post (placeholder)
   const handleEditPost = (postIndex) => {
     console.log(`Editing post ${postIndex}`);
   };
 
   return (
     <FeedMainContainer>
-      {/* Section for creating a new post */}
       <NewPostBody>
         <TellMeText>So what do you wish to publish today?</TellMeText>
         <NewPostTextarea
@@ -198,65 +184,81 @@ const NewPost = () => {
         {image && (
           <div>
             <img
-              src={URL.createObjectURL(image)} // Display the selected image before upload
+              src={URL.createObjectURL(image)}
               alt="Uploaded"
               style={{ maxWidth: "100%", marginTop: "10px" }}
             />
           </div>
         )}
       </NewPostBody>
-      {/* Display the list of posts */}
+
       {posts
         .slice()
         .reverse()
         .map((post, index) => (
           <PostCard key={`${post.id}-${index}`}>
+            {/* Avatar Rendering */}
+            {post.profile_picture ? (
+              <Avatar
+                src={`http://localhost:3000/${post.profile_picture}`}
+                alt="Profile"
+                onError={(e) => {
+                  console.error(
+                    "Failed to load profile picture:",
+                    post.profile_picture
+                  );
+                  e.target.src = "/path/to/default-avatar.png";
+                }}
+              />
+            ) : (
+              <EmptyAvatarIcon />
+            )}
+
             {post.content && <p>{post.content}</p>}
+
+            {/* Posted Image Rendering */}
             {post.media_upload && (
               <StyledImage
-                src={post.media_upload}
+                src={
+                  post.media_upload.startsWith("http")
+                    ? post.media_upload
+                    : `http://localhost:3000/${post.media_upload}`
+                }
                 alt="Post"
+                onError={(e) => {
+                  console.error(
+                    "Failed to load post image:",
+                    post.media_upload
+                  );
+                  e.target.style.display = "none"; // Hide broken image
+                }}
                 style={{ maxWidth: "100%" }}
               />
             )}
+
             <CommentSection>
               {isAuthenticated && post.userId === auth.userId && (
                 <RemoveEditButtonsContainer>
                   <RemovePostButton onClick={() => handleRemovePost(index)}>
-                    Remove Post
                     <RemovePostIcon />
+                    Remove Post
                   </RemovePostButton>
                   <EditPostButton onClick={() => handleEditPost(index)}>
+                    <PlaneIcon />
                     Edit Post
                   </EditPostButton>
                 </RemoveEditButtonsContainer>
               )}
-              {/* Render comments */}
-              {post.comments &&
-                post.comments.map((comment, commentIndex) => (
-                  <p key={`${comment.id}-${commentIndex}`}>{comment.text}</p>
-                ))}
               <CommentInput
                 placeholder="Write a comment..."
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleAddComment(index, e.target.value);
-                    e.target.value = "";
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    handleAddComment(index, event.target.value);
+                    event.target.value = "";
                   }
                 }}
               />
-              <PublishCommentButton
-                onClick={(e) => {
-                  const input = e.target.previousSibling;
-                  if (input && input.value.trim()) {
-                    handleAddComment(index, input.value);
-                    input.value = "";
-                  }
-                }}
-              >
-                Publish Comment
-              </PublishCommentButton>
+              <PublishCommentButton>Publish</PublishCommentButton>
             </CommentSection>
           </PostCard>
         ))}

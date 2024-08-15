@@ -106,10 +106,12 @@ const uploadProfilePicture = async (req, res) => {
     return res.status(401).send({ message: "User not authenticated" });
   }
 
+  let client; // Declare client outside the try block
+
   try {
     const filePath = path.join("images", req.file.filename);
 
-    const client = await db();
+    client = await db(); // Initialize client here
     await client.query(
       "UPDATE public.users SET profile_picture = $1 WHERE _id = $2",
       [filePath, userId]
@@ -128,7 +130,7 @@ const uploadProfilePicture = async (req, res) => {
     console.error("Error uploading profile picture:", error);
     res.status(500).send("Error uploading profile picture");
   } finally {
-    if (client) await client.end();
+    if (client) await client.end(); // Now client is in scope here
     console.log("Database connection closed.");
   }
 };

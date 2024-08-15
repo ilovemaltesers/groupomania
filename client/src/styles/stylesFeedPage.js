@@ -4,6 +4,21 @@ import styled from "styled-components";
 import Card from "react-bootstrap/Card";
 import { FaTelegramPlane } from "react-icons/fa";
 import { RiDeleteBin6Fill } from "react-icons/ri";
+import { MdFace2 } from "react-icons/md";
+
+const Avatar = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+const EmptyAvatarIcon = styled(MdFace2)`
+  font-size: 10em;
+  margin: 20px 0;
+  width: 0.25em;
+  height: 0.25em;
+`;
 
 const FeedMainContainer = styled.div`
   display: flex;
@@ -29,7 +44,7 @@ const TellMeText = styled.h4`
 const NewPostTextarea = styled.textarea`
   width: 100%;
   min-height: 3em;
-  padding: 10px;
+
   border: 1px solid #ccc;
   border-radius: 4px;
   resize: vertical;
@@ -175,6 +190,8 @@ export {
   RemovePostButton,
   RemovePostIcon,
   EditPostButton,
+  EmptyAvatarIcon,
+  Avatar,
 };
 
 // };   // styles for FeedPage=

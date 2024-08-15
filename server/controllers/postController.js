@@ -16,9 +16,15 @@ const getAllPosts = async (req, res) => {
     client = await db();
     console.log("Connected to the database.");
 
-    // Get all posts from the database
-    const posts = await client.query("SELECT * FROM public.posts");
-    console.log("Retrieved posts:", posts.rows);
+    // Updated query to join posts with users and retrieve user information
+    const query = `
+      SELECT p.*, u.given_name, u.family_name, u.profile_picture
+      FROM public.posts p
+      JOIN public.users u ON p.user_id = u._id
+    `;
+
+    const posts = await client.query(query);
+    console.log("Retrieved posts with user info:", posts.rows);
 
     res.status(200).send(posts.rows);
   } catch (error) {
