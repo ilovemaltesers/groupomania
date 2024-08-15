@@ -11,6 +11,8 @@ const Avatar = styled.img`
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
+  margin-right: 20px;
+  margin-bottom: 15px;
 `;
 
 const EmptyAvatarIcon = styled(MdFace2)`
@@ -44,7 +46,6 @@ const TellMeText = styled.h4`
 const NewPostTextarea = styled.textarea`
   width: 100%;
   min-height: 3em;
-
   border: 1px solid #ccc;
   border-radius: 4px;
   resize: vertical;
