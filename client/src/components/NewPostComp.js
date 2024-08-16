@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import {
   FeedMainContainer,
@@ -29,11 +29,11 @@ const NewPost = () => {
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${auth.token}`,
         },
       });
 
@@ -43,7 +43,7 @@ const NewPost = () => {
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  };
+  }, [auth.token]);
 
   useEffect(() => {
     const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
@@ -55,7 +55,7 @@ const NewPost = () => {
 
     const intervalId = setInterval(fetchPosts, 5000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, [fetchPosts]);
 
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
@@ -86,7 +86,7 @@ const NewPost = () => {
           formData,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${auth.token}`,
               "Content-Type": "multipart/form-data",
             },
           }
@@ -99,9 +99,9 @@ const NewPost = () => {
         const newPost = {
           content: content,
           media_upload: response.data.post.media_upload,
-          profile_picture: auth.profile_picture,
-          userId: auth.userId,
-          id: response.data.post.post_id,
+          profile_picture: auth.profilePicture,
+          user_id: auth.userId, // Ensure userId is correct
+          post_id: response.data.post.post_id,
           comments: [],
         };
         setPosts([newPost, ...posts]);
@@ -120,18 +120,18 @@ const NewPost = () => {
   const handleRemovePost = async (postIndex) => {
     const postToDelete = posts[postIndex];
 
-    if (postToDelete.userId !== auth.userId) {
+    if (postToDelete.user_id !== auth.userId) {
       console.log("You are not authorized to remove this post.");
       return;
     }
 
-    const url = `http://localhost:3000/api/post/${postToDelete.id}`;
+    const url = `http://localhost:3000/api/post/${postToDelete.post_id}`;
     console.log("Deleting post with URL:", url);
 
     try {
       const response = await axios.delete(url, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${auth.token}`,
         },
       });
 
@@ -151,7 +151,8 @@ const NewPost = () => {
   };
 
   const handleEditPost = (postIndex) => {
-    console.log(`Editing post ${postIndex}`);
+    console.log(`Editing post with ID ${posts[postIndex].post_id}`);
+    // Implement edit functionality here
   };
 
   return (
@@ -195,73 +196,77 @@ const NewPost = () => {
       {posts
         .slice()
         .reverse()
-        .map((post, index) => (
-          <PostCard key={`${post.id}-${index}`}>
-            {/* Avatar Rendering */}
-            {post.profile_picture ? (
-              <Avatar
-                src={`http://localhost:3000/${post.profile_picture}`}
-                alt="Profile"
-                onError={(e) => {
-                  console.error(
-                    "Failed to load profile picture:",
-                    post.profile_picture
-                  );
-                  e.target.src = "/path/to/default-avatar.png";
-                }}
-              />
-            ) : (
-              <EmptyAvatarIcon />
-            )}
+        .map((post, index) => {
+          // Explicit type conversion if necessary
+          const postUserId =
+            typeof post.user_id === "string"
+              ? Number(post.user_id)
+              : post.user_id;
+          const authUserId =
+            typeof auth.userId === "string" ? Number(auth.userId) : auth.userId;
 
-            {post.content && <p>{post.content}</p>}
+          const isPostOwner = postUserId === authUserId;
 
-            {/* Posted Image Rendering */}
-            {post.media_upload && (
-              <StyledImage
-                src={
-                  post.media_upload.startsWith("http")
-                    ? post.media_upload
-                    : `http://localhost:3000/${post.media_upload}`
-                }
-                alt="Post"
-                onError={(e) => {
-                  console.error(
-                    "Failed to load post image:",
-                    post.media_upload
-                  );
-                  e.target.style.display = "none"; // Hide broken image
-                }}
-                style={{ maxWidth: "100%" }}
-              />
-            )}
-
-            <CommentSection>
-              {isAuthenticated && post.userId === auth.userId && (
-                <RemoveEditButtonsContainer>
-                  <RemovePostButton onClick={() => handleRemovePost(index)}>
-                    <RemovePostIcon />
-                    Remove Post
-                  </RemovePostButton>
-                  <EditPostButton onClick={() => handleEditPost(index)}>
-                    <PlaneIcon />
-                    Edit Post
-                  </EditPostButton>
-                </RemoveEditButtonsContainer>
+          return (
+            <PostCard key={`${post.post_id}-${index}`}>
+              {/* Avatar Rendering */}
+              {post.profile_picture ? (
+                <Avatar
+                  src={`http://localhost:3000/${post.profile_picture}`}
+                  alt="Profile"
+                  onError={(e) => {
+                    e.target.src = "/path/to/default-avatar.png";
+                  }}
+                />
+              ) : (
+                <EmptyAvatarIcon />
               )}
-              <CommentInput
-                placeholder="Write a comment..."
-                onKeyPress={(event) => {
-                  if (event.key === "Enter") {
-                    handleAddComment(index, event.target.value);
-                    event.target.value = "";
+
+              {post.content && <p>{post.content}</p>}
+
+              {/* Posted Image Rendering */}
+              {post.media_upload && (
+                <StyledImage
+                  src={
+                    post.media_upload.startsWith("http")
+                      ? post.media_upload
+                      : `http://localhost:3000/${post.media_upload}`
                   }
-                }}
-              />
-              <PublishCommentButton>Publish</PublishCommentButton>
-            </CommentSection>
-          </PostCard>
-        ))}
+                  alt="Post"
+                  onError={(e) => {
+                    e.target.style.display = "none"; // Hide broken image
+                  }}
+                  style={{ maxWidth: "100%" }}
+                />
+              )}
+
+              <CommentSection>
+                {isAuthenticated && isPostOwner && (
+                  <RemoveEditButtonsContainer>
+                    <RemovePostButton onClick={() => handleRemovePost(index)}>
+                      <RemovePostIcon />
+                      Remove Post
+                    </RemovePostButton>
+                    <EditPostButton onClick={() => handleEditPost(index)}>
+                      <PlaneIcon />
+                      Edit Post
+                    </EditPostButton>
+                  </RemoveEditButtonsContainer>
+                )}
+                <CommentInput
+                  placeholder="Write a comment..."
+                  onKeyPress={(event) => {
+                    if (event.key === "Enter") {
+                      handleAddComment(index, event.target.value);
+                      event.target.value = "";
+                    }
+                  }}
+                />
+                <PublishCommentButton>Publish</PublishCommentButton>
+              </CommentSection>
+            </PostCard>
+          );
+        })}
     </FeedMainContainer>
   );
 };
