@@ -24,6 +24,7 @@ const Avatar = styled.img`
   object-fit: cover;
   margin-right: 10px;
   margin-bottom: 15px;
+  margin-top: 25px;
 `;
 
 const EmptyAvatarIcon = styled(MdFace2)`
