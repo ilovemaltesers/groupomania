@@ -11,26 +11,29 @@ const JWT_SECRET = "blablabla";
 const getAllPosts = async (req, res) => {
   let client;
   try {
-    client = await db();
+    client = await db(); // Ensure the `db` function is correctly implemented
     console.log("Connected to the database.");
 
-    // Updated query to join posts with users and retrieve user information
+    // SQL query to join posts with users and retrieve user information
     const query = `
-      SELECT p.*, u.given_name, u.family_name, u.profile_picture
+      SELECT p.post_id, p.content, p.media_upload, p.created_at, p.updated_at, 
+             u._id AS user_id, u.given_name, u.family_name, u.email, u.profile_picture
       FROM public.posts p
-      JOIN public.users u ON p.user_id = u._id
+      JOIN public.users u ON p.user_id = u._id;
     `;
 
-    const posts = await client.query(query);
-    console.log("Retrieved posts with user info:", posts.rows);
+    const result = await client.query(query);
+    console.log("Retrieved posts with user info:", result.rows);
 
-    res.status(200).send(posts.rows);
+    res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error during post retrieval:", error);
-    res.status(500).send("Error during post retrieval");
+    res.status(500).json({ message: "Error during post retrieval" });
   } finally {
-    if (client) await client.end();
-    console.log("Database connection closed.");
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
   }
 };
 

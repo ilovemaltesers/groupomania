@@ -6,18 +6,29 @@ import { FaTelegramPlane } from "react-icons/fa";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { MdFace2 } from "react-icons/md";
 
+const CreatorNameText = styled.h3`
+  font-size: 1.5em;
+  margin: 0; /* Adjust as needed */
+`;
+
+const CreatorNameContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+`;
+
 const Avatar = styled.img`
   width: 50px;
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 20px;
-  margin-bottom: 15px;
+  margin-right: 10px;
 `;
 
 const EmptyAvatarIcon = styled(MdFace2)`
   font-size: 10em;
   margin: 20px 0;
+  margin-right: 10px;
   width: 0.25em;
   height: 0.25em;
 `;
@@ -193,6 +204,8 @@ export {
   EditPostButton,
   EmptyAvatarIcon,
   Avatar,
+  CreatorNameContainer,
+  CreatorNameText,
 };
 
 // };   // styles for FeedPage=

@@ -21,6 +21,8 @@ import {
   PublishCommentButton,
   EmptyAvatarIcon,
   Avatar,
+  CreatorNameContainer,
+  CreatorNameText,
 } from "../styles/stylesFeedPage";
 
 const NewPost = () => {
@@ -53,7 +55,7 @@ const NewPost = () => {
       fetchPosts();
     }
 
-    const intervalId = setInterval(fetchPosts, 5000);
+    const intervalId = setInterval(fetchPosts, 5000); // Fetch posts every 5 seconds
     return () => clearInterval(intervalId);
   }, [fetchPosts]);
 
@@ -93,17 +95,23 @@ const NewPost = () => {
         );
 
         console.log("Post created successfully:", response.data);
+
         setContent("");
         setImage(null);
 
         const newPost = {
-          content: content,
+          given_name: auth.givenName,
+          family_name: auth.familyName,
+          post_id: response.data.post.post_id,
+          content: response.data.post.content,
           media_upload: response.data.post.media_upload,
           profile_picture: auth.profilePicture,
           user_id: auth.userId,
-          post_id: response.data.post.post_id,
+          created_at: response.data.post.created_at,
+          updated_at: response.data.post.updated_at,
           comments: [],
         };
+
         setPosts([newPost, ...posts]);
       } catch (error) {
         console.error("Error creating post:", error);
@@ -111,30 +119,29 @@ const NewPost = () => {
     }
   };
 
-  const handleAddComment = (postIndex, newComment) => {
+  const handleAddComment = async (postIndex, newComment) => {
     const updatedPosts = [...posts];
     updatedPosts[postIndex].comments.push(newComment);
     setPosts(updatedPosts);
+
+    // Optionally, send the comment to the server here
   };
 
   const handleRemovePost = async (postIndex) => {
     const postToDelete = posts[postIndex];
 
-    // Convert both IDs to numbers to ensure they are of the same type
+    // Convert IDs to numbers to ensure comparison
     const postOwnerId = Number(postToDelete.user_id);
     const currentUserId = Number(auth.userId);
 
-    // Check if the current user is the post owner
     if (postOwnerId !== currentUserId) {
       console.log("You are not authorized to remove this post.");
       return;
     }
 
-    // Prepare the request URL
     const url = `http://localhost:3000/api/post/${postToDelete.post_id}`;
 
     try {
-      // Perform the delete request
       const response = await axios.delete(url, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
@@ -142,7 +149,6 @@ const NewPost = () => {
       });
 
       if (response.status === 200) {
-        // Remove the post from the list if the request was successful
         const updatedPosts = posts.filter((_, index) => index !== postIndex);
         setPosts(updatedPosts);
         console.log("Post removed successfully:", response.data);
@@ -200,9 +206,7 @@ const NewPost = () => {
       {posts
         .slice()
         .reverse()
-
         .map((post, index) => {
-          // Explicit type conversion if necessary
           const postUserId =
             typeof post.user_id === "string"
               ? Number(post.user_id)
@@ -214,22 +218,25 @@ const NewPost = () => {
 
           return (
             <PostCard key={`${post.post_id}-${index}`}>
-              {/* Avatar Rendering */}
-              {post.profile_picture ? (
-                <Avatar
-                  src={`http://localhost:3000/${post.profile_picture}`}
-                  alt="Profile"
-                  onError={(e) => {
-                    e.target.src = "/path/to/default-avatar.png";
-                  }}
-                />
-              ) : (
-                <EmptyAvatarIcon />
-              )}
+              <CreatorNameContainer>
+                {post.profile_picture ? (
+                  <Avatar
+                    src={`http://localhost:3000/${post.profile_picture}`}
+                    alt="Profile"
+                    onError={(e) => {
+                      e.target.src = "/path/to/default-avatar.png";
+                    }}
+                  />
+                ) : (
+                  <EmptyAvatarIcon />
+                )}
+                <CreatorNameText>
+                  {post.given_name} {post.family_name}
+                </CreatorNameText>
+              </CreatorNameContainer>
 
               {post.content && <p>{post.content}</p>}
 
-              {/* Posted Image Rendering */}
               {post.media_upload && (
                 <StyledImage
                   src={
@@ -263,11 +270,17 @@ const NewPost = () => {
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
                       handleAddComment(index, event.target.value);
-                      event.target.value = "";
+                      event.target.value = ""; // Clear input after adding comment
                     }
                   }}
                 />
-                <PublishCommentButton>Publish</PublishCommentButton>
+                <PublishCommentButton
+                  onClick={() => {
+                    // Optionally handle comment publish button click
+                  }}
+                >
+                  Publish
+                </PublishCommentButton>
               </CommentSection>
             </PostCard>
           );
