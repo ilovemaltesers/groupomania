@@ -11,7 +11,6 @@ const UserText = styled.h1`
 
 const TitleLoggedUser = () => {
   const { isAuthenticated, auth } = useAuth();
-  console.log("Rendering TitleLoggedUser");
 
   return (
     <UserText>

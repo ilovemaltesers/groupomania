@@ -100,7 +100,7 @@ const NewPost = () => {
           content: content,
           media_upload: response.data.post.media_upload,
           profile_picture: auth.profilePicture,
-          user_id: auth.userId, // Ensure userId is correct
+          user_id: auth.userId,
           post_id: response.data.post.post_id,
           comments: [],
         };
@@ -120,25 +120,29 @@ const NewPost = () => {
   const handleRemovePost = async (postIndex) => {
     const postToDelete = posts[postIndex];
 
-    if (postToDelete.user_id !== auth.userId) {
+    // Convert both IDs to numbers to ensure they are of the same type
+    const postOwnerId = Number(postToDelete.user_id);
+    const currentUserId = Number(auth.userId);
+
+    // Check if the current user is the post owner
+    if (postOwnerId !== currentUserId) {
       console.log("You are not authorized to remove this post.");
       return;
     }
 
+    // Prepare the request URL
     const url = `http://localhost:3000/api/post/${postToDelete.post_id}`;
-    console.log("Deleting post with URL:", url);
 
     try {
+      // Perform the delete request
       const response = await axios.delete(url, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
       });
 
-      console.log("Response status:", response.status);
-      console.log("Response data:", response.data);
-
       if (response.status === 200) {
+        // Remove the post from the list if the request was successful
         const updatedPosts = posts.filter((_, index) => index !== postIndex);
         setPosts(updatedPosts);
         console.log("Post removed successfully:", response.data);
@@ -196,6 +200,7 @@ const NewPost = () => {
       {posts
         .slice()
         .reverse()
+
         .map((post, index) => {
           // Explicit type conversion if necessary
           const postUserId =

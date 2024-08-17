@@ -5,8 +5,6 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 
 const { db } = require("../connect.js");
-const { connect } = require("http2");
-const { ImUser } = require("react-icons/im");
 
 const JWT_SECRET = "blablabla";
 
