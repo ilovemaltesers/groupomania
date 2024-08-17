@@ -21,8 +21,6 @@ import {
   PublishCommentButton,
   EmptyAvatarIcon,
   Avatar,
-  CreatorNameContainer,
-  CreatorNameText,
 } from "../styles/stylesFeedPage";
 
 const NewPost = () => {
@@ -55,9 +53,9 @@ const NewPost = () => {
       fetchPosts();
     }
 
-    const intervalId = setInterval(fetchPosts, 5000); // Fetch posts every 5 seconds
+    const intervalId = setInterval(fetchPosts, 5000);
     return () => clearInterval(intervalId);
-  }, [fetchPosts]);
+  }, [fetchPosts, auth.token]);
 
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
@@ -80,7 +78,7 @@ const NewPost = () => {
         const formData = new FormData();
         formData.append("content", content);
         if (image) {
-          formData.append("image", image);
+          formData.append("image", image, image.name);
         }
 
         const response = await axios.post(
@@ -95,23 +93,17 @@ const NewPost = () => {
         );
 
         console.log("Post created successfully:", response.data);
-
         setContent("");
         setImage(null);
 
         const newPost = {
-          given_name: auth.givenName,
-          family_name: auth.familyName,
-          post_id: response.data.post.post_id,
-          content: response.data.post.content,
+          content: content,
           media_upload: response.data.post.media_upload,
           profile_picture: auth.profilePicture,
           user_id: auth.userId,
-          created_at: response.data.post.created_at,
-          updated_at: response.data.post.updated_at,
+          post_id: response.data.post.post_id,
           comments: [],
         };
-
         setPosts([newPost, ...posts]);
       } catch (error) {
         console.error("Error creating post:", error);
@@ -119,20 +111,22 @@ const NewPost = () => {
     }
   };
 
-  const handleAddComment = async (postIndex, newComment) => {
+  const handleAddComment = (postIndex, newComment) => {
     const updatedPosts = [...posts];
     updatedPosts[postIndex].comments.push(newComment);
     setPosts(updatedPosts);
-
-    // Optionally, send the comment to the server here
   };
 
   const handleRemovePost = async (postIndex) => {
     const postToDelete = posts[postIndex];
 
-    // Convert IDs to numbers to ensure comparison
     const postOwnerId = Number(postToDelete.user_id);
     const currentUserId = Number(auth.userId);
+
+    console.log(`Attempting to remove post with ID ${postToDelete.post_id}`);
+    console.log(
+      `Post owner ID: ${postOwnerId}, Current user ID: ${currentUserId}`
+    );
 
     if (postOwnerId !== currentUserId) {
       console.log("You are not authorized to remove this post.");
@@ -214,26 +208,25 @@ const NewPost = () => {
           const authUserId =
             typeof auth.userId === "string" ? Number(auth.userId) : auth.userId;
 
+          console.log(
+            `Post ID: ${post.post_id}, Post Owner ID: ${postUserId}, Auth User ID: ${authUserId}`
+          ); // Add this line to log post owner ID and auth user ID
+
           const isPostOwner = postUserId === authUserId;
 
           return (
             <PostCard key={`${post.post_id}-${index}`}>
-              <CreatorNameContainer>
-                {post.profile_picture ? (
-                  <Avatar
-                    src={`http://localhost:3000/${post.profile_picture}`}
-                    alt="Profile"
-                    onError={(e) => {
-                      e.target.src = "/path/to/default-avatar.png";
-                    }}
-                  />
-                ) : (
-                  <EmptyAvatarIcon />
-                )}
-                <CreatorNameText>
-                  {post.given_name} {post.family_name}
-                </CreatorNameText>
-              </CreatorNameContainer>
+              {post.profile_picture ? (
+                <Avatar
+                  src={`http://localhost:3000/${post.profile_picture}`}
+                  alt="Profile"
+                  onError={(e) => {
+                    e.target.src = "/path/to/default-avatar.png";
+                  }}
+                />
+              ) : (
+                <EmptyAvatarIcon />
+              )}
 
               {post.content && <p>{post.content}</p>}
 
@@ -246,7 +239,7 @@ const NewPost = () => {
                   }
                   alt="Post"
                   onError={(e) => {
-                    e.target.style.display = "none"; // Hide broken image
+                    e.target.style.display = "none";
                   }}
                   style={{ maxWidth: "100%" }}
                 />
@@ -270,17 +263,11 @@ const NewPost = () => {
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
                       handleAddComment(index, event.target.value);
-                      event.target.value = ""; // Clear input after adding comment
+                      event.target.value = "";
                     }
                   }}
                 />
-                <PublishCommentButton
-                  onClick={() => {
-                    // Optionally handle comment publish button click
-                  }}
-                >
-                  Publish
-                </PublishCommentButton>
+                <PublishCommentButton>Publish</PublishCommentButton>
               </CommentSection>
             </PostCard>
           );
