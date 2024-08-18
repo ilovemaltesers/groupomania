@@ -1,20 +1,17 @@
-// for working with file and directory paths
-const { create } = require("domain");
 const fs = require("fs");
 const path = require("path");
 const jwt = require("jsonwebtoken");
-
 const { db } = require("../connect.js");
 
 const JWT_SECRET = "blablabla";
 
+// Get all posts
 const getAllPosts = async (req, res) => {
   let client;
   try {
-    client = await db(); // Ensure the `db` function is correctly implemented
+    client = await db();
     console.log("Connected to the database.");
 
-    // SQL query to join posts with users and retrieve user information
     const query = `
       SELECT p.post_id, p.content, p.media_upload, p.created_at, p.updated_at, 
              u._id AS user_id, u.given_name, u.family_name, u.email, u.profile_picture
@@ -37,11 +34,10 @@ const getAllPosts = async (req, res) => {
   }
 };
 
+// Create a new post
 const createPost = async (req, res) => {
-  // Extract content from request body
   const { content } = req.body;
 
-  // Extract and verify the token
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
     console.error("Authorization token is missing.");
@@ -50,16 +46,14 @@ const createPost = async (req, res) => {
 
   let userId;
   try {
-    // Verify the token and extract user ID
-    const decoded = jwt.verify(token, JWT_SECRET); // Use the secret defined as JWT_SECRET
+    const decoded = jwt.verify(token, JWT_SECRET);
     console.log("Decoded Token:", decoded);
-    userId = decoded.userId; // Use the correct key from the token payload
+    userId = decoded.userId;
   } catch (error) {
-    console.error("Token verification error:", error); // Log token errors
+    console.error("Token verification error:", error);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 
-  // Check if userId was extracted successfully
   if (!userId) {
     console.error("User ID is null or undefined after token decoding.");
     return res.status(400).json({ message: "User ID could not be determined" });
@@ -68,26 +62,17 @@ const createPost = async (req, res) => {
   console.log("Content:", content);
   console.log("User ID:", userId);
 
-  // Determine the media upload URL if a file is provided
   const mediaUpload = req.file
     ? `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
     : null;
 
   console.log("Media Upload URL:", mediaUpload);
 
-  // Connect to the database
   let client;
   try {
     client = await db();
     console.log("Successfully connected to PostgreSQL database.");
-  } catch (dbError) {
-    console.error("Database connection error:", dbError);
-    return res
-      .status(500)
-      .json({ message: "Database connection error", error: dbError });
-  }
 
-  try {
     const query = `
       INSERT INTO public.posts (content, media_upload, user_id, created_at, updated_at)
       VALUES ($1, $2, $3, NOW(), NOW())
@@ -102,7 +87,6 @@ const createPost = async (req, res) => {
     console.log("Query Result:", result.rows[0]);
 
     const newPost = result.rows[0];
-
     res
       .status(201)
       .json({ message: "Post successfully created", post: newPost });
@@ -119,13 +103,10 @@ const createPost = async (req, res) => {
 
 // Delete a post
 const deletePost = async (req, res) => {
-  // Use the correct parameter name from the route
   const { post_id } = req.params;
   console.log("Received request to delete post with ID:", post_id);
 
   const token = req.headers.authorization?.split(" ")[1];
-  console.log("Authorization token:", token);
-
   if (!token) {
     console.error("Authorization token is missing.");
     return res.status(401).json({ message: "Authorization token is missing" });
@@ -133,7 +114,6 @@ const deletePost = async (req, res) => {
 
   let userId;
   try {
-    // function from the jwt library to verify the token
     const decoded = jwt.verify(token, JWT_SECRET);
     userId = decoded.userId;
     console.log("Decoded user ID from token:", userId);
@@ -147,6 +127,7 @@ const deletePost = async (req, res) => {
     client = await db();
     console.log("Connected to the database.");
 
+    // Find the post to ensure it exists and user has permission to delete it
     const findPostQuery = `
       SELECT * FROM public.posts
       WHERE post_id = $1 AND user_id = $2;
@@ -156,12 +137,50 @@ const deletePost = async (req, res) => {
     console.log("Post query result:", postResult.rows);
 
     if (postResult.rows.length === 0) {
+      console.error(
+        "Post not found or user does not have permission to delete it."
+      );
       return res.status(403).json({
         message:
           "You do not have permission to delete this post or post not found",
       });
     }
 
+    const post = postResult.rows[0];
+
+    if (post.media_upload) {
+      // Extract filename from media_upload URL
+      try {
+        const url = new URL(post.media_upload);
+        const fileName = path.basename(url.pathname); // Extract the filename from URL path
+        const imagePath = path.join(__dirname, "..", "images", fileName); // Adjust path if images are stored elsewhere
+
+        console.log("Image path for deletion:", imagePath);
+
+        // Check if file exists
+        fs.access(imagePath, fs.constants.F_OK, (err) => {
+          if (err) {
+            console.error(
+              "Image file does not exist, skipping deletion:",
+              imagePath
+            );
+          } else {
+            // Delete the file
+            fs.unlink(imagePath, (unlinkErr) => {
+              if (unlinkErr) {
+                console.error("Error deleting the image:", unlinkErr);
+              } else {
+                console.log("Image deleted successfully:", imagePath);
+              }
+            });
+          }
+        });
+      } catch (error) {
+        console.error("Error processing media_upload URL:", error);
+      }
+    }
+
+    // Proceed to delete the post from the database
     const deleteQuery = `
       DELETE FROM public.posts
       WHERE post_id = $1
@@ -189,8 +208,8 @@ const deletePost = async (req, res) => {
     }
   }
 };
-// Update a post
 
+// Update a post (commented out for now but included for reference)
 // const updatePost = async (req, res) => {
 //   const { post_id } = req.params;
 //   const { content } = req.body;
@@ -233,14 +252,12 @@ const deletePost = async (req, res) => {
 
 //     const post = postResult.rows[0];
 
-//     let newMediaUpload = post.media_upload; // Keep the existing image path
+//     let newMediaUpload = post.media_upload;
 //     if (req.file) {
-//       // If a new file is uploaded, update the media upload path
 //       newMediaUpload = `${req.protocol}://${req.get("host")}/images/${
 //         req.file.filename
 //       }`;
 
-//       // Optionally: Delete the old image file from the server
 //       if (post.media_upload) {
 //         const oldImagePath = path.join(
 //           __dirname,
@@ -289,4 +306,5 @@ module.exports = {
   getAllPosts,
   createPost,
   deletePost,
+  // updatePost, // Uncomment this line if updatePost is needed
 };
