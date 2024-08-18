@@ -189,6 +189,101 @@ const deletePost = async (req, res) => {
     }
   }
 };
+// Update a post
+
+// const updatePost = async (req, res) => {
+//   const { post_id } = req.params;
+//   const { content } = req.body;
+
+//   const token = req.headers.authorization?.split(" ")[1];
+//   if (!token) {
+//     console.error("Authorization token is missing.");
+//     return res.status(401).json({ message: "Authorization token is missing" });
+//   }
+
+//   let userId;
+//   try {
+//     const decoded = jwt.verify(token, JWT_SECRET);
+//     userId = decoded.userId;
+//     console.log("Decoded user ID from token:", userId);
+//   } catch (error) {
+//     console.error("Token verification error:", error);
+//     return res.status(401).json({ message: "Invalid or expired token" });
+//   }
+
+//   let client;
+//   try {
+//     client = await db();
+//     console.log("Connected to the database.");
+
+//     const findPostQuery = `
+//       SELECT * FROM public.posts
+//       WHERE post_id = $1 AND user_id = $2;
+//     `;
+//     const findPostValues = [post_id, userId];
+//     const postResult = await client.query(findPostQuery, findPostValues);
+//     console.log("Post query result:", postResult.rows);
+
+//     if (postResult.rows.length === 0) {
+//       return res.status(403).json({
+//         message:
+//           "You do not have permission to update this post or post not found",
+//       });
+//     }
+
+//     const post = postResult.rows[0];
+
+//     let newMediaUpload = post.media_upload; // Keep the existing image path
+//     if (req.file) {
+//       // If a new file is uploaded, update the media upload path
+//       newMediaUpload = `${req.protocol}://${req.get("host")}/images/${
+//         req.file.filename
+//       }`;
+
+//       // Optionally: Delete the old image file from the server
+//       if (post.media_upload) {
+//         const oldImagePath = path.join(
+//           __dirname,
+//           "..",
+//           "public",
+//           "images",
+//           path.basename(post.media_upload)
+//         );
+//         fs.unlink(oldImagePath, (err) => {
+//           if (err) console.error("Error deleting old image:", err);
+//           else console.log("Old image deleted:", oldImagePath);
+//         });
+//       }
+//     }
+
+//     const updateQuery = `
+//       UPDATE public.posts
+//       SET content = $1, media_upload = $2, updated_at = NOW()
+//       WHERE post_id = $3
+//       RETURNING *;
+//     `;
+//     const updateValues = [content, newMediaUpload, post_id];
+//     const updateResult = await client.query(updateQuery, updateValues);
+//     console.log("Update query result:", updateResult.rows);
+
+//     if (updateResult.rows.length > 0) {
+//       res.status(200).json({
+//         message: "Post successfully updated",
+//         post: updateResult.rows[0],
+//       });
+//     } else {
+//       res.status(404).json({ message: "Post not found" });
+//     }
+//   } catch (error) {
+//     console.error("Error during post update:", error);
+//     res.status(500).json({ message: "Error during post update", error });
+//   } finally {
+//     if (client) {
+//       await client.end();
+//       console.log("Database connection closed.");
+//     }
+//   }
+// };
 
 module.exports = {
   getAllPosts,

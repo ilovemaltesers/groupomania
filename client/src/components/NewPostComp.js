@@ -22,7 +22,9 @@ import {
   EmptyAvatarIcon,
   Avatar,
   CreatorNameContainer,
+  NameAndCreatedAtContainer,
   CreatorNameText,
+  CreatedAtText,
 } from "../styles/stylesFeedPage";
 
 const NewPost = () => {
@@ -130,7 +132,6 @@ const NewPost = () => {
   const handleRemovePost = async (postIndex) => {
     const postToDelete = posts[postIndex];
 
-    // Convert IDs to numbers to ensure comparison
     const postOwnerId = Number(postToDelete.user_id);
     const currentUserId = Number(auth.userId);
 
@@ -230,13 +231,18 @@ const NewPost = () => {
                 ) : (
                   <EmptyAvatarIcon />
                 )}
-                <CreatorNameText>
-                  {post.given_name} {post.family_name}
-                </CreatorNameText>
+                <NameAndCreatedAtContainer>
+                  <CreatorNameText>
+                    {post.given_name} {post.family_name}
+                  </CreatorNameText>
+                  <CreatedAtText>
+                    Post created{" "}
+                    {new Date(post.created_at).toLocaleDateString()}
+                  </CreatedAtText>
+                </NameAndCreatedAtContainer>
               </CreatorNameContainer>
 
               {post.content && <p>{post.content}</p>}
-
               {post.media_upload && (
                 <StyledImage
                   src={

@@ -11,7 +11,7 @@ router.get("/", verifyToken, postController.getAllPosts);
 
 router.delete("/:post_id", verifyToken, postController.deletePost);
 
-// router.put("/:post_id", verifyToken, multer, postController.updatePost);
+// router.put("/:post_id", verifyToken, postController.updatePost);
 
 // router.post("/:post_id/like", verifyToken, postController.likePost);
 
