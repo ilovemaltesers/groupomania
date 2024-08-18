@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { format } from "date-fns";
 import {
   FeedMainContainer,
   NewPostBody,
@@ -26,6 +27,11 @@ import {
   CreatorNameText,
   CreatedAtText,
 } from "../styles/stylesFeedPage";
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return format(date, "d 'of' MMMM yyyy 'at' h:mm a");
+};
 
 const NewPost = () => {
   const { isAuthenticated, auth } = useAuth();
@@ -236,8 +242,7 @@ const NewPost = () => {
                     {post.given_name} {post.family_name}
                   </CreatorNameText>
                   <CreatedAtText>
-                    Post created{" "}
-                    {new Date(post.created_at).toLocaleDateString()}
+                    Post created {formatDate(post.created_at)}
                   </CreatedAtText>
                 </NameAndCreatedAtContainer>
               </CreatorNameContainer>

@@ -9,6 +9,7 @@ const CreatedAtText = styled.p`
   font-size: 0.8em;
   color: black;
   margin: 0;
+  font-style: italic;
 `;
 
 // Style for the creator's name text
