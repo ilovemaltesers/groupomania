@@ -135,18 +135,31 @@ const NewPost = () => {
     // Optionally, send the comment to the server here
   };
 
-  const handleRemovePost = async (postIndex) => {
-    const postToDelete = posts[postIndex];
+  const handleRemovePost = async (postId) => {
+    // Find the post using postId
+    const postToDelete = posts.find((post) => post.post_id === postId);
+
+    // Debug logs
+    console.log("Attempting to remove post:", postToDelete);
+    console.log("Post ID:", postId);
+
+    if (!postToDelete) {
+      console.log("Post not found.");
+      return;
+    }
 
     const postOwnerId = Number(postToDelete.user_id);
     const currentUserId = Number(auth.userId);
+
+    console.log("Post Owner ID:", postOwnerId);
+    console.log("Current User ID:", currentUserId);
 
     if (postOwnerId !== currentUserId) {
       console.log("You are not authorized to remove this post.");
       return;
     }
 
-    const url = `http://localhost:3000/api/post/${postToDelete.post_id}`;
+    const url = `http://localhost:3000/api/post/${postId}`;
 
     try {
       const response = await axios.delete(url, {
@@ -155,10 +168,14 @@ const NewPost = () => {
         },
       });
 
+      console.log("API response status:", response.status);
+      console.log("API response data:", response.data);
+
       if (response.status === 200) {
-        const updatedPosts = posts.filter((_, index) => index !== postIndex);
+        // Update the state by removing the post
+        const updatedPosts = posts.filter((post) => post.post_id !== postId);
+        console.log("Updated posts after deletion:", updatedPosts);
         setPosts(updatedPosts);
-        console.log("Post removed successfully:", response.data);
       } else {
         console.error("Failed to remove post:", response.data);
       }
@@ -213,7 +230,7 @@ const NewPost = () => {
       {posts
         .slice()
         .reverse()
-        .map((post, index) => {
+        .map((post) => {
           const postUserId =
             typeof post.user_id === "string"
               ? Number(post.user_id)
@@ -224,7 +241,7 @@ const NewPost = () => {
           const isPostOwner = postUserId === authUserId;
 
           return (
-            <PostCard key={`${post.post_id}-${index}`}>
+            <PostCard key={post.post_id}>
               <CreatorNameContainer>
                 {post.profile_picture ? (
                   <Avatar
@@ -266,11 +283,16 @@ const NewPost = () => {
               <CommentSection>
                 {isAuthenticated && isPostOwner && (
                   <RemoveEditButtonsContainer>
-                    <RemovePostButton onClick={() => handleRemovePost(index)}>
+                    <RemovePostButton
+                      onClick={() => handleRemovePost(post.post_id)}
+                    >
                       <RemovePostIcon />
                       Remove Post
                     </RemovePostButton>
-                    <EditPostButton onClick={() => handleEditPost(index)}>
+
+                    <EditPostButton
+                      onClick={() => handleEditPost(post.post_id)}
+                    >
                       <PlaneIcon />
                       Edit Post
                     </EditPostButton>
@@ -280,7 +302,7 @@ const NewPost = () => {
                   placeholder="Write a comment..."
                   onKeyPress={(event) => {
                     if (event.key === "Enter") {
-                      handleAddComment(index, event.target.value);
+                      handleAddComment(post.post_id, event.target.value);
                       event.target.value = ""; // Clear input after adding comment
                     }
                   }}
