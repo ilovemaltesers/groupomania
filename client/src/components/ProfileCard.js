@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { MdFace2 } from "react-icons/md";
@@ -80,12 +80,46 @@ const ImageUploadInput = styled.input`
 const ProfileCard = () => {
   const [image, setImage] = useState(null);
 
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("Token is not available");
+          return;
+        }
+
+        const response = await axios.get(
+          "http://localhost:3000/api/user/profile-picture",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Fetched image data:", response.data);
+
+        // Use the base URL from the server for image display
+        setImage(`http://localhost:3000/${response.data.imageUrl}`);
+      } catch (error) {
+        console.error(
+          "Error fetching image:",
+          error.response ? error.response.data : error.message
+        );
+      }
+    };
+
+    fetchImage();
+  }, []);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
+      console.log("Preview image URL:", imageUrl);
       setImage(imageUrl);
-      saveImage(file); // Call saveImage with the selected file
+      saveImage(file);
     }
   };
 
@@ -97,23 +131,24 @@ const ProfileCard = () => {
       return;
     }
 
-    console.log("Token:", token); // Debug token
-
     try {
       const formData = new FormData();
       formData.append("image", file);
 
       const response = await axios.post(
-        "http://localhost:3000/api/user/upload-profile-picture", // Ensure this URL matches your server setup
+        "http://localhost:3000/api/user/upload-profile-picture",
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Use the token retrieved from localStorage
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      console.log("Response data:", response.data);
+      console.log("Uploaded image response:", response.data);
+
+      // Use the base URL from the server for image display
+      setImage(`http://localhost:3000/${response.data.imageUrl}`);
     } catch (error) {
       console.error(
         "Error uploading image:",
@@ -153,7 +188,7 @@ const ProfileCard = () => {
                   id="file-input"
                   type="file"
                   accept="image/*"
-                  onChange={handleFileChange} // Call handleFileChange on file selection
+                  onChange={handleFileChange}
                 />
 
                 <Form.Group controlId="formRoleTitle" className="mt-4">

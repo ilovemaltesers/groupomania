@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { db } = require("../connect.js");
 const path = require("path");
 
-const JWT_SECRET = "blablabla";
+const JWT_SECRET = "blablabla"; // Consider using a more secure way to manage secrets
 
 // Signup function
 const signup = async (req, res) => {
@@ -40,8 +40,10 @@ const signup = async (req, res) => {
     console.error("Error during signup:", error);
     res.status(500).send("Error during signup");
   } finally {
-    if (client) await client.end();
-    console.log("Database connection closed.");
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
   }
 };
 
@@ -54,7 +56,7 @@ const login = async (req, res) => {
     client = await db();
     console.log("Connected to the database.");
 
-    // Retrieve user details including familyName and givenName
+    // Retrieve user details
     const userResult = await client.query(
       "SELECT _id, family_name, given_name, password FROM public.users WHERE email = $1",
       [email]
@@ -78,7 +80,7 @@ const login = async (req, res) => {
       expiresIn: "24h",
     });
 
-    // Return userId, token, familyName, and givenName
+    // Return user details
     res.status(200).json({
       token,
       userId: user._id,
@@ -89,8 +91,10 @@ const login = async (req, res) => {
     console.error("Error during login:", error);
     res.status(500).send("Error during login");
   } finally {
-    if (client) await client.end();
-    console.log("Database connection closed.");
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
   }
 };
 
@@ -106,8 +110,7 @@ const uploadProfilePicture = async (req, res) => {
     return res.status(401).send({ message: "User not authenticated" });
   }
 
-  let client; // Declare client outside the try block
-
+  let client;
   try {
     const filePath = path.join("images", req.file.filename);
 
@@ -130,8 +133,50 @@ const uploadProfilePicture = async (req, res) => {
     console.error("Error uploading profile picture:", error);
     res.status(500).send("Error uploading profile picture");
   } finally {
-    if (client) await client.end(); // Now client is in scope here
-    console.log("Database connection closed.");
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
+  }
+};
+
+// Get profile picture function
+const getProfilePicture = async (req, res) => {
+  const userId = req.userId; // Ensure req.userId is set by verifyToken
+
+  if (!userId) {
+    return res.status(401).send({ message: "User not authenticated" });
+  }
+
+  let client;
+  try {
+    client = await db(); // Initialize client here
+    const user = await client.query(
+      "SELECT profile_picture FROM public.users WHERE _id = $1",
+      [userId]
+    );
+
+    if (user.rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    const profilePicture = user.rows[0].profile_picture;
+
+    if (!profilePicture) {
+      return res.status(404).send("Profile picture not found");
+    }
+
+    res.status(200).json({
+      imageUrl: profilePicture,
+    });
+  } catch (error) {
+    console.error("Error getting profile picture:", error);
+    res.status(500).send("Error getting profile picture");
+  } finally {
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
   }
 };
 
@@ -139,4 +184,5 @@ module.exports = {
   signup,
   login,
   uploadProfilePicture,
+  getProfilePicture,
 };

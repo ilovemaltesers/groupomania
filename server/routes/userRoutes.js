@@ -15,4 +15,6 @@ router.post(
   userContr.uploadProfilePicture
 );
 
+router.get("/profile-picture", verifyToken, userContr.getProfilePicture);
+
 module.exports = router;
