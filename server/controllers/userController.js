@@ -140,7 +140,7 @@ const uploadProfilePicture = async (req, res) => {
   }
 };
 
-// Get profile picture function
+// Get profile picture function for profile page
 const getProfilePicture = async (req, res) => {
   const userId = req.userId; // Ensure req.userId is set by verifyToken
 
@@ -179,6 +179,8 @@ const getProfilePicture = async (req, res) => {
     }
   }
 };
+
+
 
 module.exports = {
   signup,
