@@ -28,6 +28,8 @@ import {
   CreatedAtText,
 } from "../styles/stylesFeedPage";
 
+import EditPostPopUp from "../components/EditPostPopUp";
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return format(date, "d 'of' MMMM yyyy 'at' h:mm a");
@@ -38,6 +40,8 @@ const NewPost = () => {
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [showEditPostPopUp, setShowEditPostPopUp] = useState(false);
+  const [postToEdit, setPostToEdit] = useState(null);
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -169,9 +173,18 @@ const NewPost = () => {
     }
   };
 
-  const handleEditPost = (postIndex) => {
-    console.log(`Editing post with ID ${posts[postIndex].post_id}`);
-    // Implement edit functionality here
+  const handleEditPost = (postId) => {
+    // Find the post to edit
+    const post = posts.find((post) => post.post_id === postId);
+
+    if (!post) {
+      console.log("Post not found.");
+      return;
+    }
+
+    // Set the state with the post data to edit
+    setPostToEdit(post);
+    setShowEditPostPopUp(true); // Show the edit post popup or form
   };
 
   return (
@@ -275,9 +288,11 @@ const NewPost = () => {
                       Remove Post
                     </RemovePostButton>
 
-                    <EditPostButton onClick={() => handleEditPost(index)}>
+                    <EditPostButton
+                      onClick={() => handleEditPost(post.post_id)}
+                    >
                       <PlaneIcon />
-                      Edit Post
+                      Edit My Post
                     </EditPostButton>
                   </RemoveEditButtonsContainer>
                 )}
@@ -301,6 +316,13 @@ const NewPost = () => {
             </PostCard>
           );
         })}
+
+      {showEditPostPopUp && (
+        <EditPostPopUp
+          post={postToEdit}
+          onClose={() => setShowEditPostPopUp(false)}
+        />
+      )}
     </FeedMainContainer>
   );
 };
