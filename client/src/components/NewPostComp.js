@@ -1,5 +1,5 @@
-import axios from "axios";
 import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 import { useAuth } from "../contexts/AuthContext";
 import { format } from "date-fns";
 import {
@@ -27,7 +27,6 @@ import {
   CreatorNameText,
   CreatedAtText,
 } from "../styles/stylesFeedPage";
-
 import EditPostPopUp from "../components/EditPostPopUp";
 
 const formatDate = (dateString) => {
@@ -43,6 +42,7 @@ const NewPost = () => {
   const [showEditPostPopUp, setShowEditPostPopUp] = useState(false);
   const [postToEdit, setPostToEdit] = useState(null);
 
+  // Fetch posts from the server
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
@@ -50,8 +50,6 @@ const NewPost = () => {
           Authorization: `Bearer ${auth.token}`,
         },
       });
-
-      console.log("Posts data:", response.data);
       setPosts(response.data);
       localStorage.setItem("posts", JSON.stringify(response.data));
     } catch (error) {
@@ -59,6 +57,7 @@ const NewPost = () => {
     }
   }, [auth.token]);
 
+  // Load posts from local storage or fetch from server
   useEffect(() => {
     const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
     if (savedPosts.length > 0) {
@@ -68,14 +67,17 @@ const NewPost = () => {
     }
   }, [fetchPosts]);
 
+  // Save posts to local storage whenever posts state changes
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
 
+  // Handle content change in the new post textarea
   const handleCommentChange = (event) => {
     setContent(event.target.value);
   };
 
+  // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -83,6 +85,7 @@ const NewPost = () => {
     }
   };
 
+  // Handle submission of a new post
   const handleSubmit = async () => {
     if (content || image) {
       try {
@@ -102,8 +105,6 @@ const NewPost = () => {
             },
           }
         );
-
-        console.log("Post created successfully:", response.data);
 
         setContent("");
         setImage(null);
@@ -128,14 +129,14 @@ const NewPost = () => {
     }
   };
 
+  // Add a comment to a specific post
   const handleAddComment = async (postIndex, newComment) => {
     const updatedPosts = [...posts];
     updatedPosts[postIndex].comments.push(newComment);
     setPosts(updatedPosts);
-
-    // Optionally, send the comment to the server here
   };
 
+  // Remove a post
   const handleRemovePost = async (postId) => {
     const postToDelete = posts.find((post) => post.post_id === postId);
 
@@ -173,18 +174,21 @@ const NewPost = () => {
     }
   };
 
+  // Set the post to be edited and show the popup
   const handleEditPost = (postId) => {
-    // Find the post to edit
     const post = posts.find((post) => post.post_id === postId);
-
-    if (!post) {
-      console.log("Post not found.");
-      return;
+    if (post) {
+      setPostToEdit(post);
+      setShowEditPostPopUp(true);
     }
+  };
 
-    // Set the state with the post data to edit
-    setPostToEdit(post);
-    setShowEditPostPopUp(true); // Show the edit post popup or form
+  // Handle saving the edited post
+  const handleSaveEditedPost = (updatedPost) => {
+    const updatedPosts = posts.map((post) =>
+      post.post_id === updatedPost.post_id ? updatedPost : post
+    );
+    setPosts(updatedPosts);
   };
 
   return (
@@ -320,7 +324,8 @@ const NewPost = () => {
       {showEditPostPopUp && (
         <EditPostPopUp
           post={postToEdit}
-          onClose={() => setShowEditPostPopUp(false)}
+          onClose={() => setShowEditPostPopUp(false)} // Close the popup
+          onSave={handleSaveEditedPost} // Save changes and update posts
         />
       )}
     </FeedMainContainer>

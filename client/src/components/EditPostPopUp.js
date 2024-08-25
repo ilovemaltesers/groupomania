@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const EditPostPopUp = ({ post, setPost, handleEditPost }) => {
+const EditPostPopUp = ({ post, onClose, onSave }) => {
   const [image, setImage] = useState(null);
-  const [popUpVisible, setPopUpVisible] = useState(true);
+  const [content, setContent] = useState(post.content);
 
   const handleEditPostContent = (e) => {
-    setPost({ ...post, content: e.target.value });
+    setContent(e.target.value);
   };
 
   const handleImageUpload = (e) => {
@@ -18,16 +18,16 @@ const EditPostPopUp = ({ post, setPost, handleEditPost }) => {
     }
   };
 
-  const handleEditCancel = () => {
-    setPopUpVisible(false);
+  const handleEditSave = () => {
+    const updatedPost = { ...post, content, image };
+    onSave(updatedPost); // Notify parent with updated post data
+    onClose(); // Close the popup
   };
-
-  if (!popUpVisible) return null; // Don't render anything if popup is not visible
 
   return (
     <StyledEditPostContainer>
       <EditPostTextarea
-        value={post.content}
+        value={content}
         onChange={handleEditPostContent}
         placeholder="Edit your post..."
       />
@@ -35,11 +35,13 @@ const EditPostPopUp = ({ post, setPost, handleEditPost }) => {
         <input type="file" accept="image/*" onChange={handleImageUpload} />
         {image && <ImagePreview src={image} alt="Preview" />}
       </ImageUploadContainer>
-      <SubmitEditButton onClick={handleEditPost}>Submit Edit</SubmitEditButton>
-      <CancelEditButton onClick={handleEditCancel}>Cancel</CancelEditButton>
+      <SubmitEditButton onClick={handleEditSave}>Submit Edit</SubmitEditButton>
+      <CancelEditButton onClick={onClose}>Cancel</CancelEditButton>
     </StyledEditPostContainer>
   );
 };
+
+// Styled components as before
 
 // Centered Popup Styles
 const StyledEditPostContainer = styled.div`
