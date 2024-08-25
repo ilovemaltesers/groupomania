@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { format } from "date-fns";
 import {
@@ -27,6 +27,7 @@ import {
   CreatorNameText,
   CreatedAtText,
 } from "../styles/stylesFeedPage";
+
 import EditPostPopUp from "../components/EditPostPopUp";
 
 const formatDate = (dateString) => {
@@ -42,7 +43,7 @@ const NewPost = () => {
   const [showEditPostPopUp, setShowEditPostPopUp] = useState(false);
   const [postToEdit, setPostToEdit] = useState(null);
 
-  // Fetch posts from the server
+  // Fetch posts from the server or localStorage
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
@@ -50,6 +51,8 @@ const NewPost = () => {
           Authorization: `Bearer ${auth.token}`,
         },
       });
+
+      console.log("Posts data:", response.data);
       setPosts(response.data);
       localStorage.setItem("posts", JSON.stringify(response.data));
     } catch (error) {
@@ -57,7 +60,7 @@ const NewPost = () => {
     }
   }, [auth.token]);
 
-  // Load posts from local storage or fetch from server
+  // Load posts from localStorage or fetch from the server
   useEffect(() => {
     const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
     if (savedPosts.length > 0) {
@@ -67,7 +70,7 @@ const NewPost = () => {
     }
   }, [fetchPosts]);
 
-  // Save posts to local storage whenever posts state changes
+  // Update localStorage whenever posts change
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
   }, [posts]);
@@ -77,7 +80,7 @@ const NewPost = () => {
     setContent(event.target.value);
   };
 
-  // Handle image upload
+  // Handle image file upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -85,7 +88,7 @@ const NewPost = () => {
     }
   };
 
-  // Handle submission of a new post
+  // Handle new post submission
   const handleSubmit = async () => {
     if (content || image) {
       try {
@@ -105,6 +108,8 @@ const NewPost = () => {
             },
           }
         );
+
+        console.log("Post created successfully:", response.data);
 
         setContent("");
         setImage(null);
@@ -129,14 +134,16 @@ const NewPost = () => {
     }
   };
 
-  // Add a comment to a specific post
-  const handleAddComment = async (postIndex, newComment) => {
+  // Handle adding comments to a post
+  const handleAddComment = (postIndex, newComment) => {
     const updatedPosts = [...posts];
     updatedPosts[postIndex].comments.push(newComment);
     setPosts(updatedPosts);
+
+    // Optionally, send the comment to the server here
   };
 
-  // Remove a post
+  // Handle removing a post
   const handleRemovePost = async (postId) => {
     const postToDelete = posts.find((post) => post.post_id === postId);
 
@@ -174,13 +181,17 @@ const NewPost = () => {
     }
   };
 
-  // Set the post to be edited and show the popup
+  // Handle opening the edit post popup
   const handleEditPost = (postId) => {
     const post = posts.find((post) => post.post_id === postId);
-    if (post) {
-      setPostToEdit(post);
-      setShowEditPostPopUp(true);
+
+    if (!post) {
+      console.log("Post not found.");
+      return;
     }
+
+    setPostToEdit(post);
+    setShowEditPostPopUp(true);
   };
 
   // Handle saving the edited post
@@ -229,103 +240,89 @@ const NewPost = () => {
         )}
       </NewPostBody>
 
-      {posts
-        .slice()
-        .reverse()
-        .map((post, index) => {
-          const postUserId =
-            typeof post.user_id === "string"
-              ? Number(post.user_id)
-              : post.user_id;
-          const authUserId =
-            typeof auth.userId === "string" ? Number(auth.userId) : auth.userId;
+      {posts.map((post, index) => {
+        const postUserId = Number(post.user_id);
+        const authUserId = Number(auth.userId);
+        const isPostOwner = postUserId === authUserId;
 
-          const isPostOwner = postUserId === authUserId;
-
-          return (
-            <PostCard key={post.post_id}>
-              <CreatorNameContainer>
-                {post.profile_picture ? (
-                  <Avatar
-                    src={`http://localhost:3000/${post.profile_picture}`}
-                    alt="Profile"
-                    onError={(e) => {
-                      e.target.src = "/path/to/default-avatar.png";
-                    }}
-                  />
-                ) : (
-                  <EmptyAvatarIcon />
-                )}
-                <NameAndCreatedAtContainer>
-                  <CreatorNameText>
-                    {post.given_name} {post.family_name}
-                  </CreatorNameText>
-                  <CreatedAtText>
-                    Post created {formatDate(post.created_at)}
-                  </CreatedAtText>
-                </NameAndCreatedAtContainer>
-              </CreatorNameContainer>
-
-              {post.content && <p>{post.content}</p>}
-              {post.media_upload && (
-                <StyledImage
-                  src={
-                    post.media_upload.startsWith("http")
-                      ? post.media_upload
-                      : `http://localhost:3000/${post.media_upload}`
-                  }
-                  alt="Post"
+        return (
+          <PostCard key={post.post_id}>
+            <CreatorNameContainer>
+              {post.profile_picture ? (
+                <Avatar
+                  src={`http://localhost:3000/${post.profile_picture}`}
+                  alt="Profile"
                   onError={(e) => {
-                    e.target.style.display = "none"; // Hide broken image
+                    e.target.src = "/path/to/default-avatar.png";
                   }}
-                  style={{ maxWidth: "100%" }}
                 />
+              ) : (
+                <EmptyAvatarIcon />
               )}
+              <NameAndCreatedAtContainer>
+                <CreatorNameText>
+                  {post.given_name} {post.family_name}
+                </CreatorNameText>
+                <CreatedAtText>
+                  Post created {formatDate(post.created_at)}
+                </CreatedAtText>
+              </NameAndCreatedAtContainer>
+            </CreatorNameContainer>
 
-              <CommentSection>
-                {isAuthenticated && isPostOwner && (
-                  <RemoveEditButtonsContainer>
-                    <RemovePostButton
-                      onClick={() => handleRemovePost(post.post_id)}
-                    >
-                      <RemovePostIcon />
-                      Remove Post
-                    </RemovePostButton>
+            {post.content && <p>{post.content}</p>}
+            {post.media_upload && (
+              <StyledImage
+                src={post.media_upload}
+                alt="Post Image"
+                onError={(e) => {
+                  e.target.style.display = "none"; // Hide broken image
+                }}
+                style={{ maxWidth: "100%" }}
+              />
+            )}
 
-                    <EditPostButton
-                      onClick={() => handleEditPost(post.post_id)}
-                    >
-                      <PlaneIcon />
-                      Edit My Post
-                    </EditPostButton>
-                  </RemoveEditButtonsContainer>
-                )}
-                <CommentInput
-                  placeholder="Write a comment..."
-                  onKeyPress={(event) => {
-                    if (event.key === "Enter") {
-                      handleAddComment(index, event.target.value);
-                      event.target.value = ""; // Clear input after adding comment
-                    }
-                  }}
-                />
-                <PublishCommentButton
-                  onClick={() => {
-                    // Optionally handle comment publish button click
-                  }}
-                >
-                  Publish
-                </PublishCommentButton>
-              </CommentSection>
-            </PostCard>
-          );
-        })}
+            <CommentSection>
+              {isAuthenticated && isPostOwner && (
+                <RemoveEditButtonsContainer>
+                  <RemovePostButton
+                    onClick={() => handleRemovePost(post.post_id)}
+                  >
+                    <RemovePostIcon />
+                    Remove Post
+                  </RemovePostButton>
+
+                  <EditPostButton onClick={() => handleEditPost(post.post_id)}>
+                    <PlaneIcon />
+                    Edit My Post
+                  </EditPostButton>
+                </RemoveEditButtonsContainer>
+              )}
+              <CommentInput
+                placeholder="Write a comment..."
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    handleAddComment(index, event.target.value);
+                    event.target.value = ""; // Clear input after adding comment
+                  }
+                }}
+              />
+              <PublishCommentButton
+                onClick={() => {
+                  // Optionally handle comment publish button click
+                }}
+              >
+                Publish
+              </PublishCommentButton>
+            </CommentSection>
+          </PostCard>
+        );
+      })}
 
       {showEditPostPopUp && (
         <EditPostPopUp
           post={postToEdit}
-          onClose={() => setShowEditPostPopUp(false)} // Close the popup
-          onSave={handleSaveEditedPost} // Save changes and update posts
+          onClose={() => setShowEditPostPopUp(false)}
+          onSave={handleSaveEditedPost}
         />
       )}
     </FeedMainContainer>

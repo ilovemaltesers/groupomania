@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const EditPostPopUp = ({ post, onClose, onSave }) => {
-  const [image, setImage] = useState(null);
-  const [content, setContent] = useState(post.content);
+  const [content, setContent] = useState(post.content || "");
+  const [image, setImage] = useState(post.media_upload || null);
+
+  useEffect(() => {
+    setContent(post.content || "");
+    setImage(post.media_upload || null);
+  }, [post]);
 
   const handleEditPostContent = (e) => {
     setContent(e.target.value);
@@ -13,15 +18,22 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setImage(reader.result);
+      reader.onloadend = () => setImage(reader.result); // Set base64 string
       reader.readAsDataURL(file);
     }
   };
 
-  const handleEditSave = () => {
-    const updatedPost = { ...post, content, image };
-    onSave(updatedPost); // Notify parent with updated post data
-    onClose(); // Close the popup
+  const handleSave = () => {
+    onSave({
+      ...post,
+      content,
+      media_upload: image, // Pass the updated image
+    });
+    onClose();
+  };
+
+  const handleCancel = () => {
+    onClose();
   };
 
   return (
@@ -35,15 +47,12 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
         <input type="file" accept="image/*" onChange={handleImageUpload} />
         {image && <ImagePreview src={image} alt="Preview" />}
       </ImageUploadContainer>
-      <SubmitEditButton onClick={handleEditSave}>Submit Edit</SubmitEditButton>
-      <CancelEditButton onClick={onClose}>Cancel</CancelEditButton>
+      <SubmitEditButton onClick={handleSave}>Submit Edit</SubmitEditButton>
+      <CancelEditButton onClick={handleCancel}>Cancel</CancelEditButton>
     </StyledEditPostContainer>
   );
 };
-
-// Styled components as before
-
-// Centered Popup Styles
+// Styled components
 const StyledEditPostContainer = styled.div`
   position: fixed;
   top: 50%;
@@ -54,7 +63,7 @@ const StyledEditPostContainer = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
   z-index: 1000;
-  width: 500px; /* Adjust as needed */
+  width: 500px;
   max-width: 90%;
   max-height: 90%;
   overflow: auto;
