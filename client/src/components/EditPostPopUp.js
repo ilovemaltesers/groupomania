@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const EditPostPopUp = ({ post, setPost, handleEditPost }) => {
   const [image, setImage] = useState(null);
+  const [popUpVisible, setPopUpVisible] = useState(true);
 
   const handleEditPostContent = (e) => {
     setPost({ ...post, content: e.target.value });
@@ -17,6 +18,12 @@ const EditPostPopUp = ({ post, setPost, handleEditPost }) => {
     }
   };
 
+  const handleEditCancel = () => {
+    setPopUpVisible(false);
+  };
+
+  if (!popUpVisible) return null; // Don't render anything if popup is not visible
+
   return (
     <StyledEditPostContainer>
       <EditPostTextarea
@@ -29,6 +36,7 @@ const EditPostPopUp = ({ post, setPost, handleEditPost }) => {
         {image && <ImagePreview src={image} alt="Preview" />}
       </ImageUploadContainer>
       <SubmitEditButton onClick={handleEditPost}>Submit Edit</SubmitEditButton>
+      <CancelEditButton onClick={handleEditCancel}>Cancel</CancelEditButton>
     </StyledEditPostContainer>
   );
 };
@@ -80,6 +88,21 @@ const SubmitEditButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  &:hover {
+    background-color: bisque;
+    color: black;
+  }
+`;
+
+const CancelEditButton = styled.button`
+  background-color: #bdebff;
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: 30px;
   &:hover {
     background-color: bisque;
     color: black;
