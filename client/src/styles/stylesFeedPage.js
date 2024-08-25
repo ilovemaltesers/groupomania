@@ -185,7 +185,7 @@ const RemoveEditButtonsContainer = styled.div`
 
 // Style for the remove post button
 const RemovePostButton = styled.button`
-  background-color: bisque;
+  background-color: #bdebff;
   color: black;
   padding: 10px 20px;
   border: none;
