@@ -35,72 +35,74 @@ const formatDate = (dateString) => {
 };
 
 const NewPost = () => {
-  // Access authentication context
   const { isAuthenticated, auth } = useAuth();
-  const [content, setContent] = useState(""); // State for post content
-  const [image, setImage] = useState(null); // State for uploaded image
-  const [posts, setPosts] = useState([]); // State for posts
-  const [showEditPostPopUp, setShowEditPostPopUp] = useState(false); // State for showing edit popup
-  const [postToEdit, setPostToEdit] = useState(null); // State for the post being edited
+  const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [showEditPostPopUp, setShowEditPostPopUp] = useState(false);
+  const [postToEdit, setPostToEdit] = useState(null);
 
-  const userId = auth.userId; // Get the user ID from the authentication context
+  const userId = auth?.userId;
 
-  // Function to fetch posts from the server
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
         headers: {
-          Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
+          Authorization: `Bearer ${auth.token}`,
         },
       });
 
       if (Array.isArray(response.data)) {
-        setPosts(response.data); // Update state with fetched posts
-        localStorage.setItem(`posts_${userId}`, JSON.stringify(response.data)); // Save posts to localStorage
+        setPosts(response.data);
+        localStorage.setItem(`posts_${userId}`, JSON.stringify(response.data));
       } else {
         console.error("Fetched data is not an array:", response.data);
       }
     } catch (error) {
-      console.error("Error fetching posts:", error); // Log errors if fetching fails
+      console.error("Error fetching posts:", error);
     }
   }, [auth.token, userId]);
 
-  // Load posts from localStorage or fetch from the server if not available
   useEffect(() => {
+    if (!isAuthenticated) {
+      setPosts([]);
+      localStorage.removeItem(`posts_${userId}`);
+      return;
+    }
+
     const savedPosts =
       JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
-    setPosts(savedPosts.length ? savedPosts : []); // Set posts from localStorage or empty array
+    setPosts(savedPosts);
+
     if (!savedPosts.length) {
-      fetchPosts(); // Fetch posts if not found in localStorage
+      fetchPosts();
     }
-  }, [fetchPosts, userId]);
+  }, [isAuthenticated, userId, fetchPosts]);
 
-  // Update localStorage whenever posts state changes
   useEffect(() => {
-    localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
-  }, [posts, userId]);
+    if (isAuthenticated) {
+      localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
+    }
+  }, [posts, isAuthenticated, userId]);
 
-  // Handle changes to the content of the new post
   const handleCommentChange = (event) => {
     setContent(event.target.value);
   };
 
-  // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(file); // Set the uploaded image file
+      setImage(file);
     }
   };
 
-  // Submit a new post
   const handleSubmit = async () => {
     if (content || image) {
       try {
         const formData = new FormData();
         formData.append("content", content);
         if (image) {
-          formData.append("image", image); // Add image to form data if available
+          formData.append("image", image);
         }
 
         const response = await axios.post(
@@ -108,8 +110,8 @@ const NewPost = () => {
           formData,
           {
             headers: {
-              Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
-              "Content-Type": "multipart/form-data", // Specify the content type for form data
+              Authorization: `Bearer ${auth.token}`,
+              "Content-Type": "multipart/form-data",
             },
           }
         );
@@ -127,26 +129,24 @@ const NewPost = () => {
           comments: [],
         };
 
-        setPosts((prevPosts) => [newPost, ...prevPosts]); // Add the new post to the beginning of the posts array
-        setContent(""); // Clear the content
-        setImage(null); // Clear the image
+        setPosts((prevPosts) => [newPost, ...prevPosts]);
+        setContent("");
+        setImage(null);
       } catch (error) {
-        console.error("Error creating post:", error); // Log errors if post creation fails
+        console.error("Error creating post:", error);
       }
     }
   };
 
-  // Handle adding a comment to a post
   const handleAddComment = (postIndex, newComment) => {
     setPosts((prevPosts) => {
       const updatedPosts = [...prevPosts];
       updatedPosts[postIndex].comments = updatedPosts[postIndex].comments || [];
-      updatedPosts[postIndex].comments.push(newComment); // Add the new comment to the post
+      updatedPosts[postIndex].comments.push(newComment);
       return updatedPosts;
     });
   };
 
-  // Handle removing a post
   const handleRemovePost = async (postId) => {
     const postToDelete = posts.find((post) => post.post_id === postId);
 
@@ -168,24 +168,23 @@ const NewPost = () => {
         `http://localhost:3000/api/post/${postId}`,
         {
           headers: {
-            Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
+            Authorization: `Bearer ${auth.token}`,
           },
         }
       );
 
       if (response.status === 200) {
-        setPosts(
-          (prevPosts) => prevPosts.filter((post) => post.post_id !== postId) // Remove the post from state
+        setPosts((prevPosts) =>
+          prevPosts.filter((post) => post.post_id !== postId)
         );
       } else {
         console.error("Failed to remove post:", response.data);
       }
     } catch (error) {
-      console.error("Error removing post:", error); // Log errors if post removal fails
+      console.error("Error removing post:", error);
     }
   };
 
-  // Handle editing a post
   const handleEditPost = (postId) => {
     const post = posts.find((post) => post.post_id === postId);
 
@@ -194,17 +193,15 @@ const NewPost = () => {
       return;
     }
 
-    setPostToEdit(post); // Set the post to edit
-    setShowEditPostPopUp(true); // Show the edit popup
+    setPostToEdit(post);
+    setShowEditPostPopUp(true);
   };
 
-  // Save the edited post
   const handleSaveEditedPost = (updatedPost) => {
-    setPosts(
-      (prevPosts) =>
-        prevPosts.map((post) =>
-          post.post_id === updatedPost.post_id ? updatedPost : post
-        ) // Update the post in the state
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.post_id === updatedPost.post_id ? updatedPost : post
+      )
     );
   };
 
@@ -215,13 +212,13 @@ const NewPost = () => {
         <NewPostTextarea
           placeholder="Write your comment..."
           value={content}
-          onChange={handleCommentChange} // Update content on change
+          onChange={handleCommentChange}
         />
         <NewPostButtonContainer>
           <input
             type="file"
             accept="image/*"
-            onChange={handleImageUpload} // Handle image upload
+            onChange={handleImageUpload}
             style={{ display: "none" }}
             id="upload-image"
           />
@@ -260,7 +257,7 @@ const NewPost = () => {
                     src={`http://localhost:3000/${post.profile_picture}`}
                     alt="Profile"
                     onError={(e) => {
-                      e.target.src = "/path/to/default-avatar.png"; // Fallback image
+                      e.target.src = "/path/to/default-avatar.png";
                     }}
                   />
                 ) : (
@@ -282,7 +279,7 @@ const NewPost = () => {
                   src={post.media_upload}
                   alt="Post Media"
                   onError={(e) => {
-                    e.target.src = "/path/to/default-image.jpg"; // Fallback image
+                    e.target.src = "/path/to/default-image.jpg";
                   }}
                 />
               )}
@@ -304,7 +301,7 @@ const NewPost = () => {
                           userName: auth.givenName,
                           text: e.target.value,
                         });
-                        e.target.value = ""; // Clear input after adding comment
+                        e.target.value = "";
                       }
                     }}
                   />

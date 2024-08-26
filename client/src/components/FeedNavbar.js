@@ -69,7 +69,8 @@ const FeedNavbar = () => {
   const { logout } = useAuth();
 
   const handleLogout = () => {
-    logout();
+    logout(); // Call the logout function from AuthContext
+    // Optionally, redirect the user or take additional actions after logout
   };
 
   return (
