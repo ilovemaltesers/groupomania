@@ -20,20 +20,11 @@ const LoginFormComp = () => {
         }
       );
 
-      // Destructure all necessary fields from the API response
+      // Log the full API response for debugging
+      console.log("Full API Response:", response.data);
+
       const { token, userId, givenName, familyName, email, profilePicture } =
         response.data;
-
-      console.log("API Response:", {
-        token,
-        userId,
-        givenName,
-        familyName,
-        email,
-        profilePicture,
-      });
-
-      // Pass all values to the login function
       login(token, userId, givenName, familyName, email, profilePicture);
 
       alert("Login successful");

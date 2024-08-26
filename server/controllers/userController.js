@@ -56,9 +56,9 @@ const login = async (req, res) => {
     client = await db();
     console.log("Connected to the database.");
 
-    // Retrieve user details
+    // Retrieve user details including email and profile picture
     const userResult = await client.query(
-      "SELECT _id, family_name, given_name, password FROM public.users WHERE email = $1",
+      "SELECT _id, family_name, given_name, email, profile_picture, password FROM public.users WHERE email = $1",
       [email]
     );
 
@@ -80,12 +80,14 @@ const login = async (req, res) => {
       expiresIn: "24h",
     });
 
-    // Return user details
+    // Return user details including email and profile picture
     res.status(200).json({
       token,
       userId: user._id,
       familyName: user.family_name,
       givenName: user.given_name,
+      email: user.email, // Include email in the response
+      profilePicture: user.profile_picture, // Include profile picture in the response
     });
   } catch (error) {
     console.error("Error during login:", error);
@@ -179,8 +181,6 @@ const getProfilePicture = async (req, res) => {
     }
   }
 };
-
-
 
 module.exports = {
   signup,
