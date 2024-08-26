@@ -20,8 +20,21 @@ const LoginFormComp = () => {
         }
       );
 
-      const { token, userId, givenName } = response.data;
-      login(token, userId, givenName);
+      // Destructure all necessary fields from the API response
+      const { token, userId, givenName, familyName, email, profilePicture } =
+        response.data;
+
+      console.log("API Response:", {
+        token,
+        userId,
+        givenName,
+        familyName,
+        email,
+        profilePicture,
+      });
+
+      // Pass all values to the login function
+      login(token, userId, givenName, familyName, email, profilePicture);
 
       alert("Login successful");
       navigate("/feed"); // Redirect to feed page on successful login
