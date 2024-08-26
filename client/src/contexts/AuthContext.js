@@ -20,6 +20,12 @@ export const AuthProvider = ({ children }) => {
     const userId = localStorage.getItem("userId");
     const givenName = localStorage.getItem("givenName");
 
+    console.log("Initial auth state from localStorage:", {
+      token,
+      userId,
+      givenName,
+    });
+
     return token ? { token, userId, givenName } : null;
   });
 
@@ -29,7 +35,12 @@ export const AuthProvider = ({ children }) => {
     const userId = localStorage.getItem("userId");
     const givenName = localStorage.getItem("givenName");
 
-    // Update state if localStorage values change or if they are different from the current state.
+    console.log("Synchronizing state with localStorage:", {
+      token,
+      userId,
+      givenName,
+    });
+
     if (
       (token && (!auth || token !== auth.token)) ||
       (userId && (!auth || userId !== auth.userId)) ||
@@ -41,6 +52,8 @@ export const AuthProvider = ({ children }) => {
 
   // Function to handle user login. It updates localStorage and state with the new authentication details.
   const login = (token, userId, givenName) => {
+    console.log("Logging in with:", { token, userId, givenName });
+
     localStorage.setItem("token", token);
     localStorage.setItem("userId", userId);
     localStorage.setItem("givenName", givenName);
@@ -50,10 +63,13 @@ export const AuthProvider = ({ children }) => {
 
   // Function to handle user logout. It clears localStorage and updates the state to null.
   const logout = () => {
+    console.log("Logging out");
+
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("givenName");
-    localStorage.removeItem("posts"); // Also removes `posts` item if present.
+    localStorage.removeItem("posts"); // Also remove `posts` item if present.
+
     setAuth(null);
   };
 
@@ -72,5 +88,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   // Render the AuthContext provider with the current context value and children.
+  console.log("Providing AuthContext value:", value);
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

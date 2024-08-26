@@ -19,7 +19,6 @@ import {
   PlaneIcon,
   EditPostButton,
   CommentInput,
-  PublishCommentButton,
   EmptyAvatarIcon,
   Avatar,
   CreatorNameContainer,
@@ -27,75 +26,81 @@ import {
   CreatorNameText,
   CreatedAtText,
 } from "../styles/stylesFeedPage";
-
 import EditPostPopUp from "../components/EditPostPopUp";
 
+// Function to format dates
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return format(date, "d 'of' MMMM yyyy 'at' h:mm a");
 };
 
 const NewPost = () => {
+  // Access authentication context
   const { isAuthenticated, auth } = useAuth();
-  const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const [showEditPostPopUp, setShowEditPostPopUp] = useState(false);
-  const [postToEdit, setPostToEdit] = useState(null);
+  const [content, setContent] = useState(""); // State for post content
+  const [image, setImage] = useState(null); // State for uploaded image
+  const [posts, setPosts] = useState([]); // State for posts
+  const [showEditPostPopUp, setShowEditPostPopUp] = useState(false); // State for showing edit popup
+  const [postToEdit, setPostToEdit] = useState(null); // State for the post being edited
 
-  // Fetch posts from the server or localStorage
+  const userId = auth.userId; // Get the user ID from the authentication context
+
+  // Function to fetch posts from the server
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
         },
       });
 
-      console.log("Posts data:", response.data);
-      setPosts(response.data);
-      localStorage.setItem("posts", JSON.stringify(response.data));
+      if (Array.isArray(response.data)) {
+        setPosts(response.data); // Update state with fetched posts
+        localStorage.setItem(`posts_${userId}`, JSON.stringify(response.data)); // Save posts to localStorage
+      } else {
+        console.error("Fetched data is not an array:", response.data);
+      }
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error("Error fetching posts:", error); // Log errors if fetching fails
     }
-  }, [auth.token]);
+  }, [auth.token, userId]);
 
-  // Load posts from localStorage or fetch from the server
+  // Load posts from localStorage or fetch from the server if not available
   useEffect(() => {
-    const savedPosts = JSON.parse(localStorage.getItem("posts")) || [];
-    if (savedPosts.length > 0) {
-      setPosts(savedPosts);
-    } else {
-      fetchPosts();
+    const savedPosts =
+      JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
+    setPosts(savedPosts.length ? savedPosts : []); // Set posts from localStorage or empty array
+    if (!savedPosts.length) {
+      fetchPosts(); // Fetch posts if not found in localStorage
     }
-  }, [fetchPosts]);
+  }, [fetchPosts, userId]);
 
-  // Update localStorage whenever posts change
+  // Update localStorage whenever posts state changes
   useEffect(() => {
-    localStorage.setItem("posts", JSON.stringify(posts));
-  }, [posts]);
+    localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
+  }, [posts, userId]);
 
-  // Handle content change in the new post textarea
+  // Handle changes to the content of the new post
   const handleCommentChange = (event) => {
     setContent(event.target.value);
   };
 
-  // Handle image file upload
+  // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(file);
+      setImage(file); // Set the uploaded image file
     }
   };
 
-  // Handle new post submission
+  // Submit a new post
   const handleSubmit = async () => {
     if (content || image) {
       try {
         const formData = new FormData();
         formData.append("content", content);
         if (image) {
-          formData.append("image", image);
+          formData.append("image", image); // Add image to form data if available
         }
 
         const response = await axios.post(
@@ -103,16 +108,11 @@ const NewPost = () => {
           formData,
           {
             headers: {
-              Authorization: `Bearer ${auth.token}`,
-              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
+              "Content-Type": "multipart/form-data", // Specify the content type for form data
             },
           }
         );
-
-        console.log("Post created successfully:", response.data);
-
-        setContent("");
-        setImage(null);
 
         const newPost = {
           given_name: auth.givenName,
@@ -127,20 +127,23 @@ const NewPost = () => {
           comments: [],
         };
 
-        setPosts([newPost, ...posts]);
+        setPosts((prevPosts) => [newPost, ...prevPosts]); // Add the new post to the beginning of the posts array
+        setContent(""); // Clear the content
+        setImage(null); // Clear the image
       } catch (error) {
-        console.error("Error creating post:", error);
+        console.error("Error creating post:", error); // Log errors if post creation fails
       }
     }
   };
 
-  // Handle adding comments to a post
+  // Handle adding a comment to a post
   const handleAddComment = (postIndex, newComment) => {
-    const updatedPosts = [...posts];
-    updatedPosts[postIndex].comments.push(newComment);
-    setPosts(updatedPosts);
-
-    // Optionally, send the comment to the server here
+    setPosts((prevPosts) => {
+      const updatedPosts = [...prevPosts];
+      updatedPosts[postIndex].comments = updatedPosts[postIndex].comments || [];
+      updatedPosts[postIndex].comments.push(newComment); // Add the new comment to the post
+      return updatedPosts;
+    });
   };
 
   // Handle removing a post
@@ -165,23 +168,24 @@ const NewPost = () => {
         `http://localhost:3000/api/post/${postId}`,
         {
           headers: {
-            Authorization: `Bearer ${auth.token}`,
+            Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
           },
         }
       );
 
       if (response.status === 200) {
-        const updatedPosts = posts.filter((post) => post.post_id !== postId);
-        setPosts(updatedPosts);
+        setPosts(
+          (prevPosts) => prevPosts.filter((post) => post.post_id !== postId) // Remove the post from state
+        );
       } else {
         console.error("Failed to remove post:", response.data);
       }
     } catch (error) {
-      console.error("Error removing post:", error);
+      console.error("Error removing post:", error); // Log errors if post removal fails
     }
   };
 
-  // Handle opening the edit post popup
+  // Handle editing a post
   const handleEditPost = (postId) => {
     const post = posts.find((post) => post.post_id === postId);
 
@@ -190,16 +194,18 @@ const NewPost = () => {
       return;
     }
 
-    setPostToEdit(post);
-    setShowEditPostPopUp(true);
+    setPostToEdit(post); // Set the post to edit
+    setShowEditPostPopUp(true); // Show the edit popup
   };
 
-  // Handle saving the edited post
+  // Save the edited post
   const handleSaveEditedPost = (updatedPost) => {
-    const updatedPosts = posts.map((post) =>
-      post.post_id === updatedPost.post_id ? updatedPost : post
+    setPosts(
+      (prevPosts) =>
+        prevPosts.map((post) =>
+          post.post_id === updatedPost.post_id ? updatedPost : post
+        ) // Update the post in the state
     );
-    setPosts(updatedPosts);
   };
 
   return (
@@ -209,13 +215,13 @@ const NewPost = () => {
         <NewPostTextarea
           placeholder="Write your comment..."
           value={content}
-          onChange={handleCommentChange}
+          onChange={handleCommentChange} // Update content on change
         />
         <NewPostButtonContainer>
           <input
             type="file"
             accept="image/*"
-            onChange={handleImageUpload}
+            onChange={handleImageUpload} // Handle image upload
             style={{ display: "none" }}
             id="upload-image"
           />
@@ -240,85 +246,91 @@ const NewPost = () => {
         )}
       </NewPostBody>
 
-      {posts.map((post, index) => {
-        const postUserId = Number(post.user_id);
-        const authUserId = Number(auth.userId);
-        const isPostOwner = postUserId === authUserId;
+      {posts.length > 0 ? (
+        posts.map((post, index) => {
+          const postUserId = Number(post.user_id);
+          const authUserId = Number(auth.userId);
+          const isPostOwner = postUserId === authUserId;
 
-        return (
-          <PostCard key={post.post_id}>
-            <CreatorNameContainer>
-              {post.profile_picture ? (
-                <Avatar
-                  src={`http://localhost:3000/${post.profile_picture}`}
-                  alt="Profile"
+          return (
+            <PostCard key={post.post_id}>
+              <CreatorNameContainer>
+                {post.profile_picture ? (
+                  <Avatar
+                    src={`http://localhost:3000/${post.profile_picture}`}
+                    alt="Profile"
+                    onError={(e) => {
+                      e.target.src = "/path/to/default-avatar.png"; // Fallback image
+                    }}
+                  />
+                ) : (
+                  <EmptyAvatarIcon />
+                )}
+                <NameAndCreatedAtContainer>
+                  <CreatorNameText>
+                    {post.given_name} {post.family_name}
+                  </CreatorNameText>
+                  <CreatedAtText>
+                    Post created {formatDate(post.created_at)}
+                  </CreatedAtText>
+                </NameAndCreatedAtContainer>
+              </CreatorNameContainer>
+
+              {post.content && <p>{post.content}</p>}
+              {post.media_upload && (
+                <StyledImage
+                  src={post.media_upload}
+                  alt="Post Media"
                   onError={(e) => {
-                    e.target.src = "/path/to/default-avatar.png";
+                    e.target.src = "/path/to/default-image.jpg"; // Fallback image
                   }}
                 />
-              ) : (
-                <EmptyAvatarIcon />
               )}
-              <NameAndCreatedAtContainer>
-                <CreatorNameText>
-                  {post.given_name} {post.family_name}
-                </CreatorNameText>
-                <CreatedAtText>
-                  Post created {formatDate(post.created_at)}
-                </CreatedAtText>
-              </NameAndCreatedAtContainer>
-            </CreatorNameContainer>
-
-            {post.content && <p>{post.content}</p>}
-            {post.media_upload && (
-              <StyledImage
-                src={post.media_upload}
-                alt="Post Image"
-                onError={(e) => {
-                  e.target.style.display = "none"; // Hide broken image
-                }}
-                style={{ maxWidth: "100%" }}
-              />
-            )}
-
-            <CommentSection>
-              {isAuthenticated && isPostOwner && (
+              <CommentSection>
+                {post.comments &&
+                  post.comments.map((comment, commentIndex) => (
+                    <div key={commentIndex}>
+                      <p>
+                        {comment.userName}: {comment.text}
+                      </p>
+                    </div>
+                  ))}
+                {isAuthenticated && (
+                  <CommentInput
+                    placeholder="Add a comment..."
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleAddComment(index, {
+                          userName: auth.givenName,
+                          text: e.target.value,
+                        });
+                        e.target.value = ""; // Clear input after adding comment
+                      }
+                    }}
+                  />
+                )}
+              </CommentSection>
+              {isPostOwner && (
                 <RemoveEditButtonsContainer>
                   <RemovePostButton
                     onClick={() => handleRemovePost(post.post_id)}
                   >
+                    Remove
                     <RemovePostIcon />
-                    Remove Post
                   </RemovePostButton>
-
                   <EditPostButton onClick={() => handleEditPost(post.post_id)}>
-                    <PlaneIcon />
-                    Edit My Post
+                    Edit
                   </EditPostButton>
                 </RemoveEditButtonsContainer>
               )}
-              <CommentInput
-                placeholder="Write a comment..."
-                onKeyPress={(event) => {
-                  if (event.key === "Enter") {
-                    handleAddComment(index, event.target.value);
-                    event.target.value = ""; // Clear input after adding comment
-                  }
-                }}
-              />
-              <PublishCommentButton
-                onClick={() => {
-                  // Optionally handle comment publish button click
-                }}
-              >
-                Publish
-              </PublishCommentButton>
-            </CommentSection>
-          </PostCard>
-        );
-      })}
+            </PostCard>
+          );
+        })
+      ) : (
+        <p>No posts available.</p>
+      )}
 
-      {showEditPostPopUp && (
+      {showEditPostPopUp && postToEdit && (
         <EditPostPopUp
           post={postToEdit}
           onClose={() => setShowEditPostPopUp(false)}

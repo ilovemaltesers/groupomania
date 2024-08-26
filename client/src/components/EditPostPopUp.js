@@ -56,9 +56,9 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
 const StyledEditPostContainer = styled.div`
   position: fixed;
   top: 50%;
-  left: 50%;
+  left: 60%;
   transform: translate(-50%, -50%);
-  background-color: bisque;
+  background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
@@ -66,6 +66,7 @@ const StyledEditPostContainer = styled.div`
   width: 500px;
   max-width: 90%;
   max-height: 90%;
+  box-shadow: 0 4px 12px rgba(175, 228, 236);
   overflow: auto;
 `;
 
