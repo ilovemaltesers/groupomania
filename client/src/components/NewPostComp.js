@@ -15,7 +15,6 @@ import {
   CommentSection,
   RemoveEditButtonsContainer,
   RemovePostButton,
-  RemovePostIcon,
   PlaneIcon,
   EditPostButton,
   CommentInput,
@@ -260,11 +259,12 @@ const NewPost = () => {
                     src={`http://localhost:3000/${post.profile_picture}`}
                     alt="Profile"
                     onError={(e) => {
-                      e.target.src = "/path/to/default-avatar.png"; // Fallback image
+                      // Set to an empty src if there's an error loading the image
+                      e.target.src = ""; // Ensure this does not cause a loop
                     }}
                   />
                 ) : (
-                  <EmptyAvatarIcon />
+                  <EmptyAvatarIcon /> // Use the default icon if no profile picture
                 )}
                 <NameAndCreatedAtContainer>
                   <CreatorNameText>
@@ -282,10 +282,24 @@ const NewPost = () => {
                   src={post.media_upload}
                   alt="Post Media"
                   onError={(e) => {
-                    e.target.src = "/path/to/default-image.jpg"; // Fallback image
+                    e.target.src = "/path/to/default-image.jpg"; // Ensure this path is correct
                   }}
                 />
               )}
+
+              {isPostOwner && (
+                <RemoveEditButtonsContainer>
+                  <EditPostButton onClick={() => handleEditPost(post.post_id)}>
+                    Edit 🪄✨
+                  </EditPostButton>
+                  <RemovePostButton
+                    onClick={() => handleRemovePost(post.post_id)}
+                  >
+                    Remove 🗑️
+                  </RemovePostButton>
+                </RemoveEditButtonsContainer>
+              )}
+
               <CommentSection>
                 {post.comments &&
                   post.comments.map((comment, commentIndex) => (
@@ -310,19 +324,6 @@ const NewPost = () => {
                   />
                 )}
               </CommentSection>
-              {isPostOwner && (
-                <RemoveEditButtonsContainer>
-                  <RemovePostButton
-                    onClick={() => handleRemovePost(post.post_id)}
-                  >
-                    Remove
-                    <RemovePostIcon />
-                  </RemovePostButton>
-                  <EditPostButton onClick={() => handleEditPost(post.post_id)}>
-                    Edit
-                  </EditPostButton>
-                </RemoveEditButtonsContainer>
-              )}
             </PostCard>
           );
         })

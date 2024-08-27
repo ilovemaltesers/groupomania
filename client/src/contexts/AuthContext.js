@@ -19,15 +19,6 @@ export const AuthProvider = ({ children }) => {
     const email = localStorage.getItem("email");
     const profilePicture = localStorage.getItem("profilePicture");
 
-    console.log("Initial auth state from localStorage:", {
-      token,
-      userId,
-      givenName,
-      familyName,
-      email,
-      profilePicture,
-    });
-
     return token
       ? { token, userId, givenName, familyName, email, profilePicture }
       : null;
@@ -110,8 +101,6 @@ export const AuthProvider = ({ children }) => {
     }),
     [auth, isAuthenticated]
   );
-
-  console.log("Providing AuthContext value:", value);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

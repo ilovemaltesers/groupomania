@@ -179,7 +179,7 @@ const PublishCommentButton = styled.button`
 const RemoveEditButtonsContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 5px;
+  margin-top: 1.5em;
   margin-bottom: 10px;
 `;
 
@@ -197,15 +197,9 @@ const RemovePostButton = styled.button`
   }
 `;
 
-// Style for the remove post icon
-const RemovePostIcon = styled(RiDeleteBin6Fill)`
-  font-size: 1.25em;
-  margin-left: 10px;
-  margin-bottom: 5px;
-`;
-
 // Style for the edit post button
 const EditPostButton = styled.button`
+  margin-left: 14em;
   background-color: #bdebff;
   color: black;
   padding: 10px 20px;
@@ -235,7 +229,6 @@ export {
   PublishCommentButton,
   RemoveEditButtonsContainer,
   RemovePostButton,
-  RemovePostIcon,
   EditPostButton,
   EmptyAvatarIcon,
   Avatar,

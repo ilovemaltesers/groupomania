@@ -141,6 +141,7 @@ const ProfileCard = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -200,7 +201,7 @@ const ProfileCard = () => {
                 </Form.Group>
               </LeftColumn>
               <RightColumn md={6}>
-                <Form>
+                <Form onSubmit={(e) => e.preventDefault()}>
                   <Form.Group controlId="formAboutMe">
                     <Form.Label>Edit About Me</Form.Label>
                     <Form.Control
