@@ -212,29 +212,29 @@ const deletePost = async (req, res) => {
 const updatePost = async (req, res) => {
   // Extract post ID from URL parameters
   const { post_id } = req.params;
+  console.log("Received request to update post with ID:", post_id);
 
   // Extract content from request body and file information from multer
   const { content } = req.body;
-  const file = req.file;
+  const file = req.file; // 'image' is expected to be in req.file
+  console.log("Content from request body:", content);
+  console.log("Uploaded File:", file);
 
   // Build the media upload URL if a file is provided, otherwise set to null
   let newMediaUpload = file
     ? `${req.protocol}://${req.get("host")}/images/${file.filename}`
     : null;
+  console.log("New Media Upload URL:", newMediaUpload);
 
   let client;
-
   try {
     // Connect to the database
     client = await db();
     console.log("Connected to the database.");
 
-    // Log the request details for debugging
-    console.log("Request Body:", req.body);
-    console.log("Uploaded File:", req.file);
-
     // Fetch the existing post data before the update
     const preUpdateQuery = `SELECT * FROM public.posts WHERE post_id = $1;`;
+    console.log("Executing Pre-Update Query:", preUpdateQuery);
     const preUpdateResult = await client.query(preUpdateQuery, [post_id]);
     console.log("Post Before Update:", preUpdateResult.rows);
 
@@ -251,7 +251,6 @@ const updatePost = async (req, res) => {
       RETURNING *;
     `;
     const updateValues = [content || null, newMediaUpload, post_id];
-
     console.log("Executing Update Query:", updateQuery);
     console.log("Update Query Values:", updateValues);
 
@@ -287,5 +286,4 @@ module.exports = {
   createPost,
   deletePost,
   updatePost,
-  // updatePost, // Uncomment this line if updatePost is needed
 };

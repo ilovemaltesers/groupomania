@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Card from "react-bootstrap/Card";
 import { FaTelegramPlane } from "react-icons/fa";
-import { RiDeleteBin6Fill } from "react-icons/ri";
+
 import { MdFace2 } from "react-icons/md";
 
 // Style for the created at text
