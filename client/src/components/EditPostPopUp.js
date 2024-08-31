@@ -4,6 +4,7 @@ import styled from "styled-components";
 const EditPostPopUp = ({ post, onClose, onSave }) => {
   const [content, setContent] = useState(post.content || "");
   const [image, setImage] = useState(post.media_upload || null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     setContent(post.content || "");
@@ -17,7 +18,12 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file); // Save the raw file instead of Base64
+      setImage(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file); // Important to start reading the file
     }
   };
 
@@ -43,7 +49,7 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
       />
       <ImageUploadContainer>
         <input type="file" accept="image/*" onChange={handleImageUpload} />
-        {image && <ImagePreview src={image} alt="Preview" />}
+        {imagePreview && <ImagePreview src={imagePreview} alt="Preview" />}
       </ImageUploadContainer>
       <SubmitEditButton onClick={handleSave}>Submit Edit</SubmitEditButton>
       <CancelEditButton onClick={handleCancel}>Cancel</CancelEditButton>
