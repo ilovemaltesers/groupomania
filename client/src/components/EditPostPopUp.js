@@ -5,38 +5,33 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
   const [content, setContent] = useState(post.content || "");
   const [image, setImage] = useState(post.media_upload || null);
 
-  // Effect to synchronize state with incoming post prop
   useEffect(() => {
-    console.log("Received post:", post); // Log the received post
     setContent(post.content || "");
     setImage(post.media_upload || null);
   }, [post]);
 
-  // Handle changes to the post content
   const handleEditPostContent = (e) => {
     setContent(e.target.value);
-    console.log("Updated content:", e.target.value); // Log the updated content
   };
 
-  // Handle file input for image uploads
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file); // Store the raw file directly
+      const reader = new FileReader();
+      reader.onloadend = () => setImage(reader.result); // Set base64 string
+      reader.readAsDataURL(file);
     }
   };
 
-  // Handle save button click
   const handleSave = () => {
     onSave({
       ...post,
       content,
-      image, // Pass the raw file directly
+      media_upload: image, // Pass the updated image
     });
     onClose();
   };
 
-  // Handle cancel button click
   const handleCancel = () => {
     onClose();
   };
@@ -50,19 +45,18 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
       />
       <ImageUploadContainer>
         <input type="file" accept="image/*" onChange={handleImageUpload} />
-        {image && <ImagePreview src={image} alt="Image Preview" />}
+        {image && <ImagePreview src={image} alt="Preview" />}
       </ImageUploadContainer>
       <SubmitEditButton onClick={handleSave}>Submit Edit</SubmitEditButton>
       <CancelEditButton onClick={handleCancel}>Cancel</CancelEditButton>
     </StyledEditPostContainer>
   );
 };
-
 // Styled components
 const StyledEditPostContainer = styled.div`
   position: fixed;
   top: 50%;
-  left: 50%;
+  left: 60%;
   transform: translate(-50%, -50%);
   background-color: white;
   border-radius: 8px;
@@ -72,6 +66,7 @@ const StyledEditPostContainer = styled.div`
   width: 500px;
   max-width: 90%;
   max-height: 90%;
+  box-shadow: 0 4px 12px rgba(175, 228, 236);
   overflow: auto;
 `;
 
