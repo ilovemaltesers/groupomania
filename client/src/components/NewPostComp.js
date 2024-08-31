@@ -198,15 +198,48 @@ const NewPost = () => {
   };
 
   // Save the edited post
-  const handleSaveEditedPost = (updatedPost) => {
-    setPosts(
-      (prevPosts) =>
-        prevPosts.map((post) =>
-          post.post_id === updatedPost.post_id ? updatedPost : post
-        ) // Update the post in the state
-    );
-  };
+  const handleSaveEditedPost = async (updatedPost) => {
+    try {
+      const formData = new FormData();
+      formData.append("content", updatedPost.content || "");
 
+      if (updatedPost.image) {
+        formData.append("image", updatedPost.image); // Append the raw file
+      }
+
+      const response = await axios.put(
+        `http://localhost:3000/api/post/${updatedPost.post_id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+            "Content-Type": "multipart/form-data", // Important for file upload
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.post_id === updatedPost.post_id
+              ? {
+                  ...post,
+                  ...updatedPost,
+                  media_upload: response.data.post.media_upload,
+                }
+              : post
+          )
+        );
+      } else {
+        console.error(
+          "Failed to update the post. Server returned:",
+          response.status
+        );
+      }
+    } catch (error) {
+      console.error("An error occurred while updating the post:", error);
+    }
+  };
   return (
     <FeedMainContainer>
       <NewPostBody>

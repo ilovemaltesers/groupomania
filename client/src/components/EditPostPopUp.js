@@ -17,9 +17,7 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImage(reader.result); // Set base64 string
-      reader.readAsDataURL(file);
+      setImage(file); // Save the raw file instead of Base64
     }
   };
 
@@ -27,7 +25,7 @@ const EditPostPopUp = ({ post, onClose, onSave }) => {
     onSave({
       ...post,
       content,
-      media_upload: image, // Pass the updated image
+      image, // Pass the updated image
     });
     onClose();
   };
