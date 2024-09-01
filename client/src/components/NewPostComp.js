@@ -24,6 +24,15 @@ import {
   NameAndCreatedAtContainer,
   CreatorNameText,
   CreatedAtText,
+  ControlsContainer,
+  LikesandCommentsIconContainer,
+  HeartIconContainer,
+  CommentIconContainer,
+  EmptyHeartIcon,
+  HeartCounterContainer,
+  CommentCounterContainer,
+  CounterNumber,
+  CommentIcon, // Assuming this is an icon component similar to the others
 } from "../styles/stylesFeedPage";
 import EditPostPopUp from "../components/EditPostPopUp";
 
@@ -34,72 +43,65 @@ const formatDate = (dateString) => {
 };
 
 const NewPost = () => {
-  // Access authentication context
   const { isAuthenticated, auth } = useAuth();
-  const [content, setContent] = useState(""); // State for post content
-  const [image, setImage] = useState(null); // State for uploaded image
-  const [posts, setPosts] = useState([]); // State for posts
-  const [showEditPostPopUp, setShowEditPostPopUp] = useState(false); // State for showing edit popup
-  const [postToEdit, setPostToEdit] = useState(null); // State for the post being edited
+  const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [showEditPostPopUp, setShowEditPostPopUp] = useState(false);
+  const [postToEdit, setPostToEdit] = useState(null);
 
-  const userId = auth.userId; // Get the user ID from the authentication context
+  const userId = auth.userId;
 
-  // Function to fetch posts from the server
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
         headers: {
-          Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
+          Authorization: `Bearer ${auth.token}`,
         },
       });
 
       if (Array.isArray(response.data)) {
-        setPosts(response.data); // Update state with fetched posts
-        localStorage.setItem(`posts_${userId}`, JSON.stringify(response.data)); // Save posts to localStorage
+        setPosts(response.data);
+        localStorage.setItem(`posts_${userId}`, JSON.stringify(response.data));
       } else {
         console.error("Fetched data is not an array:", response.data);
       }
     } catch (error) {
-      console.error("Error fetching posts:", error); // Log errors if fetching fails
+      console.error("Error fetching posts:", error);
     }
   }, [auth.token, userId]);
 
-  // Load posts from localStorage or fetch from the server if not available
   useEffect(() => {
     const savedPosts =
       JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
-    setPosts(savedPosts.length ? savedPosts : []); // Set posts from localStorage or empty array
+    setPosts(savedPosts.length ? savedPosts : []);
     if (!savedPosts.length) {
-      fetchPosts(); // Fetch posts if not found in localStorage
+      fetchPosts();
     }
   }, [fetchPosts, userId]);
 
-  // Update localStorage whenever posts state changes
   useEffect(() => {
     localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
   }, [posts, userId]);
 
-  // Handle changes to the content of the new post
   const handleCommentChange = (event) => {
     setContent(event.target.value);
   };
 
-  // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(file); // Set the uploaded image file
+      setImage(file);
     }
   };
 
-  // Submit a new post
   const handleSubmit = async () => {
     if (content || image) {
       try {
         const formData = new FormData();
         formData.append("content", content);
         if (image) {
-          formData.append("image", image); // Add image to form data if available
+          formData.append("image", image);
         }
 
         const response = await axios.post(
@@ -107,8 +109,8 @@ const NewPost = () => {
           formData,
           {
             headers: {
-              Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
-              "Content-Type": "multipart/form-data", // Specify the content type for form data
+              Authorization: `Bearer ${auth.token}`,
+              "Content-Type": "multipart/form-data",
             },
           }
         );
@@ -124,28 +126,27 @@ const NewPost = () => {
           created_at: response.data.post.created_at,
           updated_at: response.data.post.updated_at,
           comments: [],
+          isLiked: false, // Assuming the initial like state is false
         };
 
-        setPosts((prevPosts) => [newPost, ...prevPosts]); // Add the new post to the beginning of the posts array
-        setContent(""); // Clear the content
-        setImage(null); // Clear the image
+        setPosts((prevPosts) => [newPost, ...prevPosts]);
+        setContent("");
+        setImage(null);
       } catch (error) {
-        console.error("Error creating post:", error); // Log errors if post creation fails
+        console.error("Error creating post:", error);
       }
     }
   };
 
-  // Handle adding a comment to a post
   const handleAddComment = (postIndex, newComment) => {
     setPosts((prevPosts) => {
       const updatedPosts = [...prevPosts];
       updatedPosts[postIndex].comments = updatedPosts[postIndex].comments || [];
-      updatedPosts[postIndex].comments.push(newComment); // Add the new comment to the post
+      updatedPosts[postIndex].comments.push(newComment);
       return updatedPosts;
     });
   };
 
-  // Handle removing a post
   const handleRemovePost = async (postId) => {
     const postToDelete = posts.find((post) => post.post_id === postId);
 
@@ -167,24 +168,23 @@ const NewPost = () => {
         `http://localhost:3000/api/post/${postId}`,
         {
           headers: {
-            Authorization: `Bearer ${auth.token}`, // Include the token in the request headers
+            Authorization: `Bearer ${auth.token}`,
           },
         }
       );
 
       if (response.status === 200) {
-        setPosts(
-          (prevPosts) => prevPosts.filter((post) => post.post_id !== postId) // Remove the post from state
+        setPosts((prevPosts) =>
+          prevPosts.filter((post) => post.post_id !== postId)
         );
       } else {
         console.error("Failed to remove post:", response.data);
       }
     } catch (error) {
-      console.error("Error removing post:", error); // Log errors if post removal fails
+      console.error("Error removing post:", error);
     }
   };
 
-  // Handle editing a post
   const handleEditPost = (postId) => {
     const post = posts.find((post) => post.post_id === postId);
 
@@ -193,18 +193,17 @@ const NewPost = () => {
       return;
     }
 
-    setPostToEdit(post); // Set the post to edit
-    setShowEditPostPopUp(true); // Show the edit popup
+    setPostToEdit(post);
+    setShowEditPostPopUp(true);
   };
 
-  // Save the edited post
   const handleSaveEditedPost = async (updatedPost) => {
     try {
       const formData = new FormData();
       formData.append("content", updatedPost.content || "");
 
       if (updatedPost.image) {
-        formData.append("image", updatedPost.image); // Append the raw file
+        formData.append("image", updatedPost.image);
       }
 
       const response = await axios.put(
@@ -213,7 +212,7 @@ const NewPost = () => {
         {
           headers: {
             Authorization: `Bearer ${auth.token}`,
-            "Content-Type": "multipart/form-data", // Important for file upload
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -240,6 +239,25 @@ const NewPost = () => {
       console.error("An error occurred while updating the post:", error);
     }
   };
+
+  const handleLike = async (postId) => {
+    // Implement the like functionality, including server-side communication
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.post_id === postId ? { ...post, isLiked: true } : post
+      )
+    );
+  };
+
+  const handleUnlike = async (postId) => {
+    // Implement the unlike functionality, including server-side communication
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.post_id === postId ? { ...post, isLiked: false } : post
+      )
+    );
+  };
+
   return (
     <FeedMainContainer>
       <NewPostBody>
@@ -247,13 +265,13 @@ const NewPost = () => {
         <NewPostTextarea
           placeholder="Write your comment..."
           value={content}
-          onChange={handleCommentChange} // Update content on change
+          onChange={handleCommentChange}
         />
         <NewPostButtonContainer>
           <input
             type="file"
             accept="image/*"
-            onChange={handleImageUpload} // Handle image upload
+            onChange={handleImageUpload}
             style={{ display: "none" }}
             id="upload-image"
           />
@@ -292,12 +310,11 @@ const NewPost = () => {
                     src={`http://localhost:3000/${post.profile_picture}`}
                     alt="Profile"
                     onError={(e) => {
-                      // Set to an empty src if there's an error loading the image
-                      e.target.src = ""; // Ensure this does not cause a loop
+                      e.target.src = "";
                     }}
                   />
                 ) : (
-                  <EmptyAvatarIcon /> // Use the default icon if no profile picture
+                  <EmptyAvatarIcon />
                 )}
                 <NameAndCreatedAtContainer>
                   <CreatorNameText>
@@ -315,23 +332,43 @@ const NewPost = () => {
                   src={post.media_upload}
                   alt="Post Media"
                   onError={(e) => {
-                    e.target.src = "/path/to/default-image.jpg"; // Ensure this path is correct
+                    e.target.src = "/path/to/default-image.jpg";
                   }}
                 />
               )}
 
-              {isPostOwner && (
-                <RemoveEditButtonsContainer>
-                  <EditPostButton onClick={() => handleEditPost(post.post_id)}>
-                    Edit 🪄✨
-                  </EditPostButton>
-                  <RemovePostButton
-                    onClick={() => handleRemovePost(post.post_id)}
-                  >
-                    Remove 🗑️
-                  </RemovePostButton>
-                </RemoveEditButtonsContainer>
-              )}
+              {/* Likes and Comments section */}
+              <ControlsContainer>
+                <LikesandCommentsIconContainer>
+                  <HeartIconContainer>
+                    <EmptyHeartIcon />
+                    <HeartCounterContainer>
+                      <CounterNumber>123</CounterNumber>
+                    </HeartCounterContainer>
+                  </HeartIconContainer>
+                  <CommentIconContainer>
+                    <CommentIcon />
+                    <CommentCounterContainer>
+                      <CounterNumber>45</CounterNumber>
+                    </CommentCounterContainer>
+                  </CommentIconContainer>
+                </LikesandCommentsIconContainer>
+
+                {isPostOwner && (
+                  <RemoveEditButtonsContainer>
+                    <EditPostButton
+                      onClick={() => handleEditPost(post.post_id)}
+                    >
+                      Edit 🪄✨
+                    </EditPostButton>
+                    <RemovePostButton
+                      onClick={() => handleRemovePost(post.post_id)}
+                    >
+                      Remove 🗑️
+                    </RemovePostButton>
+                  </RemoveEditButtonsContainer>
+                )}
+              </ControlsContainer>
 
               <CommentSection>
                 {post.comments &&
@@ -351,7 +388,7 @@ const NewPost = () => {
                           userName: auth.givenName,
                           text: e.target.value,
                         });
-                        e.target.value = ""; // Clear input after adding comment
+                        e.target.value = "";
                       }
                     }}
                   />
@@ -364,7 +401,7 @@ const NewPost = () => {
         <p>No posts available.</p>
       )}
 
-      {showEditPostPopUp && postToEdit && (
+      {showEditPostPopUp && (
         <EditPostPopUp
           post={postToEdit}
           onClose={() => setShowEditPostPopUp(false)}

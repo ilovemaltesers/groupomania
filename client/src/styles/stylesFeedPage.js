@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import Card from "react-bootstrap/Card";
 import { FaTelegramPlane } from "react-icons/fa";
-
 import { MdFace2 } from "react-icons/md";
+import { RiHeartsLine, RiHeartsFill } from "react-icons/ri";
+import { FaRegComment } from "react-icons/fa";
 
 // Style for the created at text
 const CreatedAtText = styled.p`
@@ -175,44 +176,114 @@ const PublishCommentButton = styled.button`
   }
 `;
 
-// Style for the container holding the remove and edit buttons
-const RemoveEditButtonsContainer = styled.div`
+const ControlsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin-top: 1.5em;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-top: 10px;
 `;
 
-// Style for the remove post button
+const RemoveEditButtonsContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+`;
+
+// Remove Post Button
 const RemovePostButton = styled.button`
   background-color: #bdebff;
   color: black;
-  padding: 10px 20px;
+  padding: 10px 20px; /* Padding for size */
+  width: 120px; /* Fixed width to ensure consistent size */
   border: none;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  text-align: center; /* Ensures text is centered */
   &:hover {
     background-color: #e74c3c;
   }
 `;
 
-// Style for the edit post button
+// Edit Post Button
 const EditPostButton = styled.button`
-  margin-left: 14em;
   background-color: #bdebff;
   color: black;
-  padding: 10px 20px;
+  padding: 10px 20px; /* Padding for size */
+  width: 120px; /* Fixed width to ensure consistent size */
   border: none;
   border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  text-align: center; /* Ensures text is centered */
   &:hover {
     background-color: bisque;
   }
 `;
 
-// Export all the styled components
+const LikesandCommentsIconContainer = styled.div`
+  display: flex;
+  align-items: center; /* Center items vertically within the container */
+  justify-content: center; /* Center items horizontally within the container */
+  width: 100%; /* Ensure it spans the full width */
+  padding: 5px 0; /* Padding for spacing */
+`;
+
+// Container for the heart icon and its counter
+const HeartIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the icon within its container */
+  margin-right: 10px; /* Space between the heart and comment icon containers */
+  width: 60px; /* Adjusted width to accommodate the counter */
+`;
+
+// Container for the comment icon and its counter
+const CommentIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the icon within its container */
+  width: 60px; /* Adjusted width to accommodate the counter */
+`;
+
+// Heart icon with a counter
+const EmptyHeartIcon = styled(RiHeartsLine)`
+  font-size: 2em;
+  color: #5a5a5a;
+  cursor: pointer;
+`;
+
+const FullHeartIcon = styled(RiHeartsFill)`
+  font-size: 2em;
+  color: fuchsia;
+  cursor: pointer;
+`;
+
+const CommentIcon = styled(FaRegComment)`
+  font-size: 1.5em;
+  color: #5a5a5a;
+  cursor: pointer;
+`;
+
+// Container for the heart counter
+const HeartCounterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: 8px; /* Space between icon and counter */
+`;
+
+// Container for the comment counter
+const CommentCounterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: 8px; /* Space between icon and counter */
+`;
+
+// Style for the counter number
+const CounterNumber = styled.span`
+  font-size: 1em; /* Adjust size as needed */
+  color: black; /* Adjust color as needed */
+`;
+
 export {
   FeedMainContainer,
   NewPostBody,
@@ -236,4 +307,14 @@ export {
   NameAndCreatedAtContainer,
   CreatorNameText,
   CreatedAtText,
+  ControlsContainer,
+  LikesandCommentsIconContainer,
+  HeartIconContainer,
+  CommentIconContainer,
+  EmptyHeartIcon,
+  FullHeartIcon,
+  CommentIcon,
+  HeartCounterContainer,
+  CommentCounterContainer,
+  CounterNumber,
 };
