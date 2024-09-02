@@ -268,20 +268,20 @@ const CommentIcon = styled(FaRegComment)`
 const HeartCounterContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 8px; /* Space between icon and counter */
+  margin-left: 8px;
 `;
 
 // Container for the comment counter
 const CommentCounterContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-left: 8px; /* Space between icon and counter */
+  margin-left: 8px;
 `;
 
 // Style for the counter number
 const CounterNumber = styled.span`
-  font-size: 1em; /* Adjust size as needed */
-  color: black; /* Adjust color as needed */
+  font-size: 1em;
+  color: black;
 `;
 
 export {

@@ -32,7 +32,7 @@ import {
   HeartCounterContainer,
   CommentCounterContainer,
   CounterNumber,
-  CommentIcon, // Assuming this is an icon component similar to the others
+  CommentIcon,
 } from "../styles/stylesFeedPage";
 import EditPostPopUp from "../components/EditPostPopUp";
 
@@ -126,7 +126,8 @@ const NewPost = () => {
           created_at: response.data.post.created_at,
           updated_at: response.data.post.updated_at,
           comments: [],
-          isLiked: false, // Assuming the initial like state is false
+          isLiked: false, // Initial like state
+          likesCount: 0, // Initial like count
         };
 
         setPosts((prevPosts) => [newPost, ...prevPosts]);
@@ -240,20 +241,20 @@ const NewPost = () => {
     }
   };
 
-  const handleLike = async (postId) => {
-    // Implement the like functionality, including server-side communication
+  const handleLikeToggle = (postId) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
-        post.post_id === postId ? { ...post, isLiked: true } : post
-      )
-    );
-  };
-
-  const handleUnlike = async (postId) => {
-    // Implement the unlike functionality, including server-side communication
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.post_id === postId ? { ...post, isLiked: false } : post
+        post.post_id === postId
+          ? {
+              ...post,
+              isLiked: !post.isLiked,
+              likesCount: isNaN(post.likesCount)
+                ? 0
+                : post.isLiked
+                ? Math.max(post.likesCount - 1, 0)
+                : post.likesCount + 1,
+            }
+          : post
       )
     );
   };
@@ -341,15 +342,17 @@ const NewPost = () => {
               <ControlsContainer>
                 <LikesandCommentsIconContainer>
                   <HeartIconContainer>
-                    <EmptyHeartIcon />
+                    <EmptyHeartIcon
+                      onClick={() => handleLikeToggle(post.post_id)}
+                    />
                     <HeartCounterContainer>
-                      <CounterNumber>123</CounterNumber>
+                      <CounterNumber>{post.likesCount}</CounterNumber>
                     </HeartCounterContainer>
                   </HeartIconContainer>
                   <CommentIconContainer>
                     <CommentIcon />
                     <CommentCounterContainer>
-                      <CounterNumber>45</CounterNumber>
+                      <CounterNumber>0</CounterNumber>
                     </CommentCounterContainer>
                   </CommentIconContainer>
                 </LikesandCommentsIconContainer>
