@@ -29,6 +29,7 @@ import {
   HeartIconContainer,
   CommentIconContainer,
   EmptyHeartIcon,
+  FullHeartIcon,
   HeartCounterContainer,
   CommentCounterContainer,
   CounterNumber,
@@ -52,6 +53,7 @@ const NewPost = () => {
 
   const userId = auth.userId;
 
+  // Fetch posts from the API
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
@@ -71,6 +73,7 @@ const NewPost = () => {
     }
   }, [auth.token, userId]);
 
+  // Initialize posts from localStorage or fetch from API
   useEffect(() => {
     const savedPosts =
       JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
@@ -80,14 +83,17 @@ const NewPost = () => {
     }
   }, [fetchPosts, userId]);
 
+  // Update localStorage when posts change
   useEffect(() => {
     localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
   }, [posts, userId]);
 
+  // Handle input change for new post
   const handleCommentChange = (event) => {
     setContent(event.target.value);
   };
 
+  // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -95,6 +101,7 @@ const NewPost = () => {
     }
   };
 
+  // Submit a new post
   const handleSubmit = async () => {
     if (content || image) {
       try {
@@ -139,6 +146,7 @@ const NewPost = () => {
     }
   };
 
+  // Add a comment to a post
   const handleAddComment = (postIndex, newComment) => {
     setPosts((prevPosts) => {
       const updatedPosts = [...prevPosts];
@@ -148,6 +156,7 @@ const NewPost = () => {
     });
   };
 
+  // Remove a post
   const handleRemovePost = async (postId) => {
     const postToDelete = posts.find((post) => post.post_id === postId);
 
@@ -186,6 +195,7 @@ const NewPost = () => {
     }
   };
 
+  // Edit a post
   const handleEditPost = (postId) => {
     const post = posts.find((post) => post.post_id === postId);
 
@@ -198,6 +208,7 @@ const NewPost = () => {
     setShowEditPostPopUp(true);
   };
 
+  // Save edited post
   const handleSaveEditedPost = async (updatedPost) => {
     try {
       const formData = new FormData();
@@ -241,6 +252,7 @@ const NewPost = () => {
     }
   };
 
+  // Toggle like state
   const handleLikeToggle = (postId) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
@@ -248,9 +260,7 @@ const NewPost = () => {
           ? {
               ...post,
               isLiked: !post.isLiked,
-              likesCount: isNaN(post.likesCount)
-                ? 0
-                : post.isLiked
+              likesCount: post.isLiked
                 ? Math.max(post.likesCount - 1, 0)
                 : post.likesCount + 1,
             }
@@ -301,7 +311,6 @@ const NewPost = () => {
         posts.map((post, index) => {
           const postUserId = Number(post.user_id);
           const authUserId = Number(auth.userId);
-          const isPostOwner = postUserId === authUserId;
 
           return (
             <PostCard key={post.post_id}>
@@ -342,9 +351,17 @@ const NewPost = () => {
               <ControlsContainer>
                 <LikesandCommentsIconContainer>
                   <HeartIconContainer>
-                    <EmptyHeartIcon
-                      onClick={() => handleLikeToggle(post.post_id)}
-                    />
+                    {post.isLiked &&
+                    isAuthenticated &&
+                    postUserId !== authUserId ? (
+                      <FullHeartIcon
+                        onClick={() => handleLikeToggle(post.post_id)}
+                      />
+                    ) : (
+                      <EmptyHeartIcon
+                        onClick={() => handleLikeToggle(post.post_id)}
+                      />
+                    )}
                     <HeartCounterContainer>
                       <CounterNumber>{post.likesCount}</CounterNumber>
                     </HeartCounterContainer>
@@ -352,12 +369,14 @@ const NewPost = () => {
                   <CommentIconContainer>
                     <CommentIcon />
                     <CommentCounterContainer>
-                      <CounterNumber>0</CounterNumber>
+                      <CounterNumber>
+                        {post.comments ? post.comments.length : 0}
+                      </CounterNumber>
                     </CommentCounterContainer>
                   </CommentIconContainer>
                 </LikesandCommentsIconContainer>
 
-                {isPostOwner && (
+                {isAuthenticated && postUserId === authUserId && (
                   <RemoveEditButtonsContainer>
                     <EditPostButton
                       onClick={() => handleEditPost(post.post_id)}
