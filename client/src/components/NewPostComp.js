@@ -253,24 +253,71 @@ const NewPost = () => {
   };
 
   // Toggle like state
-  const handleLikeToggle = (postId) => {
+  const handleLikeToggle = async (postId) => {
+    // Optimistically update the UI
     setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.post_id === postId
-          ? {
-              ...post,
-              // Only update like state if the user is not the post owner
-              isLiked: post.user_id !== userId ? !post.isLiked : post.isLiked,
-              likesCount:
-                post.user_id !== userId
-                  ? post.isLiked
-                    ? Math.max(post.likesCount - 1, 0)
-                    : post.likesCount + 1
-                  : post.likesCount,
-            }
-          : post
-      )
+      prevPosts.map((post) => {
+        if (post.post_id === postId) {
+          const updatedLikesCount =
+            post.user_id !== userId
+              ? post.isLiked
+                ? Math.max(post.likesCount - 1, 0)
+                : post.likesCount + 1
+              : post.likesCount;
+
+          return {
+            ...post,
+            isLiked: post.user_id !== userId ? !post.isLiked : post.isLiked,
+            likesCount: isNaN(updatedLikesCount) ? 0 : updatedLikesCount,
+          };
+        }
+        return post;
+      })
     );
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/post/${postId}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const { likesCount, isLiked } = response.data;
+
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.post_id === postId
+              ? {
+                  ...post,
+                  likesCount: isNaN(likesCount) ? 0 : likesCount,
+                  isLiked: isLiked,
+                }
+              : post
+          )
+        );
+      } else {
+        console.error("Failed to update like status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error updating like status:", error);
+      // Optionally revert optimistic update here if needed
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.post_id === postId
+            ? {
+                ...post,
+                isLiked: !post.isLiked, // Revert optimistic update
+                likesCount: isNaN(post.likesCount) ? 0 : post.likesCount, // Ensure valid count
+              }
+            : post
+        )
+      );
+    }
   };
 
   return (

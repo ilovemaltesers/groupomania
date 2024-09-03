@@ -13,6 +13,6 @@ router.delete("/:post_id", verifyToken, multer, postController.deletePost);
 
 router.put("/:post_id", verifyToken, multer, postController.updatePost);
 
-// router.post("/:post_id/like", verifyToken, postController.likePost);
+router.post("/:post_id/like", verifyToken, postController.likePost);
 
 module.exports = router;
