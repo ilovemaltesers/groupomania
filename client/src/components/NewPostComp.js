@@ -259,10 +259,14 @@ const NewPost = () => {
         post.post_id === postId
           ? {
               ...post,
-              isLiked: !post.isLiked,
-              likesCount: post.isLiked
-                ? Math.max(post.likesCount - 1, 0)
-                : post.likesCount + 1,
+              // Only update like state if the user is not the post owner
+              isLiked: post.user_id !== userId ? !post.isLiked : post.isLiked,
+              likesCount:
+                post.user_id !== userId
+                  ? post.isLiked
+                    ? Math.max(post.likesCount - 1, 0)
+                    : post.likesCount + 1
+                  : post.likesCount,
             }
           : post
       )
@@ -351,16 +355,20 @@ const NewPost = () => {
               <ControlsContainer>
                 <LikesandCommentsIconContainer>
                   <HeartIconContainer>
-                    {post.isLiked &&
-                    isAuthenticated &&
-                    postUserId !== authUserId ? (
-                      <FullHeartIcon
-                        onClick={() => handleLikeToggle(post.post_id)}
-                      />
+                    {isAuthenticated && postUserId !== authUserId ? (
+                      post.isLiked ? (
+                        <FullHeartIcon
+                          onClick={() => handleLikeToggle(post.post_id)}
+                        />
+                      ) : (
+                        <EmptyHeartIcon
+                          onClick={() => handleLikeToggle(post.post_id)}
+                        />
+                      )
                     ) : (
-                      <EmptyHeartIcon
-                        onClick={() => handleLikeToggle(post.post_id)}
-                      />
+                      <div style={{ cursor: "not-allowed" }}>
+                        {post.isLiked ? <FullHeartIcon /> : <EmptyHeartIcon />}
+                      </div>
                     )}
                     <HeartCounterContainer>
                       <CounterNumber>{post.likesCount}</CounterNumber>
