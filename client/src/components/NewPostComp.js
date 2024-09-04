@@ -53,7 +53,7 @@ const NewPost = () => {
 
   const userId = auth.userId;
 
-  // Fetch posts from the API
+  // Fetch posts from the API and update local storage
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
@@ -62,8 +62,21 @@ const NewPost = () => {
         },
       });
 
+      // Log the entire response object
+      console.log("Fetched response from API:", response);
+
+      // Log the data specifically
+      console.log("Fetched posts data:", response.data);
+
+      // Check if the data is an array
       if (Array.isArray(response.data)) {
+        // Log the length of the posts array
+        console.log("Number of posts fetched:", response.data.length);
+
+        // Set posts to state
         setPosts(response.data);
+
+        // Update localStorage
         localStorage.setItem(`posts_${userId}`, JSON.stringify(response.data));
       } else {
         console.error("Fetched data is not an array:", response.data);
@@ -73,20 +86,10 @@ const NewPost = () => {
     }
   }, [auth.token, userId]);
 
-  // Initialize posts from localStorage or fetch from API
+  // Fetch posts on component mount or when auth.token or userId changes
   useEffect(() => {
-    const savedPosts =
-      JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
-    setPosts(savedPosts.length ? savedPosts : []);
-    if (!savedPosts.length) {
-      fetchPosts();
-    }
-  }, [fetchPosts, userId]);
-
-  // Update localStorage when posts change
-  useEffect(() => {
-    localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
-  }, [posts, userId]);
+    fetchPosts();
+  }, [fetchPosts]);
 
   // Handle input change for new post
   const handleCommentChange = (event) => {
@@ -255,6 +258,7 @@ const NewPost = () => {
   const handleLikeToggle = async (postId) => {
     console.log("Toggling like for post:", postId);
 
+    // Optimistically update the UI
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
         post.post_id === postId
@@ -283,9 +287,7 @@ const NewPost = () => {
       console.log("Response received:", response.data);
 
       if (response.status === 200) {
-        const { likesCount, isLiked } = response.data;
-
-        console.log("Updated like status:", { likesCount, isLiked });
+        const { likesCount } = response.data;
 
         // Update the state with the correct data from the server
         setPosts((prevPosts) =>
@@ -294,7 +296,7 @@ const NewPost = () => {
               ? {
                   ...post,
                   likesCount: isNaN(likesCount) ? 0 : likesCount,
-                  isLiked: isLiked,
+                  isLiked: !post.isLiked,
                 }
               : post
           )
@@ -362,6 +364,7 @@ const NewPost = () => {
 
       {posts.length > 0 ? (
         posts.map((post, index) => {
+          console.log("Rendering post:", post);
           const postUserId = Number(post.user_id);
           const authUserId = Number(auth.userId);
 
@@ -423,6 +426,7 @@ const NewPost = () => {
                       <CounterNumber>{post.likesCount}</CounterNumber>
                     </HeartCounterContainer>
                   </HeartIconContainer>
+
                   <CommentIconContainer>
                     <CommentIcon />
                     <CommentCounterContainer>
