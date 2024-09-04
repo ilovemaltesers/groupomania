@@ -255,6 +255,20 @@ const NewPost = () => {
   const handleLikeToggle = async (postId) => {
     console.log("Toggling like for post:", postId);
 
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.post_id === postId
+          ? {
+              ...post,
+              isLiked: !post.isLiked,
+              likesCount: post.isLiked
+                ? Math.max(post.likesCount - 1, 0)
+                : post.likesCount + 1,
+            }
+          : post
+      )
+    );
+
     try {
       const response = await axios.post(
         `http://localhost:3000/api/like/${postId}`,
@@ -273,6 +287,7 @@ const NewPost = () => {
 
         console.log("Updated like status:", { likesCount, isLiked });
 
+        // Update the state with the correct data from the server
         setPosts((prevPosts) =>
           prevPosts.map((post) =>
             post.post_id === postId
@@ -289,13 +304,17 @@ const NewPost = () => {
       }
     } catch (error) {
       console.error("Error updating like status:", error);
+
+      // Revert the optimistic update in case of an error
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.post_id === postId
             ? {
                 ...post,
-                isLiked: !post.isLiked, // Revert optimistic update
-                likesCount: isNaN(post.likesCount) ? 0 : post.likesCount, // Ensure valid count
+                isLiked: !post.isLiked,
+                likesCount: post.isLiked
+                  ? post.likesCount + 1
+                  : Math.max(post.likesCount - 1, 0),
               }
             : post
         )

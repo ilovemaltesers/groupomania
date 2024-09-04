@@ -55,10 +55,28 @@ const likePost = async (req, res) => {
     console.log("Like insert result:", likeInsertResult.rows);
 
     if (likeInsertResult.rows.length > 0) {
-      res.status(201).json({
-        message: "Post liked successfully",
-        like: likeInsertResult.rows[0],
-      });
+      // Update the likes count in the posts table
+      const updateLikesCountQuery = `
+        UPDATE public.posts
+        SET likes_count = likes_count + 1
+        WHERE post_id = $1
+        RETURNING likes_count;
+      `;
+      const updateLikesCountValues = [post_id];
+      const updateLikesCountResult = await client.query(
+        updateLikesCountQuery,
+        updateLikesCountValues
+      );
+      console.log("Update likes count result:", updateLikesCountResult.rows);
+
+      if (updateLikesCountResult.rows.length > 0) {
+        res.status(201).json({
+          message: "Post liked successfully",
+          likesCount: updateLikesCountResult.rows[0].likes_count,
+        });
+      } else {
+        res.status(500).json({ message: "Error updating likes count" });
+      }
     } else {
       res.status(500).json({ message: "Error liking post" });
     }
@@ -68,7 +86,6 @@ const likePost = async (req, res) => {
   } finally {
     if (client) {
       await client.end();
-
       console.log("Database connection closed.");
     }
   }
