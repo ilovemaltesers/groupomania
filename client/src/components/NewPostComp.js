@@ -62,16 +62,9 @@ const NewPost = () => {
         },
       });
 
-      // Log the entire response object
-      console.log("Fetched response from API:", response);
-
-      // Log the data specifically
-      console.log("Fetched posts data:", response.data);
-
       // Check if the data is an array
       if (Array.isArray(response.data)) {
         // Log the length of the posts array
-        console.log("Number of posts fetched:", response.data.length);
 
         // Set posts to state
         setPosts(response.data);
@@ -364,7 +357,6 @@ const NewPost = () => {
 
       {posts.length > 0 ? (
         posts.map((post, index) => {
-          console.log("Rendering post:", post);
           const postUserId = Number(post.user_id);
           const authUserId = Number(auth.userId);
 
@@ -423,7 +415,9 @@ const NewPost = () => {
                       </div>
                     )}
                     <HeartCounterContainer>
-                      <CounterNumber>{post.likesCount}</CounterNumber>
+                      <CounterNumber>
+                        {isNaN(post.likesCount) ? 0 : post.likesCount}
+                      </CounterNumber>
                     </HeartCounterContainer>
                   </HeartIconContainer>
 
