@@ -53,7 +53,7 @@ const NewPost = () => {
 
   const userId = auth.userId;
 
-  // Fetch posts from the API and update local storage
+  // Fetch posts from the API
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
@@ -62,14 +62,8 @@ const NewPost = () => {
         },
       });
 
-      // Check if the data is an array
       if (Array.isArray(response.data)) {
-        // Log the length of the posts array
-
-        // Set posts to state
         setPosts(response.data);
-
-        // Update localStorage
         localStorage.setItem(`posts_${userId}`, JSON.stringify(response.data));
       } else {
         console.error("Fetched data is not an array:", response.data);
@@ -79,10 +73,20 @@ const NewPost = () => {
     }
   }, [auth.token, userId]);
 
-  // Fetch posts on component mount or when auth.token or userId changes
+  // Initialize posts from localStorage or fetch from API
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    const savedPosts =
+      JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
+    setPosts(savedPosts.length ? savedPosts : []);
+    if (!savedPosts.length) {
+      fetchPosts();
+    }
+  }, [fetchPosts, userId]);
+
+  // Update localStorage when posts change
+  useEffect(() => {
+    localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
+  }, [posts, userId]);
 
   // Handle input change for new post
   const handleCommentChange = (event) => {
@@ -251,7 +255,6 @@ const NewPost = () => {
   const handleLikeToggle = async (postId) => {
     console.log("Toggling like for post:", postId);
 
-    // Optimistically update the UI
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
         post.post_id === postId
@@ -280,7 +283,9 @@ const NewPost = () => {
       console.log("Response received:", response.data);
 
       if (response.status === 200) {
-        const { likesCount } = response.data;
+        const { likesCount, isLiked } = response.data;
+
+        console.log("Updated like status:", { likesCount, isLiked });
 
         // Update the state with the correct data from the server
         setPosts((prevPosts) =>
@@ -289,7 +294,7 @@ const NewPost = () => {
               ? {
                   ...post,
                   likesCount: isNaN(likesCount) ? 0 : likesCount,
-                  isLiked: !post.isLiked,
+                  isLiked: isLiked,
                 }
               : post
           )
@@ -359,6 +364,7 @@ const NewPost = () => {
         posts.map((post, index) => {
           const postUserId = Number(post.user_id);
           const authUserId = Number(auth.userId);
+          console.log("profile_picture", post.profile_picture);
 
           return (
             <PostCard key={post.post_id}>
@@ -415,12 +421,9 @@ const NewPost = () => {
                       </div>
                     )}
                     <HeartCounterContainer>
-                      <CounterNumber>
-                        {isNaN(post.likesCount) ? 0 : post.likesCount}
-                      </CounterNumber>
+                      <CounterNumber>{post.likesCount}</CounterNumber>
                     </HeartCounterContainer>
                   </HeartIconContainer>
-
                   <CommentIconContainer>
                     <CommentIcon />
                     <CommentCounterContainer>
