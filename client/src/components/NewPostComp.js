@@ -63,8 +63,18 @@ const NewPost = () => {
       });
 
       if (Array.isArray(response.data)) {
-        setPosts(response.data);
-        localStorage.setItem(`posts_${userId}`, JSON.stringify(response.data));
+        const postsWithDefaults = response.data.map((post) => ({
+          ...post,
+          isLiked: post.isLiked || false,
+          likesCount: post.likesCount || 0,
+          comments: post.comments || [],
+        }));
+
+        setPosts(postsWithDefaults);
+        localStorage.setItem(
+          `posts_${userId}`,
+          JSON.stringify(postsWithDefaults)
+        );
       } else {
         console.error("Fetched data is not an array:", response.data);
       }
@@ -77,8 +87,9 @@ const NewPost = () => {
   useEffect(() => {
     const savedPosts =
       JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
-    setPosts(savedPosts.length ? savedPosts : []);
-    if (!savedPosts.length) {
+    if (savedPosts.length) {
+      setPosts(savedPosts);
+    } else {
       fetchPosts();
     }
   }, [fetchPosts, userId]);
@@ -252,9 +263,8 @@ const NewPost = () => {
     }
   };
 
+  // Toggle like status
   const handleLikeToggle = async (postId) => {
-    console.log("Toggling like for post:", postId);
-
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
         post.post_id === postId
@@ -280,14 +290,9 @@ const NewPost = () => {
         }
       );
 
-      console.log("Response received:", response.data);
-
       if (response.status === 200) {
         const { likesCount, isLiked } = response.data;
 
-        console.log("Updated like status:", { likesCount, isLiked });
-
-        // Update the state with the correct data from the server
         setPosts((prevPosts) =>
           prevPosts.map((post) =>
             post.post_id === postId
@@ -302,31 +307,13 @@ const NewPost = () => {
           )
         );
       } else {
-        console.error("Failed to update like status:", response.status);
+        console.error("Failed to update like status:", response.data);
       }
     } catch (error) {
       console.error("Error updating like status:", error);
-
-      // Revert the optimistic update in case of an error
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.post_id === postId
-            ? {
-                ...post,
-                isLiked: !post.isLiked,
-                likesCount: post.isLiked
-                  ? Number(post.likesCount) + 1
-                  : Math.max(Number(post.likesCount) - 1, 0),
-              }
-            : post
-        )
-      );
     }
-
-    // Return the likesCount of the post with the given postId
-    const updatedPost = posts.find((post) => post.post_id === postId);
-    return updatedPost ? Number(updatedPost.likesCount) : 0;
   };
+
   return (
     <FeedMainContainer>
       <NewPostBody>
