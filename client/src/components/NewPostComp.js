@@ -53,7 +53,6 @@ const NewPost = () => {
 
   const userId = auth.userId;
 
-  // Fetch posts from the API
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
@@ -65,11 +64,9 @@ const NewPost = () => {
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
-          isLiked: post.isLiked || false,
-          likesCount: post.likesCount || 0,
-          comments: post.comments || [],
+          likesCount: post.likesCount || 0, // Default to 0 if undefined
+          isLiked: post.isLiked || false, // Default to false if undefined
         }));
-
         setPosts(postsWithDefaults);
         localStorage.setItem(
           `posts_${userId}`,
@@ -83,28 +80,14 @@ const NewPost = () => {
     }
   }, [auth.token, userId]);
 
-  // Initialize posts from localStorage or fetch from API
   useEffect(() => {
-    const savedPosts =
-      JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
-    if (savedPosts.length) {
-      setPosts(savedPosts);
-    } else {
-      fetchPosts();
-    }
-  }, [fetchPosts, userId]);
+    fetchPosts();
+  }, [fetchPosts]);
 
-  // Update localStorage when posts change
-  useEffect(() => {
-    localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
-  }, [posts, userId]);
-
-  // Handle input change for new post
   const handleCommentChange = (event) => {
     setContent(event.target.value);
   };
 
-  // Handle image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -112,7 +95,6 @@ const NewPost = () => {
     }
   };
 
-  // Submit a new post
   const handleSubmit = async () => {
     if (content || image) {
       try {
@@ -134,21 +116,19 @@ const NewPost = () => {
         );
 
         const newPost = {
-          given_name: auth.givenName,
-          family_name: auth.familyName,
-          post_id: response.data.post.post_id,
-          content: response.data.post.content,
-          media_upload: response.data.post.media_upload,
-          profile_picture: auth.profilePicture,
+          ...response.data.post,
           user_id: auth.userId,
-          created_at: response.data.post.created_at,
-          updated_at: response.data.post.updated_at,
+          profile_picture: auth.profilePicture,
           comments: [],
-          isLiked: false, // Initial like state
-          likesCount: 0, // Initial like count
+          isLiked: false,
+          likesCount: 0,
         };
 
         setPosts((prevPosts) => [newPost, ...prevPosts]);
+        localStorage.setItem(
+          `posts_${userId}`,
+          JSON.stringify([newPost, ...posts])
+        );
         setContent("");
         setImage(null);
       } catch (error) {
@@ -157,33 +137,19 @@ const NewPost = () => {
     }
   };
 
-  // Add a comment to a post
   const handleAddComment = (postIndex, newComment) => {
     setPosts((prevPosts) => {
       const updatedPosts = [...prevPosts];
-      updatedPosts[postIndex].comments = updatedPosts[postIndex].comments || [];
-      updatedPosts[postIndex].comments.push(newComment);
+      if (updatedPosts[postIndex]) {
+        updatedPosts[postIndex].comments =
+          updatedPosts[postIndex].comments || [];
+        updatedPosts[postIndex].comments.push(newComment);
+      }
       return updatedPosts;
     });
   };
 
-  // Remove a post
   const handleRemovePost = async (postId) => {
-    const postToDelete = posts.find((post) => post.post_id === postId);
-
-    if (!postToDelete) {
-      console.log("Post not found.");
-      return;
-    }
-
-    const postOwnerId = Number(postToDelete.user_id);
-    const currentUserId = Number(auth.userId);
-
-    if (postOwnerId !== currentUserId) {
-      console.log("You are not authorized to remove this post.");
-      return;
-    }
-
     try {
       const response = await axios.delete(
         `http://localhost:3000/api/post/${postId}`,
@@ -195,9 +161,9 @@ const NewPost = () => {
       );
 
       if (response.status === 200) {
-        setPosts((prevPosts) =>
-          prevPosts.filter((post) => post.post_id !== postId)
-        );
+        const updatedPosts = posts.filter((post) => post.post_id !== postId);
+        setPosts(updatedPosts);
+        localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
       } else {
         console.error("Failed to remove post:", response.data);
       }
@@ -206,25 +172,18 @@ const NewPost = () => {
     }
   };
 
-  // Edit a post
   const handleEditPost = (postId) => {
     const post = posts.find((post) => post.post_id === postId);
-
-    if (!post) {
-      console.log("Post not found.");
-      return;
+    if (post) {
+      setPostToEdit(post);
+      setShowEditPostPopUp(true);
     }
-
-    setPostToEdit(post);
-    setShowEditPostPopUp(true);
   };
 
-  // Save edited post
   const handleSaveEditedPost = async (updatedPost) => {
     try {
       const formData = new FormData();
       formData.append("content", updatedPost.content || "");
-
       if (updatedPost.image) {
         formData.append("image", updatedPost.image);
       }
@@ -241,17 +200,17 @@ const NewPost = () => {
       );
 
       if (response.status === 200) {
-        setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.post_id === updatedPost.post_id
-              ? {
-                  ...post,
-                  ...updatedPost,
-                  media_upload: response.data.post.media_upload,
-                }
-              : post
-          )
+        const updatedPosts = posts.map((post) =>
+          post.post_id === updatedPost.post_id
+            ? {
+                ...post,
+                ...updatedPost,
+                media_upload: response.data.post.media_upload,
+              }
+            : post
         );
+        setPosts(updatedPosts);
+        localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
       } else {
         console.error(
           "Failed to update the post. Server returned:",
@@ -263,21 +222,18 @@ const NewPost = () => {
     }
   };
 
-  // Toggle like status
   const handleLikeToggle = async (postId) => {
-    // Optimistically update UI for better user experience
+    const post = posts.find((post) => post.post_id === postId);
+    if (!post) return;
+
+    const updatedPost = {
+      ...post,
+      isLiked: !post.isLiked,
+      likesCount: post.isLiked ? post.likesCount - 1 : post.likesCount + 1,
+    };
+
     setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.post_id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likesCount: post.isLiked
-                ? Math.max(Number(post.likesCount) - 1, 0)
-                : Number(post.likesCount) + 1,
-            }
-          : post
-      )
+      prevPosts.map((p) => (p.post_id === postId ? updatedPost : p))
     );
 
     try {
@@ -290,43 +246,42 @@ const NewPost = () => {
           },
         }
       );
-      console.log("API Response:", response.data);
 
       if (response.status === 200) {
         const { likesCount, isLiked } = response.data;
-        console.log("Updated like status:", response.data);
-
-        // Update the local state based on server response
         setPosts((prevPosts) =>
-          prevPosts.map((post) =>
-            post.post_id === postId
-              ? {
-                  ...post,
-                  likesCount: isNaN(Number(likesCount))
-                    ? 0
-                    : Number(likesCount),
-                  isLiked: isLiked,
-                }
-              : post
+          prevPosts.map((p) =>
+            p.post_id === postId ? { ...p, likesCount, isLiked } : p
           )
         );
+        localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
       } else {
         console.error("Failed to update like status:", response.data);
+        // Revert optimistic update
+        setPosts((prevPosts) =>
+          prevPosts.map((p) =>
+            p.post_id === postId
+              ? {
+                  ...p,
+                  isLiked: !updatedPost.isLiked,
+                  likesCount: updatedPost.likesCount,
+                }
+              : p
+          )
+        );
       }
     } catch (error) {
       console.error("Error updating like status:", error);
-      // Revert optimistic update in case of error
+      // Revert optimistic update
       setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.post_id === postId
+        prevPosts.map((p) =>
+          p.post_id === postId
             ? {
-                ...post,
-                isLiked: !post.isLiked,
-                likesCount: post.isLiked
-                  ? Math.max(Number(post.likesCount) - 1, 0)
-                  : Number(post.likesCount) + 1,
+                ...p,
+                isLiked: !updatedPost.isLiked,
+                likesCount: updatedPost.likesCount,
               }
-            : post
+            : p
         )
       );
     }
