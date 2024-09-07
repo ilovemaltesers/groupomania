@@ -26,7 +26,7 @@ const likePost = async (req, res) => {
   let client;
   try {
     client = await db();
-    console.log("Connected to the database.");
+    console.log("Successfully connected to PostgreSQL database");
 
     // Check if the user has already liked the post
     const checkLikeQuery = `
@@ -38,27 +38,21 @@ const likePost = async (req, res) => {
     console.log("Like query result:", likeResult.rows);
 
     if (likeResult.rows.length > 0) {
-      console.error("User has already liked this post.");
-      return res
-        .status(403)
-        .json({ message: "User has already liked this post" });
-    }
+      // User has already liked the post; proceed to unlike
+      console.log("User has already liked this post. Proceeding to unlike.");
 
-    // Proceed to insert a new like
-    const likeQuery = `
-      INSERT INTO public.likes (post_id, user_id, created_at)
-      VALUES ($1, $2, NOW())
-      RETURNING *;
-    `;
-    const likeValues = [post_id, userId];
-    const likeInsertResult = await client.query(likeQuery, likeValues);
-    console.log("Like insert result:", likeInsertResult.rows);
+      // Remove the like
+      const removeLikeQuery = `
+        DELETE FROM public.likes
+        WHERE post_id = $1 AND user_id = $2;
+      `;
+      const removeLikeValues = [post_id, userId];
+      await client.query(removeLikeQuery, removeLikeValues);
 
-    if (likeInsertResult.rows.length > 0) {
       // Update the likes count in the posts table
       const updateLikesCountQuery = `
         UPDATE public.posts
-        SET likes_count = likes_count + 1
+        SET likes_count = likes_count - 1
         WHERE post_id = $1
         RETURNING likes_count;
       `;
@@ -70,15 +64,53 @@ const likePost = async (req, res) => {
       console.log("Update likes count result:", updateLikesCountResult.rows);
 
       if (updateLikesCountResult.rows.length > 0) {
-        res.status(201).json({
-          message: "Post liked successfully",
+        res.status(200).json({
+          message: "Post unliked successfully",
           likesCount: updateLikesCountResult.rows[0].likes_count,
         });
       } else {
         res.status(500).json({ message: "Error updating likes count" });
       }
     } else {
-      res.status(500).json({ message: "Error liking post" });
+      // User has not liked the post yet; proceed to like
+      console.log("User has not liked this post. Proceeding to like.");
+
+      // Insert the new like
+      const likeQuery = `
+        INSERT INTO public.likes (post_id, user_id, created_at)
+        VALUES ($1, $2, NOW())
+        RETURNING *;
+      `;
+      const likeValues = [post_id, userId];
+      const likeInsertResult = await client.query(likeQuery, likeValues);
+      console.log("Like insert result:", likeInsertResult.rows);
+
+      if (likeInsertResult.rows.length > 0) {
+        // Update the likes count in the posts table
+        const updateLikesCountQuery = `
+          UPDATE public.posts
+          SET likes_count = likes_count + 1
+          WHERE post_id = $1
+          RETURNING likes_count;
+        `;
+        const updateLikesCountValues = [post_id];
+        const updateLikesCountResult = await client.query(
+          updateLikesCountQuery,
+          updateLikesCountValues
+        );
+        console.log("Update likes count result:", updateLikesCountResult.rows);
+
+        if (updateLikesCountResult.rows.length > 0) {
+          res.status(201).json({
+            message: "Post liked successfully",
+            likesCount: updateLikesCountResult.rows[0].likes_count,
+          });
+        } else {
+          res.status(500).json({ message: "Error updating likes count" });
+        }
+      } else {
+        res.status(500).json({ message: "Error liking post" });
+      }
     }
   } catch (error) {
     console.error("Error during post like:", error);

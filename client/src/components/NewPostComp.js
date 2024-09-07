@@ -265,6 +265,7 @@ const NewPost = () => {
 
   // Toggle like status
   const handleLikeToggle = async (postId) => {
+    // Optimistically update UI for better user experience
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
         post.post_id === postId
@@ -289,10 +290,13 @@ const NewPost = () => {
           },
         }
       );
+      console.log("API Response:", response.data);
 
       if (response.status === 200) {
         const { likesCount, isLiked } = response.data;
+        console.log("Updated like status:", response.data);
 
+        // Update the local state based on server response
         setPosts((prevPosts) =>
           prevPosts.map((post) =>
             post.post_id === postId
@@ -311,6 +315,20 @@ const NewPost = () => {
       }
     } catch (error) {
       console.error("Error updating like status:", error);
+      // Revert optimistic update in case of error
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.post_id === postId
+            ? {
+                ...post,
+                isLiked: !post.isLiked,
+                likesCount: post.isLiked
+                  ? Math.max(Number(post.likesCount) - 1, 0)
+                  : Number(post.likesCount) + 1,
+              }
+            : post
+        )
+      );
     }
   };
 
