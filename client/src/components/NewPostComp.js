@@ -262,8 +262,8 @@ const NewPost = () => {
               ...post,
               isLiked: !post.isLiked,
               likesCount: post.isLiked
-                ? Math.max(post.likesCount - 1, 0)
-                : post.likesCount + 1,
+                ? Math.max(Number(post.likesCount) - 1, 0)
+                : Number(post.likesCount) + 1,
             }
           : post
       )
@@ -293,7 +293,9 @@ const NewPost = () => {
             post.post_id === postId
               ? {
                   ...post,
-                  likesCount: isNaN(likesCount) ? 0 : likesCount,
+                  likesCount: isNaN(Number(likesCount))
+                    ? 0
+                    : Number(likesCount),
                   isLiked: isLiked,
                 }
               : post
@@ -313,15 +315,18 @@ const NewPost = () => {
                 ...post,
                 isLiked: !post.isLiked,
                 likesCount: post.isLiked
-                  ? post.likesCount + 1
-                  : Math.max(post.likesCount - 1, 0),
+                  ? Number(post.likesCount) + 1
+                  : Math.max(Number(post.likesCount) - 1, 0),
               }
             : post
         )
       );
     }
-  };
 
+    // Return the likesCount of the post with the given postId
+    const updatedPost = posts.find((post) => post.post_id === postId);
+    return updatedPost ? Number(updatedPost.likesCount) : 0;
+  };
   return (
     <FeedMainContainer>
       <NewPostBody>
@@ -364,7 +369,6 @@ const NewPost = () => {
         posts.map((post, index) => {
           const postUserId = Number(post.user_id);
           const authUserId = Number(auth.userId);
-          console.log("profile_picture", post.profile_picture);
 
           return (
             <PostCard key={post.post_id}>

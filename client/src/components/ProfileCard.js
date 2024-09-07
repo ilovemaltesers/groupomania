@@ -79,7 +79,13 @@ const ImageUploadInput = styled.input`
 
 const ProfileCard = () => {
   const [image, setImage] = useState(null);
+  const [roleTitle, setRoleTitle] = useState("");
+  const [aboutMe, setAboutMe] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
+  // Fetch profile image on component mount
   useEffect(() => {
     const fetchImage = async () => {
       try {
@@ -98,9 +104,7 @@ const ProfileCard = () => {
           }
         );
 
-        console.log("Fetched image data:", response.data);
-
-        // Use the base URL from the server for image display
+        // Set image URL for display
         setImage(`http://localhost:3000/${response.data.imageUrl}`);
       } catch (error) {
         console.error(
@@ -113,19 +117,19 @@ const ProfileCard = () => {
     fetchImage();
   }, []);
 
+  // Handle image file upload
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      console.log("Preview image URL:", imageUrl);
       setImage(imageUrl);
-      saveImage(file);
+      saveImage(file); // Call save image function
     }
   };
 
+  // Save uploaded image to server
   const saveImage = async (file) => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       console.error("Token is not available");
       return;
@@ -146,15 +150,31 @@ const ProfileCard = () => {
         }
       );
 
-      console.log("Uploaded image response:", response.data);
-
-      // Use the base URL from the server for image display
       setImage(`http://localhost:3000/${response.data.imageUrl}`);
     } catch (error) {
       console.error(
         "Error uploading image:",
         error.response ? error.response.data : error.message
       );
+    }
+  };
+
+  // Handle form submission (e.g., saving role/title and about me)
+  const handleSaveChanges = (e) => {
+    e.preventDefault();
+    // Handle form data submission here (e.g., send role/title, about me to API)
+    console.log("Role Title:", roleTitle);
+    console.log("About Me:", aboutMe);
+  };
+
+  // Handle password change
+  const handleChangePassword = (e) => {
+    e.preventDefault();
+    if (newPassword === confirmPassword) {
+      // Send the new password to the server
+      console.log("Changing password to:", newPassword);
+    } else {
+      console.error("Passwords do not match");
     }
   };
 
@@ -169,7 +189,7 @@ const ProfileCard = () => {
                 {image ? (
                   <img
                     src={image}
-                    alt="Uploaded"
+                    alt="Profile"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -197,34 +217,39 @@ const ProfileCard = () => {
                   <Form.Control
                     type="text"
                     placeholder="Enter your role or title"
+                    value={roleTitle}
+                    onChange={(e) => setRoleTitle(e.target.value)}
                   />
                 </Form.Group>
               </LeftColumn>
               <RightColumn md={6}>
-                <Form onSubmit={(e) => e.preventDefault()}>
+                <Form onSubmit={handleSaveChanges}>
                   <Form.Group controlId="formAboutMe">
                     <Form.Label>Edit About Me</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={5}
                       placeholder="Write something about yourself"
+                      value={aboutMe}
+                      onChange={(e) => setAboutMe(e.target.value)}
                     />
                   </Form.Group>
 
-                  <ButtonSaveChanges
-                    variant="primary"
-                    type="submit"
-                    className="mt-3"
-                  >
+                  <ButtonSaveChanges type="submit" className="mt-3">
                     Save Changes
                   </ButtonSaveChanges>
+                </Form>
 
-                  <hr className="my-4" />
+                <hr className="my-4" />
+
+                <Form onSubmit={handleChangePassword}>
                   <Form.Group controlId="formCurrentPassword">
                     <Form.Label>Current Password</Form.Label>
                     <Form.Control
                       type="password"
                       placeholder="Enter current password"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                     />
                   </Form.Group>
 
@@ -233,6 +258,8 @@ const ProfileCard = () => {
                     <Form.Control
                       type="password"
                       placeholder="Enter new password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
                     />
                   </Form.Group>
 
@@ -241,14 +268,12 @@ const ProfileCard = () => {
                     <Form.Control
                       type="password"
                       placeholder="Confirm new password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </Form.Group>
 
-                  <ButtonSaveChanges
-                    variant="primary"
-                    type="submit"
-                    className="mt-3"
-                  >
+                  <ButtonSaveChanges type="submit" className="mt-3">
                     Change Password
                   </ButtonSaveChanges>
                 </Form>
