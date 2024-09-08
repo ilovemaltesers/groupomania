@@ -61,7 +61,6 @@ const NewPost = () => {
         },
       });
 
-      // Log the entire response object
       console.log("Full response:", response);
       console.log("Fetched posts data:", response.data);
 
@@ -72,11 +71,7 @@ const NewPost = () => {
           isLiked: post.isLiked || false,
         }));
 
-        // Log posts after processing defaults
-
         setPosts(postsWithDefaults);
-
-        // Log to check local storage set operation
         localStorage.setItem(
           `posts_${userId}`,
           JSON.stringify(postsWithDefaults)
@@ -236,19 +231,16 @@ const NewPost = () => {
     const post = posts.find((post) => post.post_id === postId);
     if (!post) return;
 
-    // Create optimistic UI update
     const updatedPost = {
       ...post,
       isLiked: !post.isLiked,
       likesCount: post.isLiked ? post.likesCount - 1 : post.likesCount + 1,
     };
 
-    // Update state optimistically
     setPosts((prevPosts) =>
       prevPosts.map((p) => (p.post_id === postId ? updatedPost : p))
     );
 
-    // Function to revert optimistic update in case of failure
     const revertOptimisticUpdate = () => {
       setPosts((prevPosts) =>
         prevPosts.map((p) =>
@@ -264,7 +256,6 @@ const NewPost = () => {
     };
 
     try {
-      // Send the like/unlike request to the backend
       const response = await axios.post(
         `http://localhost:3000/api/like/${postId}`,
         {},
@@ -275,28 +266,25 @@ const NewPost = () => {
         }
       );
 
-      // Check for both 200 and 201 status codes
       if (response.status === 200 || response.status === 201) {
         const { likesCount, isLiked } = response.data;
 
-        // Update the post with actual response data
         setPosts((prevPosts) => {
           const updatedPosts = prevPosts.map((p) =>
             p.post_id === postId ? { ...p, likesCount, isLiked } : p
           );
 
-          // Update localStorage with the updated posts array
           localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
 
           return updatedPosts;
         });
       } else {
         console.error("Failed to update like status:", response.data);
-        revertOptimisticUpdate(); // Revert the optimistic update
+        revertOptimisticUpdate();
       }
     } catch (error) {
       console.error("Error updating like status:", error);
-      revertOptimisticUpdate(); // Revert the optimistic update on error
+      revertOptimisticUpdate();
     }
   };
 
@@ -378,7 +366,6 @@ const NewPost = () => {
                 />
               )}
 
-              {/* Likes and Comments section */}
               <ControlsContainer>
                 <LikesandCommentsIconContainer>
                   <HeartIconContainer>
