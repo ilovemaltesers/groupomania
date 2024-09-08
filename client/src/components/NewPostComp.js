@@ -55,23 +55,41 @@ const NewPost = () => {
 
   const fetchPosts = useCallback(async () => {
     try {
+      console.log("Fetching posts...");
+
       const response = await axios.get("http://localhost:3000/api/post", {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
       });
 
+      // Log the entire response object
+      console.log("Full response:", response);
+
+      // Log the response data
+      console.log("Response data:", response.data);
+
       if (Array.isArray(response.data)) {
+        // Log the posts array before setting state
+        console.log("Raw posts data:", response.data);
+
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
-          likesCount: post.likesCount || 0, // Default to 0 if undefined
-          isLiked: post.isLiked || false, // Default to false if undefined
+          likesCount: post.likes_count || 0, // Ensure the correct field name
+          isLiked: post.isLiked || false,
         }));
+
+        // Log posts after processing defaults
+        console.log("Posts with defaults:", postsWithDefaults);
+
         setPosts(postsWithDefaults);
+
+        // Log to check local storage set operation
         localStorage.setItem(
           `posts_${userId}`,
           JSON.stringify(postsWithDefaults)
         );
+        console.log("Posts saved to localStorage.");
       } else {
         console.error("Fetched data is not an array:", response.data);
       }
@@ -226,53 +244,20 @@ const NewPost = () => {
     const post = posts.find((post) => post.post_id === postId);
     if (!post) return;
 
+    // Create optimistic UI update
     const updatedPost = {
       ...post,
       isLiked: !post.isLiked,
       likesCount: post.isLiked ? post.likesCount - 1 : post.likesCount + 1,
     };
 
+    // Update state optimistically
     setPosts((prevPosts) =>
       prevPosts.map((p) => (p.post_id === postId ? updatedPost : p))
     );
 
-    try {
-      const response = await axios.post(
-        `http://localhost:3000/api/like/${postId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${auth.token}`,
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        const { likesCount, isLiked } = response.data;
-        setPosts((prevPosts) =>
-          prevPosts.map((p) =>
-            p.post_id === postId ? { ...p, likesCount, isLiked } : p
-          )
-        );
-        localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
-      } else {
-        console.error("Failed to update like status:", response.data);
-        // Revert optimistic update
-        setPosts((prevPosts) =>
-          prevPosts.map((p) =>
-            p.post_id === postId
-              ? {
-                  ...p,
-                  isLiked: !updatedPost.isLiked,
-                  likesCount: updatedPost.likesCount,
-                }
-              : p
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error updating like status:", error);
-      // Revert optimistic update
+    // Function to revert optimistic update in case of failure
+    const revertOptimisticUpdate = () => {
       setPosts((prevPosts) =>
         prevPosts.map((p) =>
           p.post_id === postId
@@ -284,6 +269,42 @@ const NewPost = () => {
             : p
         )
       );
+    };
+
+    try {
+      // Send the like/unlike request to the backend
+      const response = await axios.post(
+        `http://localhost:3000/api/like/${postId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
+
+      // Check for both 200 and 201 status codes
+      if (response.status === 200 || response.status === 201) {
+        const { likesCount, isLiked } = response.data;
+
+        // Update the post with actual response data
+        setPosts((prevPosts) => {
+          const updatedPosts = prevPosts.map((p) =>
+            p.post_id === postId ? { ...p, likesCount, isLiked } : p
+          );
+
+          // Update localStorage with the updated posts array
+          localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
+
+          return updatedPosts;
+        });
+      } else {
+        console.error("Failed to update like status:", response.data);
+        revertOptimisticUpdate(); // Revert the optimistic update
+      }
+    } catch (error) {
+      console.error("Error updating like status:", error);
+      revertOptimisticUpdate(); // Revert the optimistic update on error
     }
   };
 
