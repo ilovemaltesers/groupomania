@@ -53,53 +53,49 @@ const NewPost = () => {
 
   const userId = auth.userId;
 
-  const fetchPosts = useCallback(async () => {
+  // The fetchPosts function remains the same, but make sure it's inside the component
+  const fetchPosts = async () => {
     try {
+      // Attempt to load posts from localStorage first
+      const localPosts =
+        JSON.parse(localStorage.getItem(`posts_${userId}`)) || [];
+      setPosts(localPosts); // Display cached posts immediately
+
+      // Fetch posts from the API
       const response = await axios.get("http://localhost:3000/api/post", {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
       });
 
-      console.log("Full response:", response);
-      console.log("Fetched posts data:", response.data);
-
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
-          likesCount: post.likes_count || 0, // Ensure the correct field name
+          likesCount: Number(post.likes_count) || 0, // Ensure likesCount is a number
           isLiked: post.isLiked || false,
         }));
 
-        setPosts(postsWithDefaults);
+        // Save the posts to localStorage for future reference
         localStorage.setItem(
           `posts_${userId}`,
           JSON.stringify(postsWithDefaults)
         );
-        console.log("Posts saved to localStorage.");
+        setPosts(postsWithDefaults); // Update the state with fresh posts from the API
       } else {
         console.error("Fetched data is not an array:", response.data);
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  }, [auth.token, userId]);
+  };
 
+  // useEffect to call fetchPosts when component mounts
   useEffect(() => {
     fetchPosts();
-  }, [fetchPosts]);
+    // Since you only want this to run once on mount, you can leave the dependency array empty
+  }, []);
 
-  const handleCommentChange = (event) => {
-    setContent(event.target.value);
-  };
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImage(file);
-    }
-  };
-
+  // Handle new post submission
   const handleSubmit = async () => {
     if (content || image) {
       try {
@@ -126,14 +122,13 @@ const NewPost = () => {
           profile_picture: auth.profilePicture,
           comments: [],
           isLiked: false,
-          likesCount: response.data.post.likes_count || 0,
+          likesCount: Number(response.data.post.likes_count) || 0, // Use new field name
         };
 
-        setPosts((prevPosts) => [newPost, ...prevPosts]);
-        localStorage.setItem(
-          `posts_${userId}`,
-          JSON.stringify([newPost, ...posts])
-        );
+        // Update posts and local storage
+        const updatedPosts = [newPost, ...posts];
+        localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
+        setPosts(updatedPosts);
         setContent("");
         setImage(null);
       } catch (error) {
@@ -142,6 +137,7 @@ const NewPost = () => {
     }
   };
 
+  // Handle adding a comment
   const handleAddComment = (postIndex, newComment) => {
     setPosts((prevPosts) => {
       const updatedPosts = [...prevPosts];
@@ -154,6 +150,7 @@ const NewPost = () => {
     });
   };
 
+  // Handle removing a post
   const handleRemovePost = async (postId) => {
     try {
       const response = await axios.delete(
@@ -177,6 +174,7 @@ const NewPost = () => {
     }
   };
 
+  // Handle editing a post
   const handleEditPost = (postId) => {
     const post = posts.find((post) => post.post_id === postId);
     if (post) {
@@ -185,6 +183,7 @@ const NewPost = () => {
     }
   };
 
+  // Handle saving edited post
   const handleSaveEditedPost = async (updatedPost) => {
     try {
       const formData = new FormData();
@@ -211,11 +210,14 @@ const NewPost = () => {
                 ...post,
                 ...updatedPost,
                 media_upload: response.data.post.media_upload,
+                likesCount: Number(response.data.post.likes_count) || 0, // Convert to number and use new field name
               }
             : post
         );
-        setPosts(updatedPosts);
+
+        // Update posts and local storage
         localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
+        setPosts(updatedPosts);
       } else {
         console.error(
           "Failed to update the post. Server returned:",
@@ -227,6 +229,7 @@ const NewPost = () => {
     }
   };
 
+  // Handle like toggle
   const handleLikeToggle = async (postId) => {
     const post = posts.find((post) => post.post_id === postId);
     if (!post) return;
@@ -237,23 +240,11 @@ const NewPost = () => {
       likesCount: post.isLiked ? post.likesCount - 1 : post.likesCount + 1,
     };
 
+    console.log("Updated Post:", updatedPost); // Debug log
+
     setPosts((prevPosts) =>
       prevPosts.map((p) => (p.post_id === postId ? updatedPost : p))
     );
-
-    const revertOptimisticUpdate = () => {
-      setPosts((prevPosts) =>
-        prevPosts.map((p) =>
-          p.post_id === postId
-            ? {
-                ...p,
-                isLiked: !updatedPost.isLiked,
-                likesCount: updatedPost.likesCount,
-              }
-            : p
-        )
-      );
-    };
 
     try {
       const response = await axios.post(
@@ -269,22 +260,22 @@ const NewPost = () => {
       if (response.status === 200 || response.status === 201) {
         const { likesCount, isLiked } = response.data;
 
+        console.log("Server Response:", response.data); // Debug log
+
         setPosts((prevPosts) => {
           const updatedPosts = prevPosts.map((p) =>
-            p.post_id === postId ? { ...p, likesCount, isLiked } : p
+            p.post_id === postId
+              ? { ...p, likesCount: Number(likesCount), isLiked }
+              : p
           );
-
           localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
-
           return updatedPosts;
         });
       } else {
         console.error("Failed to update like status:", response.data);
-        revertOptimisticUpdate();
       }
     } catch (error) {
       console.error("Error updating like status:", error);
-      revertOptimisticUpdate();
     }
   };
 
@@ -295,13 +286,13 @@ const NewPost = () => {
         <NewPostTextarea
           placeholder="Write your comment..."
           value={content}
-          onChange={handleCommentChange}
+          onChange={(e) => setContent(e.target.value)}
         />
         <NewPostButtonContainer>
           <input
             type="file"
             accept="image/*"
-            onChange={handleImageUpload}
+            onChange={(e) => setImage(e.target.files[0])}
             style={{ display: "none" }}
             id="upload-image"
           />
@@ -366,6 +357,7 @@ const NewPost = () => {
                 />
               )}
 
+              {/* Likes and Comments section */}
               <ControlsContainer>
                 <LikesandCommentsIconContainer>
                   <HeartIconContainer>
@@ -391,9 +383,7 @@ const NewPost = () => {
                   <CommentIconContainer>
                     <CommentIcon />
                     <CommentCounterContainer>
-                      <CounterNumber>
-                        {post.comments ? post.comments.length : 0}
-                      </CounterNumber>
+                      <CounterNumber>{post.likesCount}</CounterNumber>
                     </CommentCounterContainer>
                   </CommentIconContainer>
                 </LikesandCommentsIconContainer>
