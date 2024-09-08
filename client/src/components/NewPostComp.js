@@ -73,7 +73,6 @@ const NewPost = () => {
         }));
 
         // Log posts after processing defaults
-        console.log("Posts with defaults:", postsWithDefaults);
 
         setPosts(postsWithDefaults);
 
@@ -128,8 +127,8 @@ const NewPost = () => {
 
         const newPost = {
           ...response.data.post,
-          userId: auth.userId,
-          profilePicture: auth.profilePicture,
+          user_id: auth.userId,
+          profile_picture: auth.profilePicture,
           comments: [],
           isLiked: false,
           likesCount: response.data.post.likes_count || 0,
@@ -216,7 +215,7 @@ const NewPost = () => {
             ? {
                 ...post,
                 ...updatedPost,
-                mediaUpload: response.data.post.media_upload,
+                media_upload: response.data.post.media_upload,
               }
             : post
         );
@@ -341,15 +340,15 @@ const NewPost = () => {
 
       {posts.length > 0 ? (
         posts.map((post, index) => {
-          const postUserId = Number(post.userId);
+          const postUserId = Number(post.user_id);
           const authUserId = Number(auth.userId);
 
           return (
             <PostCard key={post.post_id}>
               <CreatorNameContainer>
-                {post.profilePicture ? (
+                {post.profile_picture ? (
                   <Avatar
-                    src={`http://localhost:3000/${post.profilePicture}`}
+                    src={`http://localhost:3000/${post.profile_picture}`}
                     alt="Profile"
                     onError={(e) => {
                       e.target.src = "";
@@ -369,9 +368,9 @@ const NewPost = () => {
               </CreatorNameContainer>
 
               {post.content && <p>{post.content}</p>}
-              {post.mediaUpload && (
+              {post.media_upload && (
                 <StyledImage
-                  src={post.mediaUpload}
+                  src={post.media_upload}
                   alt="Post Media"
                   onError={(e) => {
                     e.target.src = "/path/to/default-image.jpg";
