@@ -55,8 +55,6 @@ const NewPost = () => {
 
   const fetchPosts = useCallback(async () => {
     try {
-      console.log("Fetching posts...");
-
       const response = await axios.get("http://localhost:3000/api/post", {
         headers: {
           Authorization: `Bearer ${auth.token}`,
@@ -65,14 +63,9 @@ const NewPost = () => {
 
       // Log the entire response object
       console.log("Full response:", response);
-
-      // Log the response data
-      console.log("Response data:", response.data);
+      console.log("Fetched posts data:", response.data);
 
       if (Array.isArray(response.data)) {
-        // Log the posts array before setting state
-        console.log("Raw posts data:", response.data);
-
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
           likesCount: post.likes_count || 0, // Ensure the correct field name
@@ -80,7 +73,6 @@ const NewPost = () => {
         }));
 
         // Log posts after processing defaults
-        console.log("Posts with defaults:", postsWithDefaults);
 
         setPosts(postsWithDefaults);
 
@@ -139,7 +131,7 @@ const NewPost = () => {
           profile_picture: auth.profilePicture,
           comments: [],
           isLiked: false,
-          likesCount: 0,
+          likesCount: response.data.post.likes_count || 0,
         };
 
         setPosts((prevPosts) => [newPost, ...prevPosts]);

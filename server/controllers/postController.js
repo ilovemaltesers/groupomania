@@ -12,15 +12,22 @@ const getAllPosts = async (req, res) => {
     client = await db();
     console.log("Connected to the database.");
 
+    // Query to get posts with likes count
     const query = `
       SELECT p.post_id, p.content, p.media_upload, p.created_at, p.updated_at, 
-             u._id AS user_id, u.given_name, u.family_name, u.email, u.profile_picture
+             u._id AS user_id, u.given_name, u.family_name, u.email, u.profile_picture,
+             COALESCE(l.like_count, 0) AS likes_count
       FROM public.posts p
-      JOIN public.users u ON p.user_id = u._id;
+      JOIN public.users u ON p.user_id = u._id
+      LEFT JOIN (
+        SELECT post_id, COUNT(*) AS like_count
+        FROM public.likes
+        GROUP BY post_id
+      ) l ON p.post_id = l.post_id;
     `;
 
     const result = await client.query(query);
-    console.log("Retrieved posts with user info:", result.rows);
+    console.log("Retrieved posts with user info and likes count:", result.rows);
 
     res.status(200).json(result.rows);
   } catch (error) {
