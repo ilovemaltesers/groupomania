@@ -68,7 +68,7 @@ const NewPost = () => {
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
-
+          likesCount: post.likes_count || 0, // Ensure the correct field name
           isLiked: post.isLiked || false,
         }));
 
