@@ -182,9 +182,41 @@ const getProfilePicture = async (req, res) => {
   }
 };
 
+const postRoleAboutMe = async (req, res) => {
+  const { roleTitle, aboutMe } = req.body;
+  console.log("Role Title:", roleTitle);
+  console.log("About Me:", aboutMe);
+  const userId = req.userId;
+
+  if (!userId) {
+    return res.status(401).send({ message: "User not authenticated" });
+  }
+
+  let client;
+
+  try {
+    client = await db();
+    await client.query(
+      "UPDATE public.users SET title_role = $1, about_me = $2 WHERE _id = $3",
+      [roleTitle, aboutMe, userId]
+    );
+
+    res.status(200).send("Role and about me updated successfully!");
+  } catch (error) {
+    console.error("Error updating role and about me:", error);
+    res.status(500).send("Error updating role and about me");
+  } finally {
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
+  }
+};
+
 module.exports = {
   signup,
   login,
   uploadProfilePicture,
   getProfilePicture,
+  postRoleAboutMe,
 };

@@ -160,11 +160,43 @@ const ProfileCard = () => {
   };
 
   // Handle form submission (e.g., saving role/title and about me)
-  const handleSaveChanges = (e) => {
+  const titleRoleAboutMe = async (e) => {
     e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token is not available");
+      return;
+    }
+
     // Handle form data submission here (e.g., send role/title, about me to API)
     console.log("Role Title:", roleTitle);
     console.log("About Me:", aboutMe);
+
+    const formData = {
+      roleTitle: roleTitle,
+      aboutMe: aboutMe,
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/user/profile/role/aboutme",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Role and about me updated successfully:", response.data);
+    } catch (error) {
+      console.error(
+        "Error updating role and about me:",
+        error.response ? error.response.data : error.message
+      );
+    }
   };
 
   // Handle password change
@@ -223,7 +255,7 @@ const ProfileCard = () => {
                 </Form.Group>
               </LeftColumn>
               <RightColumn md={6}>
-                <Form onSubmit={handleSaveChanges}>
+                <Form onSubmit={titleRoleAboutMe}>
                   <Form.Group controlId="formAboutMe">
                     <Form.Label>Edit About Me</Form.Label>
                     <Form.Control

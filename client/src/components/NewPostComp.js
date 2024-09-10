@@ -332,9 +332,6 @@ const NewPost = () => {
           const postUserId = Number(post.user_id);
           const authUserId = Number(auth.userId);
 
-          // Add console log here to check the isLiked property
-          console.log(`Post ID: ${post.post_id}, isLiked: ${post.isLiked}`);
-
           return (
             <PostCard key={post.post_id}>
               <CreatorNameContainer>
