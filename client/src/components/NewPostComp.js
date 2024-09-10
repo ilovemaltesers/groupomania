@@ -61,27 +61,19 @@ const NewPost = () => {
         },
       });
 
-      // Log the entire response object
-      console.log("Full response:", response);
-      console.log("Fetched posts data:", response.data);
-
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
-          likesCount: post.likes_count || 0, // Ensure the correct field name
-          isLiked: post.isLiked || false,
+          likesCount: post.likes_count || 0,
+          isLiked: post.is_liked || false, // Ensure the correct field name
         }));
 
-        // Log posts after processing defaults
-
         setPosts(postsWithDefaults);
-
-        // Log to check local storage set operation
         localStorage.setItem(
           `posts_${userId}`,
           JSON.stringify(postsWithDefaults)
         );
-        console.log("Posts saved to localStorage.");
+        console.log("Fetched posts:", postsWithDefaults); // Log fetched posts
       } else {
         console.error("Fetched data is not an array:", response.data);
       }
@@ -95,7 +87,7 @@ const NewPost = () => {
   }, [fetchPosts]);
 
   useEffect(() => {
-    console.log("Posts state:", posts);
+    console.log("Posts state:", posts); // Log posts state
   }, [posts]);
 
   const handleCommentChange = (event) => {
@@ -335,10 +327,13 @@ const NewPost = () => {
         )}
       </NewPostBody>
 
-      {posts.length > 0 ? (
+      {posts && posts.length > 0 ? (
         posts.map((post, index) => {
           const postUserId = Number(post.user_id);
           const authUserId = Number(auth.userId);
+
+          // Add console log here to check the isLiked property
+          console.log(`Post ID: ${post.post_id}, isLiked: ${post.isLiked}`);
 
           return (
             <PostCard key={post.post_id}>
@@ -378,7 +373,7 @@ const NewPost = () => {
               <ControlsContainer>
                 <LikesandCommentsIconContainer>
                   <HeartIconContainer>
-                    {isAuthenticated && postUserId !== authUserId ? (
+                    {isAuthenticated ? (
                       post.isLiked ? (
                         <FullHeartIcon
                           onClick={() => handleLikeToggle(post.post_id)}

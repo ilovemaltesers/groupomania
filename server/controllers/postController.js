@@ -5,29 +5,53 @@ const { db } = require("../connect.js");
 
 const JWT_SECRET = "blablabla";
 
-// Get all posts
 const getAllPosts = async (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    console.error("Authorization token is missing.");
+    return res.status(401).json({ message: "Authorization token is missing" });
+  }
+
+  let userId;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    userId = decoded.userId;
+    console.log("Decoded user ID from token:", userId);
+  } catch (error) {
+    console.error("Token verification error:", error);
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
+
   let client;
   try {
     client = await db();
     console.log("Connected to the database.");
 
-    // Query to get posts with likes count
+    // Query to get posts with likes count and whether the post is liked by the user
     const query = `
       SELECT p.post_id, p.content, p.media_upload, p.created_at, p.updated_at, 
              u._id AS user_id, u.given_name, u.family_name, u.email, u.profile_picture,
-             COALESCE(l.like_count, 0) AS likes_count
+             COALESCE(l.like_count, 0) AS likes_count,
+             CASE WHEN ul.user_id IS NOT NULL THEN true ELSE false END AS is_liked
       FROM public.posts p
       JOIN public.users u ON p.user_id = u._id
       LEFT JOIN (
         SELECT post_id, COUNT(*) AS like_count
         FROM public.likes
         GROUP BY post_id
-      ) l ON p.post_id = l.post_id;
+      ) l ON p.post_id = l.post_id
+      LEFT JOIN (
+        SELECT post_id, user_id
+        FROM public.likes
+        WHERE user_id = $1
+      ) ul ON p.post_id = ul.post_id;
     `;
 
-    const result = await client.query(query);
-    console.log("Retrieved posts with user info and likes count:", result.rows);
+    const result = await client.query(query, [userId]);
+    console.log(
+      "Retrieved posts with user info, likes count, and is_liked:",
+      result.rows
+    );
 
     res.status(200).json(result.rows);
   } catch (error) {
@@ -41,6 +65,7 @@ const getAllPosts = async (req, res) => {
   }
 };
 
+module.exports = { getAllPosts };
 // Create a new post
 const createPost = async (req, res) => {
   const { content } = req.body;
