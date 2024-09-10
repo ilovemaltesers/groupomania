@@ -95,8 +95,8 @@ const NewPost = () => {
   }, [fetchPosts]);
 
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    console.log("Posts state:", posts);
+  }, [posts]);
 
   const handleCommentChange = (event) => {
     setContent(event.target.value);
