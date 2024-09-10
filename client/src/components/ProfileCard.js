@@ -2,7 +2,15 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { MdFace2 } from "react-icons/md";
-import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Button,
+  Form,
+  Modal,
+} from "react-bootstrap";
 import TitleLoggedUser from "./TitleLoggedUser";
 
 // Styled components
@@ -84,6 +92,12 @@ const ProfileCard = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showModal, setShowModal] = useState(false); // For controlling profile edit modal
+  const [showPasswordModal, setShowPasswordModal] = useState(false); // For controlling password modal
+  const [submittedData, setSubmittedData] = useState({
+    roleTitle: "",
+    aboutMe: "",
+  });
 
   // Fetch profile image on component mount
   useEffect(() => {
@@ -159,7 +173,7 @@ const ProfileCard = () => {
     }
   };
 
-  // Handle form submission (e.g., saving role/title and about me)
+  // Handle profile form submission
   const titleRoleAboutMe = async (e) => {
     e.preventDefault();
 
@@ -169,14 +183,7 @@ const ProfileCard = () => {
       return;
     }
 
-    // Handle form data submission here (e.g., send role/title, about me to API)
-    console.log("Role Title:", roleTitle);
-    console.log("About Me:", aboutMe);
-
-    const formData = {
-      roleTitle: roleTitle,
-      aboutMe: aboutMe,
-    };
+    const formData = { roleTitle, aboutMe };
 
     try {
       const response = await axios.post(
@@ -190,23 +197,50 @@ const ProfileCard = () => {
         }
       );
 
-      console.log("Role and about me updated successfully:", response.data);
+      setSubmittedData(formData); // Store submitted data
+      setShowModal(false); // Close profile modal
+      console.log("Profile updated successfully:", response.data);
     } catch (error) {
       console.error(
-        "Error updating role and about me:",
+        "Error updating profile:",
         error.response ? error.response.data : error.message
       );
     }
   };
 
   // Handle password change
-  const handleChangePassword = (e) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
-    if (newPassword === confirmPassword) {
-      // Send the new password to the server
-      console.log("Changing password to:", newPassword);
-    } else {
+    if (newPassword !== confirmPassword) {
       console.error("Passwords do not match");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token is not available");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/user/change-password",
+        { currentPassword, newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("Password changed successfully:", response.data);
+      setShowPasswordModal(false); // Close password modal after success
+    } catch (error) {
+      console.error(
+        "Error changing password:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -232,35 +266,54 @@ const ProfileCard = () => {
                 ) : (
                   <ImagePlaceholderIcon />
                 )}
-                <ButtonUploadImg
-                  onClick={() => document.getElementById("file-input").click()}
-                >
-                  Upload Image
-                </ButtonUploadImg>
-                <ImageUploadInput
-                  id="file-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
 
-                <Form.Group controlId="formRoleTitle" className="mt-4">
-                  <Form.Label>Edit Role/Title</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter your role or title"
-                    value={roleTitle}
-                    onChange={(e) => setRoleTitle(e.target.value)}
-                  />
-                </Form.Group>
+                {/* Show the submitted role and about me */}
+                {submittedData.roleTitle && (
+                  <div className="mt-4">
+                    <h3>{submittedData.roleTitle}</h3>
+                    <p>{submittedData.aboutMe}</p>
+                  </div>
+                )}
               </LeftColumn>
               <RightColumn md={6}>
+                <ButtonSaveChanges
+                  onClick={() => setShowModal(true)}
+                  className="mt-3"
+                >
+                  Edit Profile
+                </ButtonSaveChanges>
+
+                <ButtonSaveChanges
+                  onClick={() => setShowPasswordModal(true)}
+                  className="mt-3"
+                >
+                  Change Password
+                </ButtonSaveChanges>
+              </RightColumn>
+            </Row>
+
+            {/* Modal for editing profile */}
+            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>Edit Profile</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
                 <Form onSubmit={titleRoleAboutMe}>
-                  <Form.Group controlId="formAboutMe">
+                  <Form.Group controlId="formRoleTitle">
+                    <Form.Label>Edit Role/Title</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter your role or title"
+                      value={roleTitle}
+                      onChange={(e) => setRoleTitle(e.target.value)}
+                    />
+                  </Form.Group>
+
+                  <Form.Group controlId="formAboutMe" className="mt-3">
                     <Form.Label>Edit About Me</Form.Label>
                     <Form.Control
                       as="textarea"
-                      rows={5}
+                      rows={3}
                       placeholder="Write something about yourself"
                       value={aboutMe}
                       onChange={(e) => setAboutMe(e.target.value)}
@@ -271,9 +324,19 @@ const ProfileCard = () => {
                     Save Changes
                   </ButtonSaveChanges>
                 </Form>
+              </Modal.Body>
+            </Modal>
 
-                <hr className="my-4" />
-
+            {/* Modal for changing password */}
+            <Modal
+              show={showPasswordModal}
+              onHide={() => setShowPasswordModal(false)}
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Change Password</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
                 <Form onSubmit={handleChangePassword}>
                   <Form.Group controlId="formCurrentPassword">
                     <Form.Label>Current Password</Form.Label>
@@ -309,8 +372,19 @@ const ProfileCard = () => {
                     Change Password
                   </ButtonSaveChanges>
                 </Form>
-              </RightColumn>
-            </Row>
+              </Modal.Body>
+            </Modal>
+            <ButtonUploadImg
+              onClick={() => document.getElementById("file-input").click()}
+            >
+              Upload/Edit Image
+            </ButtonUploadImg>
+            <ImageUploadInput
+              id="file-input"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
           </StyledCard>
         </Col>
       </Row>
