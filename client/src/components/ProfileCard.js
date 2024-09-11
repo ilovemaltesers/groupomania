@@ -44,6 +44,7 @@ const LeftColumn = styled(Col)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center; /* Center text horizontally */
 `;
 
 const RightColumn = styled(Col)`
@@ -103,6 +104,10 @@ const ImageUploadInput = styled.input`
   display: none;
 `;
 
+const ProfilePictureWrapper = styled.div`
+  margin-top: 20px; /* Adjust this value to move the picture down */
+`;
+
 const ProfileCard = () => {
   const [image, setImage] = useState(null);
   const [roleTitle, setRoleTitle] = useState("");
@@ -148,6 +153,43 @@ const ProfileCard = () => {
 
     fetchImage();
   }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log("Token from localStorage:", token);
+
+      if (!token) {
+        console.error("Token is not available");
+        return;
+      }
+
+      const response = await axios.get(
+        "http://localhost:3000/api/user/profile/role/aboutme",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Set profile data
+      setRoleTitle(response.data.roleTitle);
+      setAboutMe(response.data.aboutMe);
+    } catch (error) {
+      console.error(
+        "Error fetching profile data:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
+  console.log("Role Title:", roleTitle);
+  console.log("About Me:", aboutMe);
 
   // Handle image file upload
   const handleFileChange = (event) => {
@@ -196,6 +238,8 @@ const ProfileCard = () => {
     e.preventDefault();
 
     const token = localStorage.getItem("token");
+    console.log("Token:", token);
+
     if (!token) {
       console.error("Token is not available");
       return;
@@ -270,28 +314,28 @@ const ProfileCard = () => {
             <Row>
               <LeftColumn md={6}>
                 <TitleLoggedUser />
-                {image ? (
-                  <img
-                    src={image}
-                    alt="Profile"
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      margin: "20px 0",
-                      borderRadius: "50%",
-                    }}
-                  />
-                ) : (
-                  <ImagePlaceholderIcon />
-                )}
+                <ProfilePictureWrapper>
+                  {image ? (
+                    <img
+                      src={image}
+                      alt="Profile"
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        margin: "20px 0", // Space between image and text
+                        borderRadius: "50%",
+                      }}
+                    />
+                  ) : (
+                    <ImagePlaceholderIcon />
+                  )}
+                </ProfilePictureWrapper>
 
-                {/* Show the submitted role and about me */}
-                {submittedData.roleTitle && (
-                  <div className="mt-4">
-                    <h3>{submittedData.roleTitle}</h3>
-                    <p>{submittedData.aboutMe}</p>
-                  </div>
-                )}
+                {/* Centered Title and About Me */}
+                <div className="mt-4">
+                  <h3>{roleTitle || "Your Role Title"}</h3>
+                  <p>{aboutMe || "Write something about yourself..."}</p>
+                </div>
               </LeftColumn>
               <RightColumn md={6}>
                 <ButtonSaveChanges

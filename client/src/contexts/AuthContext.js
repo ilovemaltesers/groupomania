@@ -33,15 +33,6 @@ export const AuthProvider = ({ children }) => {
     const email = localStorage.getItem("email");
     const profilePicture = localStorage.getItem("profilePicture");
 
-    console.log("Synchronizing state with localStorage:", {
-      token,
-      userId,
-      givenName,
-      familyName,
-      email,
-      profilePicture,
-    });
-
     // Set the auth state if the data is present
     if (token && userId && givenName) {
       setAuth({ token, userId, givenName, familyName, email, profilePicture });

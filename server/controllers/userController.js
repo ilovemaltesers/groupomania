@@ -213,10 +213,54 @@ const postRoleAboutMe = async (req, res) => {
   }
 };
 
+const getRoleAboutMe = async (req, res) => {
+  console.log("Entered getRoleAboutMe");
+  const userId = req.userId;
+
+  console.log("User ID in controller function:", userId);
+
+  if (!userId) {
+    return res.status(401).send({ message: "User not authenticated" });
+  }
+
+  let client;
+  try {
+    client = await db();
+    console.log("Successfully connected to PostgreSQL database");
+
+    const user = await client.query(
+      "SELECT title_role, about_me FROM public.users WHERE _id = $1",
+      [userId]
+    );
+
+    console.log("Query result:", user.rows); // Log the result of the query
+
+    if (user.rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    const roleAboutMe = user.rows[0];
+
+    res.status(200).json({
+      roleTitle: roleAboutMe.title_role,
+      aboutMe: roleAboutMe.about_me,
+    });
+  } catch (error) {
+    console.error("Error getting role and about me:", error);
+    res.status(500).send("Error getting role and about me");
+  } finally {
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
+  }
+};
+
 module.exports = {
   signup,
   login,
   uploadProfilePicture,
   getProfilePicture,
   postRoleAboutMe,
+  getRoleAboutMe,
 };

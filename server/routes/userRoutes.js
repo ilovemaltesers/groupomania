@@ -19,4 +19,7 @@ router.get("/profile-picture", verifyToken, userContr.getProfilePicture);
 
 router.post("/profile/role/aboutme", verifyToken, userContr.postRoleAboutMe);
 
+router.get("/profile/role/aboutme", verifyToken, userContr.getRoleAboutMe);
+
+console.log(userContr);
 module.exports = router;
