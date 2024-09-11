@@ -49,6 +49,9 @@ const LeftColumn = styled(Col)`
 const RightColumn = styled(Col)`
   display: flex;
   flex-direction: column;
+  justify-content: space-between; /* Evenly spaces out the buttons */
+  height: 100%; /* Ensures column takes full height */
+  padding: 20px 0;
 `;
 
 const ButtonUploadImg = styled(Button)`
@@ -78,6 +81,21 @@ const ButtonSaveChanges = styled(Button)`
   &:hover {
     background-color: bisque;
     color: black;
+  }
+`;
+
+const ButtonDeleteAccount = styled(Button)`
+  background-color: #bdebff;
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  &:hover {
+    background-color: darkred;
+    color: white;
   }
 `;
 
@@ -280,15 +298,25 @@ const ProfileCard = () => {
                   onClick={() => setShowModal(true)}
                   className="mt-3"
                 >
-                  Edit Profile
+                  Edit Profile 🪄
                 </ButtonSaveChanges>
 
                 <ButtonSaveChanges
                   onClick={() => setShowPasswordModal(true)}
                   className="mt-3"
                 >
-                  Change Password
+                  Change Password 🔐
                 </ButtonSaveChanges>
+
+                <ButtonUploadImg
+                  onClick={() => document.getElementById("file-input").click()}
+                >
+                  Upload/Edit Image 📸
+                </ButtonUploadImg>
+
+                <ButtonDeleteAccount className="mt-3">
+                  Delete Account 🗑️
+                </ButtonDeleteAccount>
               </RightColumn>
             </Row>
 
@@ -299,30 +327,26 @@ const ProfileCard = () => {
               </Modal.Header>
               <Modal.Body>
                 <Form onSubmit={titleRoleAboutMe}>
-                  <Form.Group controlId="formRoleTitle">
-                    <Form.Label>Edit Role/Title</Form.Label>
+                  <Form.Group>
+                    <Form.Label>Role Title</Form.Label>
                     <Form.Control
                       type="text"
-                      placeholder="Enter your role or title"
                       value={roleTitle}
                       onChange={(e) => setRoleTitle(e.target.value)}
                     />
                   </Form.Group>
-
-                  <Form.Group controlId="formAboutMe" className="mt-3">
-                    <Form.Label>Edit About Me</Form.Label>
+                  <Form.Group className="mt-3">
+                    <Form.Label>About Me</Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={3}
-                      placeholder="Write something about yourself"
                       value={aboutMe}
                       onChange={(e) => setAboutMe(e.target.value)}
                     />
                   </Form.Group>
-
-                  <ButtonSaveChanges type="submit" className="mt-3">
+                  <Button type="submit" className="mt-3">
                     Save Changes
-                  </ButtonSaveChanges>
+                  </Button>
                 </Form>
               </Modal.Body>
             </Modal>
@@ -338,47 +362,37 @@ const ProfileCard = () => {
               </Modal.Header>
               <Modal.Body>
                 <Form onSubmit={handleChangePassword}>
-                  <Form.Group controlId="formCurrentPassword">
+                  <Form.Group>
                     <Form.Label>Current Password</Form.Label>
                     <Form.Control
                       type="password"
-                      placeholder="Enter current password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                     />
                   </Form.Group>
-
-                  <Form.Group controlId="formNewPassword" className="mt-3">
+                  <Form.Group className="mt-3">
                     <Form.Label>New Password</Form.Label>
                     <Form.Control
                       type="password"
-                      placeholder="Enter new password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                     />
                   </Form.Group>
-
-                  <Form.Group controlId="formConfirmPassword" className="mt-3">
-                    <Form.Label>Confirm New Password</Form.Label>
+                  <Form.Group className="mt-3">
+                    <Form.Label>Confirm Password</Form.Label>
                     <Form.Control
                       type="password"
-                      placeholder="Confirm new password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </Form.Group>
-
-                  <ButtonSaveChanges type="submit" className="mt-3">
-                    Change Password
-                  </ButtonSaveChanges>
+                  <Button type="submit" className="mt-3">
+                    Save Password
+                  </Button>
                 </Form>
               </Modal.Body>
             </Modal>
-            <ButtonUploadImg
-              onClick={() => document.getElementById("file-input").click()}
-            >
-              Upload/Edit Image
-            </ButtonUploadImg>
+
             <ImageUploadInput
               id="file-input"
               type="file"
