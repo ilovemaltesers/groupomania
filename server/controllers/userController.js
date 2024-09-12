@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { db } = require("../connect.js");
 const path = require("path");
+const fs = require("fs");
 
 const JWT_SECRET = "blablabla"; // Consider using a more secure way to manage secrets
 
@@ -270,21 +271,74 @@ const deleteAccount = async (req, res) => {
     console.log("Connecting to the database...");
     client = await db();
 
-    console.log("Executing DELETE query...");
-    const result = await client.query(
+    // 1. Get the user's profile picture path
+    const userResult = await client.query(
+      "SELECT profile_picture FROM public.users WHERE _id = $1",
+      [userId]
+    );
+
+    const currentPicture = userResult.rows[0]?.profile_picture;
+
+    // If a profile picture exists, delete it from the server
+    if (currentPicture) {
+      const picturePath = path.join(__dirname, "..", currentPicture);
+      fs.unlink(picturePath, (err) => {
+        if (err) {
+          console.error("Failed to delete profile picture:", err);
+        } else {
+          console.log("Profile picture deleted successfully");
+        }
+      });
+    }
+
+    // 2. Get the paths of all media uploads (images) from the user's posts
+    const postImagesResult = await client.query(
+      "SELECT media_upload FROM public.posts WHERE user_id = $1",
+      [userId]
+    );
+
+    const postImages = postImagesResult.rows;
+
+    // 3. Delete each post's image from the server if it exists
+    postImages.forEach((post) => {
+      const postImagePath = post.media_upload; // Assuming media_upload stores the image path
+      if (postImagePath) {
+        // Convert the URL to a relative path and delete the image
+        const fullPostImagePath = path.join(
+          __dirname,
+          "..",
+          "images",
+          path.basename(postImagePath)
+        );
+        fs.unlink(fullPostImagePath, (err) => {
+          if (err) {
+            console.error("Failed to delete post image:", err);
+          } else {
+            console.log("Post image deleted successfully:", fullPostImagePath);
+          }
+        });
+      }
+    });
+
+    // 4. Delete the user's posts from the database
+    await client.query("DELETE FROM public.posts WHERE user_id = $1", [userId]);
+    console.log("Posts deleted successfully from the database");
+
+    // 5. Delete the user from the database
+    const deleteResult = await client.query(
       "DELETE FROM public.users WHERE _id = $1",
       [userId]
     );
 
-    console.log("Query result:", result);
+    console.log("Query result:", deleteResult);
 
     // Check if any rows were deleted
-    if (result.rowCount === 0) {
+    if (deleteResult.rowCount === 0) {
       console.log("User not found or already deleted");
       return res.status(404).send({ message: "User not found" });
     }
 
-    res.status(200).send("Account deleted successfully!");
+    res.status(200).send("Account and associated posts deleted successfully!");
   } catch (error) {
     console.error("Error in deleteAccount:", error);
     res.status(500).send("Error deleting account");
