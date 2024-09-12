@@ -256,6 +256,46 @@ const getRoleAboutMe = async (req, res) => {
   }
 };
 
+const deleteAccount = async (req, res) => {
+  const userId = req.userId;
+  console.log("User ID in deleteAccount:", userId);
+
+  if (!userId) {
+    console.error("User ID is not provided or user is not authenticated");
+    return res.status(401).send({ message: "User not authenticated" });
+  }
+
+  let client;
+  try {
+    console.log("Connecting to the database...");
+    client = await db();
+
+    console.log("Executing DELETE query...");
+    const result = await client.query(
+      "DELETE FROM public.users WHERE _id = $1",
+      [userId]
+    );
+
+    console.log("Query result:", result);
+
+    // Check if any rows were deleted
+    if (result.rowCount === 0) {
+      console.log("User not found or already deleted");
+      return res.status(404).send({ message: "User not found" });
+    }
+
+    res.status(200).send("Account deleted successfully!");
+  } catch (error) {
+    console.error("Error in deleteAccount:", error);
+    res.status(500).send("Error deleting account");
+  } finally {
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -263,4 +303,5 @@ module.exports = {
   getProfilePicture,
   postRoleAboutMe,
   getRoleAboutMe,
+  deleteAccount,
 };

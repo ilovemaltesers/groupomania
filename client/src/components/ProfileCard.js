@@ -157,7 +157,6 @@ const ProfileCard = () => {
   const fetchProfileData = async () => {
     try {
       const token = localStorage.getItem("token");
-      console.log("Token from localStorage:", token);
 
       if (!token) {
         console.error("Token is not available");
@@ -187,9 +186,6 @@ const ProfileCard = () => {
   useEffect(() => {
     fetchProfileData();
   }, []);
-
-  console.log("Role Title:", roleTitle);
-  console.log("About Me:", aboutMe);
 
   // Handle image file upload
   const handleFileChange = (event) => {
@@ -306,6 +302,33 @@ const ProfileCard = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const token = localStorage.getItem("token");
+    console.log("Token:", token);
+    if (!token) {
+      console.error("Token is not available");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        "http://localhost:3000/api/user/profile/delete/account",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("Account deleted successfully:", response.data);
+    } catch (error) {
+      console.error(
+        "Error deleting account:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
   return (
     <StyledContainer fluid>
       <Row className="w-100 h-100">
@@ -358,7 +381,10 @@ const ProfileCard = () => {
                   Upload/Edit Image 📸
                 </ButtonUploadImg>
 
-                <ButtonDeleteAccount className="mt-3">
+                <ButtonDeleteAccount
+                  onClick={handleDeleteAccount}
+                  className="mt-3"
+                >
                   Delete Account 🗑️
                 </ButtonDeleteAccount>
               </RightColumn>
