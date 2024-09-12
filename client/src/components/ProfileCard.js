@@ -368,18 +368,19 @@ const ProfileCard = () => {
                   Edit Profile 🪄
                 </ButtonSaveChanges>
 
+                {/* Move Upload/Edit Image Button before Change Password */}
+                <ButtonUploadImg
+                  onClick={() => document.getElementById("file-input").click()}
+                >
+                  Upload/Edit Image 📸
+                </ButtonUploadImg>
+
                 <ButtonSaveChanges
                   onClick={() => setShowPasswordModal(true)}
                   className="mt-3"
                 >
                   Change Password 🔐
                 </ButtonSaveChanges>
-
-                <ButtonUploadImg
-                  onClick={() => document.getElementById("file-input").click()}
-                >
-                  Upload/Edit Image 📸
-                </ButtonUploadImg>
 
                 <ButtonDeleteAccount
                   onClick={handleDeleteAccount}
