@@ -232,7 +232,7 @@ const NewPost = () => {
 
   const handleLikeToggle = async (postId) => {
     const post = posts.find((post) => post.post_id === postId);
-    if (!post) return;
+    if (!post || Number(post.user_id) === Number(auth.userId)) return; // Prevent liking own post
 
     const updatedPost = {
       ...post,
@@ -372,7 +372,15 @@ const NewPost = () => {
                 <LikesandCommentsIconContainer>
                   <HeartIconContainer>
                     {isAuthenticated ? (
-                      post.isLiked ? (
+                      Number(post.user_id) === Number(auth.userId) ? (
+                        <div style={{ cursor: "not-allowed" }}>
+                          {post.isLiked ? (
+                            <FullHeartIcon />
+                          ) : (
+                            <EmptyHeartIcon />
+                          )}
+                        </div>
+                      ) : post.isLiked ? (
                         <FullHeartIcon
                           onClick={() => handleLikeToggle(post.post_id)}
                         />
