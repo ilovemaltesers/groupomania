@@ -26,6 +26,7 @@ const ProfilePage = () => {
             className="d-inline-block align-top"
             alt="placeholder"
           />
+
           <LogoutIcon onClick={handleLeavePage} />
         </NavContainer>
       </ProfileNavbar>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
+
 import { MdFace2 } from "react-icons/md";
 import {
   Container,
@@ -105,7 +106,7 @@ const ImageUploadInput = styled.input`
 `;
 
 const ProfilePictureWrapper = styled.div`
-  margin-top: 20px; /* Adjust this value to move the picture down */
+  margin-top: 20px;
 `;
 
 const ProfileCard = () => {

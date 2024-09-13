@@ -34,6 +34,8 @@ import {
   CommentCounterContainer,
   CounterNumber,
   CommentIcon,
+  ImagePreviewContainer,
+  PreviewImage,
 } from "../styles/stylesFeedPage";
 import EditPostPopUp from "../components/EditPostPopUp";
 
@@ -316,17 +318,16 @@ const NewPost = () => {
             Submit
           </SubmitNewPostButton>
         </NewPostButtonContainer>
+
         {image && (
-          <div>
-            <img
+          <ImagePreviewContainer>
+            <PreviewImage
               src={URL.createObjectURL(image)}
-              alt="Uploaded"
-              style={{ maxWidth: "100%", marginTop: "10px" }}
+              alt="Uploaded Preview"
             />
-          </div>
+          </ImagePreviewContainer>
         )}
       </NewPostBody>
-
       {posts && posts.length > 0 ? (
         posts.map((post, index) => {
           const postUserId = Number(post.user_id);

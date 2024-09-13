@@ -92,6 +92,20 @@ const NewPostButtonContainer = styled.div`
   margin-top: 10px;
 `;
 
+const ImagePreviewContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
+`;
+
+const PreviewImage = styled.img`
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+`;
+
 // Style for the submit new post button
 const SubmitNewPostButton = styled.button`
   background-color: #bdebff;
@@ -317,4 +331,6 @@ export {
   HeartCounterContainer,
   CommentCounterContainer,
   CounterNumber,
+  ImagePreviewContainer,
+  PreviewImage,
 };
