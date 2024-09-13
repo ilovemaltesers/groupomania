@@ -232,31 +232,32 @@ const NewPost = () => {
 
   const handleLikeToggle = async (postId) => {
     const post = posts.find((post) => post.post_id === postId);
-    if (!post || Number(post.user_id) === Number(auth.userId)) return; // Prevent liking own post
+    if (!post) return;
 
-    const updatedPost = {
-      ...post,
-      isLiked: !post.isLiked,
-      likes_count: post.isLiked ? post.likes_count - 1 : post.likes_count + 1,
-    };
+    // Prevent liking own posts
+    if (Number(post.user_id) === Number(auth.userId)) return;
 
+    // Optimistically determine the new like state
+    const newIsLiked = !post.isLiked;
+    const newLikesCount = newIsLiked
+      ? post.likes_count + 1
+      : post.likes_count - 1;
+
+    // Prevent negative like count
+    const validLikesCount = Math.max(newLikesCount, 0);
+
+    // Optimistically update the UI
     setPosts((prevPosts) =>
-      prevPosts.map((p) => (p.post_id === postId ? updatedPost : p))
+      prevPosts.map((p) =>
+        p.post_id === postId
+          ? {
+              ...p,
+              isLiked: newIsLiked,
+              likes_count: validLikesCount,
+            }
+          : p
+      )
     );
-
-    const revertOptimisticUpdate = () => {
-      setPosts((prevPosts) =>
-        prevPosts.map((p) =>
-          p.post_id === postId
-            ? {
-                ...p,
-                isLiked: !updatedPost.isLiked,
-                likesCount: updatedPost.likesCount,
-              }
-            : p
-        )
-      );
-    };
 
     try {
       const response = await axios.post(
@@ -272,22 +273,52 @@ const NewPost = () => {
       if (response.status === 200 || response.status === 201) {
         const { likesCount, isLiked } = response.data;
 
-        setPosts((prevPosts) => {
-          const updatedPosts = prevPosts.map((p) =>
-            p.post_id === postId ? { ...p, likesCount, isLiked } : p
-          );
+        // Ensure likes count is not negative
+        const validLikesCount = Math.max(likesCount, 0);
 
-          localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
+        // Update UI with server response
+        setPosts((prevPosts) =>
+          prevPosts.map((p) =>
+            p.post_id === postId
+              ? {
+                  ...p,
+                  likes_count: validLikesCount,
+                  isLiked,
+                }
+              : p
+          )
+        );
 
-          return updatedPosts;
-        });
+        localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
       } else {
         console.error("Failed to update like status:", response.data);
-        revertOptimisticUpdate();
+        // Revert optimistic update on failure
+        setPosts((prevPosts) =>
+          prevPosts.map((p) =>
+            p.post_id === postId
+              ? {
+                  ...p,
+                  isLiked: !newIsLiked,
+                  likes_count: post.likes_count,
+                }
+              : p
+          )
+        );
       }
     } catch (error) {
       console.error("Error updating like status:", error);
-      revertOptimisticUpdate();
+      // Revert optimistic update on error
+      setPosts((prevPosts) =>
+        prevPosts.map((p) =>
+          p.post_id === postId
+            ? {
+                ...p,
+                isLiked: !newIsLiked,
+                likes_count: post.likes_count,
+              }
+            : p
+        )
+      );
     }
   };
 
@@ -395,9 +426,10 @@ const NewPost = () => {
                       </div>
                     )}
                     <HeartCounterContainer>
-                      <CounterNumber>{post.likesCount}</CounterNumber>
+                      <CounterNumber>{post.likes_count}</CounterNumber>
                     </HeartCounterContainer>
                   </HeartIconContainer>
+
                   <CommentIconContainer>
                     <CommentIcon />
                     <CommentCounterContainer>

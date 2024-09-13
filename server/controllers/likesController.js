@@ -49,10 +49,10 @@ const likePost = async (req, res) => {
       const removeLikeValues = [post_id, userId];
       await client.query(removeLikeQuery, removeLikeValues);
 
-      // Update the likes count in the posts table
+      // Update the likes count in the posts table, ensuring it doesn't go below 0
       const updateLikesCountQuery = `
         UPDATE public.posts
-        SET likes_count = likes_count - 1
+        SET likes_count = GREATEST(likes_count - 1, 0)
         WHERE post_id = $1
         RETURNING likes_count;
       `;
