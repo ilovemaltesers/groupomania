@@ -66,23 +66,31 @@ const NewPost = () => {
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
-          likesCount: post.likes_count || 0,
-          isLiked: post.is_liked || false, // Ensure the correct field name
+          likes_count: post.likes_count || 0,
+          is_liked: post.is_liked || false,
         }));
 
-        setPosts(postsWithDefaults);
-        localStorage.setItem(
-          `posts_${userId}`,
-          JSON.stringify(postsWithDefaults)
+        // Sort posts by 'created_at' timestamp in descending order (newest first)
+        const sortedPosts = postsWithDefaults.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
-        console.log("Fetched posts:", postsWithDefaults); // Log fetched posts
+
+        console.log("Fetched posts with likes:", sortedPosts);
+
+        setPosts(sortedPosts);
+        // Clear and update local storage
+        localStorage.removeItem(`posts_${auth.userId}`);
+        localStorage.setItem(
+          `posts_${auth.userId}`,
+          JSON.stringify(sortedPosts)
+        );
       } else {
         console.error("Fetched data is not an array:", response.data);
       }
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  }, [auth.token, userId]);
+  }, [auth.token, auth.userId]);
 
   useEffect(() => {
     fetchPosts();
@@ -233,34 +241,6 @@ const NewPost = () => {
   };
 
   const handleLikeToggle = async (postId) => {
-    const post = posts.find((post) => post.post_id === postId);
-    if (!post) return;
-
-    // Prevent liking own posts
-    if (Number(post.user_id) === Number(auth.userId)) return;
-
-    // Optimistically determine the new like state
-    const newIsLiked = !post.isLiked;
-    const newLikesCount = newIsLiked
-      ? post.likes_count + 1
-      : post.likes_count - 1;
-
-    // Prevent negative like count
-    const validLikesCount = Math.max(newLikesCount, 0);
-
-    // Optimistically update the UI
-    setPosts((prevPosts) =>
-      prevPosts.map((p) =>
-        p.post_id === postId
-          ? {
-              ...p,
-              isLiked: newIsLiked,
-              likes_count: validLikesCount,
-            }
-          : p
-      )
-    );
-
     try {
       const response = await axios.post(
         `http://localhost:3000/api/like/${postId}`,
@@ -272,55 +252,26 @@ const NewPost = () => {
         }
       );
 
-      if (response.status === 200 || response.status === 201) {
-        const { likesCount, isLiked } = response.data;
+      // Check the response data
+      const { likesCount } = response.data;
 
-        // Ensure likes count is not negative
-        const validLikesCount = Math.max(likesCount, 0);
-
-        // Update UI with server response
-        setPosts((prevPosts) =>
-          prevPosts.map((p) =>
-            p.post_id === postId
-              ? {
-                  ...p,
-                  likes_count: validLikesCount,
-                  isLiked,
-                }
-              : p
-          )
-        );
-
-        localStorage.setItem(`posts_${userId}`, JSON.stringify(posts));
-      } else {
-        console.error("Failed to update like status:", response.data);
-        // Revert optimistic update on failure
-        setPosts((prevPosts) =>
-          prevPosts.map((p) =>
-            p.post_id === postId
-              ? {
-                  ...p,
-                  isLiked: !newIsLiked,
-                  likes_count: post.likes_count,
-                }
-              : p
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error updating like status:", error);
-      // Revert optimistic update on error
+      // Update frontend state with the latest data
       setPosts((prevPosts) =>
-        prevPosts.map((p) =>
-          p.post_id === postId
-            ? {
-                ...p,
-                isLiked: !newIsLiked,
-                likes_count: post.likes_count,
-              }
-            : p
+        prevPosts.map((post) =>
+          post.post_id === postId ? { ...post, likes_count: likesCount } : post
         )
       );
+
+      // Update local storage with the latest data
+      const updatedPosts = posts.map((post) =>
+        post.post_id === postId ? { ...post, likes_count: likesCount } : post
+      );
+      localStorage.setItem(
+        `posts_${auth.userId}`,
+        JSON.stringify(updatedPosts)
+      );
+    } catch (error) {
+      console.error("Error updating like status:", error);
     }
   };
 
