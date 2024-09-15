@@ -357,14 +357,15 @@ const NewPost = () => {
                   <HeartIconContainer>
                     {isAuthenticated ? (
                       Number(post.user_id) === Number(auth.userId) ? (
+                        // User's own post: Do not show like button if the post is liked
                         <div style={{ cursor: "not-allowed" }}>
-                          {post.isLiked ? (
+                          {post.is_liked ? (
                             <FullHeartIcon />
                           ) : (
                             <EmptyHeartIcon />
                           )}
                         </div>
-                      ) : post.isLiked ? (
+                      ) : post.is_liked ? (
                         <FullHeartIcon
                           onClick={() => handleLikeToggle(post.post_id)}
                         />
@@ -375,7 +376,7 @@ const NewPost = () => {
                       )
                     ) : (
                       <div style={{ cursor: "not-allowed" }}>
-                        {post.isLiked ? <FullHeartIcon /> : <EmptyHeartIcon />}
+                        {post.is_liked ? <FullHeartIcon /> : <EmptyHeartIcon />}
                       </div>
                     )}
                     <HeartCounterContainer>
