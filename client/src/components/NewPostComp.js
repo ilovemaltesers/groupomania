@@ -127,6 +127,8 @@ const NewPost = () => {
           ...response.data.post,
           user_id: auth.userId,
           profile_picture: auth.profilePicture,
+          given_name: auth.givenName, // Add the user name fields here
+          family_name: auth.familyName,
           comments: [],
           isLiked: false,
           likes_count: response.data.post.likes_count || 0,
