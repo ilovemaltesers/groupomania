@@ -4,6 +4,8 @@ import { FaTelegramPlane } from "react-icons/fa";
 import { MdFace2 } from "react-icons/md";
 import { RiHeartsLine, RiHeartsFill } from "react-icons/ri";
 import { FaRegComment } from "react-icons/fa";
+import { IoPersonCircleSharp } from "react-icons/io5";
+import { BsEnvelopeHeart } from "react-icons/bs";
 
 // Style for the created at text
 const CreatedAtText = styled.p`
@@ -157,39 +159,6 @@ const StyledImage = styled.img`
   border-radius: 3%;
 `;
 
-// Style for the comment section
-const CommentSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-`;
-
-// Style for the comment input textarea
-const CommentInput = styled.textarea`
-  width: 100%;
-  min-height: 2em;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  resize: vertical;
-  margin-top: 10px;
-`;
-
-// Style for the publish comment button
-const PublishCommentButton = styled.button`
-  background-color: #bdebff;
-  color: black;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  margin-top: 10px;
-  &:hover {
-    background-color: bisque;
-  }
-`;
-
 const ControlsContainer = styled.div`
   display: flex;
   align-items: center;
@@ -206,7 +175,7 @@ const RemoveEditButtonsContainer = styled.div`
 const RemovePostButton = styled.button`
   background-color: #bdebff;
   color: black;
-  padding: 10px 20px; /* Padding for size */
+  padding: 10px 10px; /* Padding for size */
   width: 120px; /* Fixed width to ensure consistent size */
   border: none;
   border-radius: 4px;
@@ -222,7 +191,7 @@ const RemovePostButton = styled.button`
 const EditPostButton = styled.button`
   background-color: #bdebff;
   color: black;
-  padding: 10px 20px; /* Padding for size */
+  padding: 10px 10px; /* Padding for size */
   width: 120px; /* Fixed width to ensure consistent size */
   border: none;
   border-radius: 4px;
@@ -298,6 +267,70 @@ const CounterNumber = styled.span`
   color: black;
 `;
 
+const CommentSection = styled.div`
+  display: flex;
+  align-items: center; /* Align avatar and input vertically centered */
+  margin-top: 10px;
+  padding: 10px; /* Padding to ensure content is not touching edges */
+`;
+
+const CommentAvatarContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 62px;
+  height: 50px;
+  margin-left: -15px;
+  margin-right: 10px;
+  margin-top: 8px;
+
+  border-radius: 50%;
+`;
+
+const CommentAvatar = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%; /* Make the image round */
+  object-fit: cover; /* Ensure the image fills the container without distortion */
+`;
+
+const CommentAvatarPlaceholder = styled(IoPersonCircleSharp)`
+  font-size: 50px; /* Set size of the placeholder icon */
+  color: #919bab;
+`;
+
+// Style for the publish comment button
+const PublishCommentButton = styled.button`
+  background-color: #bdebff;
+  color: black;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  margin-top: 10px;
+  &:hover {
+    background-color: bisque;
+  }
+`;
+
+const SubmitCommentContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  height: 10px;
+`;
+
+const LetterIconBtn = styled(BsEnvelopeHeart)`
+  font-size: 40px;
+  color: #919bab;
+  margin-top: 10px;
+  margin-left: 15px;
+  &:hover {
+    color: fuchsia;
+  }
+`;
+
 export {
   FeedMainContainer,
   NewPostBody,
@@ -310,7 +343,9 @@ export {
   PostCard,
   StyledImage,
   CommentSection,
-  CommentInput,
+  CommentAvatarContainer,
+  CommentAvatarPlaceholder,
+  CommentAvatar,
   PublishCommentButton,
   RemoveEditButtonsContainer,
   RemovePostButton,
@@ -333,4 +368,6 @@ export {
   CounterNumber,
   ImagePreviewContainer,
   PreviewImage,
+  SubmitCommentContainer,
+  LetterIconBtn,
 };

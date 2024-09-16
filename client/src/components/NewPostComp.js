@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { format } from "date-fns";
+
 import {
   FeedMainContainer,
   NewPostBody,
@@ -17,7 +18,9 @@ import {
   RemovePostButton,
   PlaneIcon,
   EditPostButton,
-  CommentInput,
+  CommentAvatarContainer,
+  CommentAvatarPlaceholder,
+  CommentAvatar,
   EmptyAvatarIcon,
   Avatar,
   CreatorNameContainer,
@@ -36,8 +39,11 @@ import {
   CommentIcon,
   ImagePreviewContainer,
   PreviewImage,
+  SubmitCommentContainer,
+  LetterIconBtn,
 } from "../styles/stylesFeedPage";
 import EditPostPopUp from "../components/EditPostPopUp";
+import CommentTextarea from "../components/CommentInput";
 
 // Function to format dates
 const formatDate = (dateString) => {
@@ -419,20 +425,21 @@ const NewPost = () => {
                       </p>
                     </div>
                   ))}
-                {isAuthenticated && (
-                  <CommentInput
-                    placeholder="Add a comment..."
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleAddComment(index, {
-                          userName: auth.givenName,
-                          text: e.target.value,
-                        });
-                        e.target.value = "";
-                      }
-                    }}
-                  />
-                )}
+                <CommentAvatarContainer>
+                  {CommentAvatar ? (
+                    <CommentAvatarPlaceholder
+                      src={CommentAvatarPlaceholder}
+                      alt="User Avatar"
+                    />
+                  ) : (
+                    <CommentAvatarPlaceholder />
+                  )}
+                </CommentAvatarContainer>
+
+                {isAuthenticated && <CommentTextarea></CommentTextarea>}
+                <SubmitCommentContainer>
+                  <LetterIconBtn />
+                </SubmitCommentContainer>
               </CommentSection>
             </PostCard>
           );
