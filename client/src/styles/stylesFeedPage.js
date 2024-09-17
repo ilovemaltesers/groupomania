@@ -333,11 +333,21 @@ const CommentAvatarContainer = styled.div`
   border-radius: 50%;
 `;
 
-const CommentAvatar = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 50%; /* Make the image round */
-  object-fit: cover; /* Ensure the image fills the container without distortion */
+const CommentAvatar = styled.div`
+  width: 40px; /* Adjust size as needed */
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0; /* Background color when no image */
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 `;
 
 const CommentAvatarPlaceholder = styled(IoPersonCircleSharp)`
@@ -371,7 +381,7 @@ const LetterIconBtn = styled(BsEnvelopeHeart)`
   font-size: 40px;
   color: #919bab;
 
-  margin-left: 15px;
+  margin-left: 8px;
   &:hover {
     color: fuchsia;
   }

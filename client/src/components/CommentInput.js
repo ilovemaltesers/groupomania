@@ -13,6 +13,7 @@ const StyledTextarea = styled.textarea`
   resize: none; /* Prevent resizing of the textarea */
   box-sizing: border-box; /* Include padding and border in element's total width and height */
   margin-top: 10px;
+  margin-left: -12px;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
   font-size: 1em; /* Adjust font size to match line height */
   line-height: 1em; /* Line height should be the same as height for consistency */

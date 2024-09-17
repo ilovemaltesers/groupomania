@@ -488,7 +488,7 @@ const NewPost = () => {
                       <CommentTextarea
                         value={content}
                         onChange={handleCommentChange}
-                        placeholder="Write a comment..."
+                        placeholder="Say something..."
                       />
                     </div>
 
@@ -498,6 +498,7 @@ const NewPost = () => {
                         onClick={() =>
                           handleAddComment(index, {
                             userName: auth.givenName,
+
                             text: content,
                             profile_picture: auth.profilePicture, // Use the current user's profile picture
                           })
