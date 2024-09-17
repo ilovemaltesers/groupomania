@@ -315,7 +315,6 @@ const CounterNumber = styled.span`
 `;
 
 const CommentSection = styled.div`
-  display: flex;
   align-items: center; /* Align avatar and input vertically centered */
   margin-top: 10px;
   padding: 10px; /* Padding to ensure content is not touching edges */
@@ -371,7 +370,7 @@ const SubmitCommentContainer = styled.div`
 const LetterIconBtn = styled(BsEnvelopeHeart)`
   font-size: 40px;
   color: #919bab;
-  margin-top: 10px;
+
   margin-left: 15px;
   &:hover {
     color: fuchsia;

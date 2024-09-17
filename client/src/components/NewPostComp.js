@@ -418,25 +418,37 @@ const NewPost = () => {
               </ControlsContainer>
 
               <CommentSection>
+                {/* Map through existing comments */}
                 {post.comments &&
                   post.comments.map((comment, commentIndex) => (
-                    <div key={commentIndex} style={{ marginBottom: "10px" }}>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <div
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "50%",
-                            backgroundColor: "#ccc", // Placeholder color
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginRight: "10px",
-                          }}
-                        >
-                          {/* Placeholder for Comment Avatar */}
-                          {comment.userName.charAt(0)}
-                        </div>
+                    <div
+                      key={commentIndex}
+                      style={{
+                        marginBottom: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {/* Avatar Container for each comment */}
+                      <CommentAvatarContainer>
+                        {comment.profile_picture ? (
+                          <Avatar
+                            src={`http://localhost:3000/${comment.profile_picture}`}
+                            alt="Commenter Profile"
+                            onError={(e) => {
+                              e.target.src = ""; // Fallback if image fails to load
+                            }}
+                          />
+                        ) : (
+                          <CommentAvatarPlaceholder>
+                            {comment.userName.charAt(0)}{" "}
+                            {/* Placeholder with first letter */}
+                          </CommentAvatarPlaceholder>
+                        )}
+                      </CommentAvatarContainer>
+
+                      {/* Comment text */}
+                      <div style={{ marginLeft: "10px" }}>
                         <p>
                           <strong>{comment.userName}</strong>: {comment.text}
                         </p>
@@ -444,19 +456,50 @@ const NewPost = () => {
                     </div>
                   ))}
 
+                {/* New Comment Input Section */}
                 {isAuthenticated && (
-                  <div style={{ marginTop: "10px" }}>
-                    <CommentTextarea
-                      value={content}
-                      onChange={handleCommentChange}
-                      placeholder="Write a comment..."
-                    />
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {/* Avatar for the user posting the comment */}
+                    <CommentAvatarContainer>
+                      {auth.profilePicture ? (
+                        <Avatar
+                          src={`http://localhost:3000/${auth.profilePicture}`}
+                          alt="User Profile"
+                          onError={(e) => {
+                            e.target.src = ""; // Fallback if image fails to load
+                          }}
+                        />
+                      ) : (
+                        <CommentAvatarPlaceholder>
+                          {auth.givenName.charAt(0)}{" "}
+                          {/* Placeholder for current user */}
+                        </CommentAvatarPlaceholder>
+                      )}
+                    </CommentAvatarContainer>
+
+                    {/* Comment Textarea */}
+                    <div style={{ marginLeft: "10px", flexGrow: 1 }}>
+                      <CommentTextarea
+                        value={content}
+                        onChange={handleCommentChange}
+                        placeholder="Write a comment..."
+                      />
+                    </div>
+
+                    {/* Submit Comment Button */}
                     <SubmitCommentContainer>
                       <LetterIconBtn
                         onClick={() =>
                           handleAddComment(index, {
                             userName: auth.givenName,
                             text: content,
+                            profile_picture: auth.profilePicture, // Use the current user's profile picture
                           })
                         }
                       />
