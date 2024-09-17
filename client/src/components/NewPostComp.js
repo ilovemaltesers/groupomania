@@ -20,9 +20,8 @@ import {
   EditPostButton,
   CommentAvatarContainer,
   CommentAvatarPlaceholder,
-  CommentAvatar,
-  EmptyAvatarIcon,
   Avatar,
+  EmptyAvatarIcon,
   CreatorNameContainer,
   NameAndCreatedAtContainer,
   CreatorNameText,
@@ -162,15 +161,20 @@ const NewPost = () => {
   };
 
   const handleAddComment = (postIndex, newComment) => {
+    if (!newComment.text.trim()) return; // Prevent adding empty comments
+
     setPosts((prevPosts) => {
       const updatedPosts = [...prevPosts];
       if (updatedPosts[postIndex]) {
         updatedPosts[postIndex].comments =
           updatedPosts[postIndex].comments || [];
-        updatedPosts[postIndex].comments.push(newComment);
+        updatedPosts[postIndex].comments.unshift(newComment);
       }
       return updatedPosts;
     });
+
+    // Clear the input field after adding the comment
+    setContent("");
   };
 
   const handleRemovePost = async (postId) => {
@@ -258,17 +262,14 @@ const NewPost = () => {
         }
       );
 
-      // Check the response data
       const { likesCount } = response.data;
 
-      // Update frontend state with the latest data
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post.post_id === postId ? { ...post, likes_count: likesCount } : post
         )
       );
 
-      // Update local storage with the latest data
       const updatedPosts = posts.map((post) =>
         post.post_id === postId ? { ...post, likes_count: likesCount } : post
       );
@@ -286,7 +287,7 @@ const NewPost = () => {
       <NewPostBody>
         <TellMeText>So what do you wish to publish today?</TellMeText>
         <NewPostTextarea
-          placeholder="Write your comment..."
+          placeholder="Write your post content..."
           value={content}
           onChange={handleCommentChange}
         />
@@ -318,6 +319,7 @@ const NewPost = () => {
           </ImagePreviewContainer>
         )}
       </NewPostBody>
+
       {posts && posts.length > 0 ? (
         posts.map((post, index) => {
           const postUserId = Number(post.user_id);
@@ -363,7 +365,6 @@ const NewPost = () => {
                   <HeartIconContainer>
                     {isAuthenticated ? (
                       Number(post.user_id) === Number(auth.userId) ? (
-                        // User's own post: Do not show like button if the post is liked
                         <div style={{ cursor: "not-allowed" }}>
                           {post.is_liked ? (
                             <FullHeartIcon />
@@ -419,27 +420,49 @@ const NewPost = () => {
               <CommentSection>
                 {post.comments &&
                   post.comments.map((comment, commentIndex) => (
-                    <div key={commentIndex}>
-                      <p>
-                        {comment.userName}: {comment.text}
-                      </p>
+                    <div key={commentIndex} style={{ marginBottom: "10px" }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            borderRadius: "50%",
+                            backgroundColor: "#ccc", // Placeholder color
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginRight: "10px",
+                          }}
+                        >
+                          {/* Placeholder for Comment Avatar */}
+                          {comment.userName.charAt(0)}
+                        </div>
+                        <p>
+                          <strong>{comment.userName}</strong>: {comment.text}
+                        </p>
+                      </div>
                     </div>
                   ))}
-                <CommentAvatarContainer>
-                  {CommentAvatar ? (
-                    <CommentAvatarPlaceholder
-                      src={CommentAvatarPlaceholder}
-                      alt="User Avatar"
-                    />
-                  ) : (
-                    <CommentAvatarPlaceholder />
-                  )}
-                </CommentAvatarContainer>
 
-                {isAuthenticated && <CommentTextarea></CommentTextarea>}
-                <SubmitCommentContainer>
-                  <LetterIconBtn />
-                </SubmitCommentContainer>
+                {isAuthenticated && (
+                  <div style={{ marginTop: "10px" }}>
+                    <CommentTextarea
+                      value={content}
+                      onChange={handleCommentChange}
+                      placeholder="Write a comment..."
+                    />
+                    <SubmitCommentContainer>
+                      <LetterIconBtn
+                        onClick={() =>
+                          handleAddComment(index, {
+                            userName: auth.givenName,
+                            text: content,
+                          })
+                        }
+                      />
+                    </SubmitCommentContainer>
+                  </div>
+                )}
               </CommentSection>
             </PostCard>
           );
