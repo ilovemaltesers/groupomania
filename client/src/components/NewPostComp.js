@@ -168,7 +168,10 @@ const NewPost = () => {
       if (updatedPosts[postIndex]) {
         updatedPosts[postIndex].comments =
           updatedPosts[postIndex].comments || [];
-        updatedPosts[postIndex].comments.unshift(newComment);
+        updatedPosts[postIndex].comments.unshift({
+          ...newComment,
+          userName: `${auth.givenName} ${auth.familyName}`, // Include both names
+        });
       }
       return updatedPosts;
     });
@@ -450,7 +453,8 @@ const NewPost = () => {
                       {/* Comment text */}
                       <div style={{ marginLeft: "10px" }}>
                         <p>
-                          <strong>{comment.userName}</strong>: {comment.text}
+                          <strong>{comment.userName} </strong>
+                          {comment.text}
                         </p>
                       </div>
                     </div>
