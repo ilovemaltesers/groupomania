@@ -172,34 +172,81 @@ const RemoveEditButtonsContainer = styled.div`
 `;
 
 // Remove Post Button
-const RemovePostButton = styled.button`
-  background-color: #bdebff;
-  color: black;
-  padding: 10px 10px; /* Padding for size */
-  width: 120px; /* Fixed width to ensure consistent size */
-  border: none;
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  text-align: center; /* Ensures text is centered */
-  &:hover {
-    background-color: #e74c3c;
-  }
-`;
-
 // Edit Post Button
 const EditPostButton = styled.button`
   background-color: #bdebff;
   color: black;
-  padding: 10px 10px; /* Padding for size */
-  width: 120px; /* Fixed width to ensure consistent size */
+  padding: 10px 30px; /* Default padding for larger screens */
   border: none;
   border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  text-align: center; /* Ensures text is centered */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  white-space: nowrap; /* Prevent text from wrapping */
+  font-size: 1em; /* Default font size */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   &:hover {
     background-color: bisque;
+  }
+
+  /* Medium Screen (Tablets) */
+  @media (max-width: 768px) {
+    padding: 8px 20px; /* Reduced padding for medium screens */
+    font-size: 0.9em; /* Slightly smaller font for medium screens */
+  }
+
+  /* Small Screen (Mobile) */
+  @media (max-width: 410px) {
+    padding: 6px 15px; /* Reduced padding for small screens */
+    font-size: 0.85em; /* Smaller font size for small screens */
+
+    /* Hide the text and only show emoji */
+    & .text {
+      display: none;
+    }
+  }
+`;
+
+// Remove Post Button
+const RemovePostButton = styled.button`
+  background-color: #bdebff;
+  color: black;
+  padding: 10px 30px; /* Default padding for larger screens */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  white-space: nowrap; /* Prevent text from wrapping */
+  font-size: 1em; /* Default font size */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #e74c3c;
+  }
+
+  /* Medium Screen (Tablets) */
+  @media (max-width: 768px) {
+    padding: 8px 20px; /* Reduced padding for medium screens */
+    font-size: 0.9em; /* Slightly smaller font for medium screens */
+  }
+
+  /* Small Screen (Mobile) */
+  @media (max-width: 410px) {
+    padding: 6px 15px; /* Reduced padding for small screens */
+    font-size: 0.85em; /* Smaller font size for small screens */
+
+    /* Hide the text and only show emoji */
+    & .text {
+      display: none;
+    }
   }
 `;
 

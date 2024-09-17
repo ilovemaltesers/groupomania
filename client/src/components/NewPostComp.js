@@ -405,12 +405,12 @@ const NewPost = () => {
                     <EditPostButton
                       onClick={() => handleEditPost(post.post_id)}
                     >
-                      Edit 🪄✨
+                      <span className="text">Edit</span> 🪄✨
                     </EditPostButton>
                     <RemovePostButton
                       onClick={() => handleRemovePost(post.post_id)}
                     >
-                      Remove 🗑️
+                      <span className="text">Remove</span> 🗑️
                     </RemovePostButton>
                   </RemoveEditButtonsContainer>
                 )}
