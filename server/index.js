@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
 const likeRoutes = require("./routes/likeRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 // Test response
 app.get("/", (req, res) => {
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/like", likeRoutes);
+app.use("/api/comment", commentRoutes);
 
 // Start the server
 app.listen(port, () => {
