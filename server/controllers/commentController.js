@@ -57,4 +57,36 @@ const createComment = async (req, res) => {
   }
 };
 
-module.exports = { createComment };
+const getAllComments = async (req, res) => {
+  let client;
+
+  const { post_id } = req.params;
+
+  try {
+    client = await db();
+    console.log("Successfully connected to PostgreSQL database");
+
+    // Modify query to fetch comments filtered by post_id
+    const fetchCommentsByPostIdQuery = `
+      SELECT * FROM public.comments WHERE post_id = $1;
+    `;
+
+    const result = await client.query(fetchCommentsByPostIdQuery, [post_id]);
+    console.log(
+      "Comments fetched successfully for post_id:",
+      post_id,
+      result.rows
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error while fetching comments:", error); // Check this log for errors
+    res.status(500).json({ message: "Internal server error" });
+  } finally {
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
+  }
+};
+
+module.exports = { createComment, getAllComments };

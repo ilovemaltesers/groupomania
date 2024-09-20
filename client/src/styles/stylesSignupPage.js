@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import BackgroundImage from "../assets/images/bg-signup.jpg";
+import BackgroundImage from "../assets/images/fern.jpg";
 import { Link } from "react-router-dom";
 
 export const Background = styled.div`
@@ -41,9 +41,9 @@ export const SignupButton = styled.button`
   display: block;
   width: 100%;
   margin-top: 20px;
-  background-color: darkcyan;
+  background-color: #a3c5d5;
   border: none;
-  color: white;
+  color: black;
   padding: 12px 20px;
   font-size: 1rem;
   cursor: pointer;
@@ -57,7 +57,7 @@ export const AlreadyAccountLink = styled(Link)`
   display: block;
   text-align: center;
   margin-top: 10px;
-  color: forestgreen;
+  color: black;
   text-decoration: none;
   font-size: 0.9rem;
   &:hover {
@@ -87,5 +87,5 @@ export const GroupomaniaText = styled.h1`
   font-size: 3rem;
   font-weight: bold;
   text-align: center;
-  color: darkcyan;
+  color: #507586;
 `;
