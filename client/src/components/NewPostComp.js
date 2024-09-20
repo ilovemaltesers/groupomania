@@ -160,12 +160,14 @@ const NewPost = () => {
     }
   };
 
-  const handleAddComment = (postIndex, newComment) => {
+  const handleAddComment = async (post_id, postIndex, newComment) => {
     if (!newComment.text.trim()) return; // Prevent adding empty comments
 
+    // Update the local state with a new comment
     setPosts((prevPosts) => {
-      const updatedPosts = [...prevPosts];
+      const updatedPosts = [...prevPosts]; // Copy the posts array to avoid mutation
       if (updatedPosts[postIndex]) {
+        // Ensure comments array exists and prepend new comment
         updatedPosts[postIndex].comments =
           updatedPosts[postIndex].comments || [];
         updatedPosts[postIndex].comments.unshift({
@@ -173,11 +175,28 @@ const NewPost = () => {
           userName: `${auth.givenName} ${auth.familyName}`, // Include both names
         });
       }
-      return updatedPosts;
+      return updatedPosts; // Return the updated state
     });
 
-    // Clear the input field after adding the comment
-    setContent("");
+    setContent(""); // Clear the comment input field
+
+    // Make the Axios request to the server
+    try {
+      const token = localStorage.getItem("token"); // Get the auth token from local storage
+
+      // Send the POST request with correct data structure
+      await axios.post(
+        `http://localhost:3000/api/comment/${post_id}`,
+        { comment_text: newComment.text }, // Use comment_text as per the backend requirement
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the headers
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error posting comment:", error); // Handle any errors
+    }
   };
 
   const handleRemovePost = async (postId) => {
@@ -500,11 +519,10 @@ const NewPost = () => {
                     <SubmitCommentContainer>
                       <LetterIconBtn
                         onClick={() =>
-                          handleAddComment(index, {
+                          handleAddComment(post.post_id, index, {
                             userName: auth.givenName,
-
                             text: content,
-                            profile_picture: auth.profilePicture, // Use the current user's profile picture
+                            profile_picture: auth.profilePicture,
                           })
                         }
                       />
