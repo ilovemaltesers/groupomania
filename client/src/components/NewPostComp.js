@@ -60,6 +60,7 @@ const NewPost = () => {
 
   const userId = auth.userId;
 
+  // Fetch posts from the backend, including comments and likes
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/post", {
@@ -73,6 +74,7 @@ const NewPost = () => {
           ...post,
           likes_count: post.likes_count || 0,
           is_liked: post.is_liked || false,
+          comments: post.comments || [], // Ensure comments are fetched
         }));
 
         // Sort posts by 'created_at' timestamp in descending order (newest first)
@@ -80,14 +82,11 @@ const NewPost = () => {
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
 
-        console.log("Fetched posts with likes:", sortedPosts);
-
-        setPosts(sortedPosts);
-        // Clear and update local storage
-        localStorage.removeItem(`posts_${auth.userId}`);
+        // Update the state and localStorage simultaneously
+        setPosts(sortedPosts); // Update the state with sorted posts
         localStorage.setItem(
           `posts_${auth.userId}`,
-          JSON.stringify(sortedPosts)
+          JSON.stringify(sortedPosts) // Store the sorted posts with comments
         );
       } else {
         console.error("Fetched data is not an array:", response.data);
@@ -97,13 +96,24 @@ const NewPost = () => {
     }
   }, [auth.token, auth.userId]);
 
+  // Fetch posts from localStorage on component mount
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    const storedPosts = localStorage.getItem(`posts_${auth.userId}`);
+    if (storedPosts) {
+      setPosts(JSON.parse(storedPosts));
+      console.log("Loaded posts from localStorage:", JSON.parse(storedPosts));
+    } else {
+      fetchPosts(); // Fetch from server if no localStorage data exists
+    }
+  }, [auth.userId, fetchPosts]); // Dependency array to re-fetch if auth.userId changes
 
+  // Save posts to localStorage after each update
   useEffect(() => {
-    console.log("Posts state:", posts); // Log posts state
-  }, [posts]);
+    if (posts.length > 0) {
+      localStorage.setItem(`posts_${auth.userId}`, JSON.stringify(posts));
+      console.log("Posts saved to localStorage after state update:", posts);
+    }
+  }, [posts, auth.userId]); // Dependency array to save whenever posts change
 
   const handleCommentChange = (event) => {
     setContent(event.target.value);
@@ -165,9 +175,10 @@ const NewPost = () => {
 
     // Update the local state with a new comment
     setPosts((prevPosts) => {
+      console.log("Previous posts state before adding comment:", prevPosts); // Log previous state
+
       const updatedPosts = [...prevPosts]; // Copy the posts array to avoid mutation
       if (updatedPosts[postIndex]) {
-        // Ensure comments array exists and prepend new comment
         updatedPosts[postIndex].comments =
           updatedPosts[postIndex].comments || [];
         updatedPosts[postIndex].comments.unshift({
@@ -175,6 +186,16 @@ const NewPost = () => {
           userName: `${auth.givenName} ${auth.familyName}`, // Include both names
         });
       }
+
+      console.log("Updated posts state after adding comment:", updatedPosts); // Log updated state
+
+      // Save updated posts to localStorage after updating state
+      localStorage.setItem(
+        `posts_${auth.userId}`,
+        JSON.stringify(updatedPosts)
+      );
+      console.log("Updated localStorage after adding comment:", updatedPosts); // Debug log to check localStorage
+
       return updatedPosts; // Return the updated state
     });
 
