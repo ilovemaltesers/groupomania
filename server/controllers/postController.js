@@ -27,12 +27,18 @@ const getAllPosts = async (req, res) => {
     client = await db();
     console.log("Connected to the database.");
 
-    // Query to get posts with likes count and whether the post is liked by the user
+    // Updated query to include comments
     const query = `
       SELECT p.post_id, p.content, p.media_upload, p.created_at, p.updated_at, 
              u._id AS user_id, u.given_name, u.family_name, u.email, u.profile_picture,
              COALESCE(l.like_count, 0) AS likes_count,
-             CASE WHEN ul.user_id IS NOT NULL THEN true ELSE false END AS is_liked
+             CASE WHEN ul.user_id IS NOT NULL THEN true ELSE false END AS is_liked,
+             json_agg(json_build_object(
+               'comment_id', c.comment_id,
+               'user_id', c.user_id,
+               'comment_text', c.comment_text,
+               'created_at', c.created_at
+             )) AS comments
       FROM public.posts p
       JOIN public.users u ON p.user_id = u._id
       LEFT JOIN (
@@ -44,12 +50,14 @@ const getAllPosts = async (req, res) => {
         SELECT post_id, user_id
         FROM public.likes
         WHERE user_id = $1
-      ) ul ON p.post_id = ul.post_id;
+      ) ul ON p.post_id = ul.post_id
+      LEFT JOIN public.comments c ON p.post_id = c.post_id
+      GROUP BY p.post_id, u._id, l.like_count, ul.user_id;
     `;
 
     const result = await client.query(query, [userId]);
     console.log(
-      "Retrieved posts with user info, likes count, and is_liked:",
+      "Retrieved posts with user info, likes count, is_liked, and comments:",
       result.rows
     );
 
