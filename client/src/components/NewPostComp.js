@@ -158,7 +158,19 @@ const NewPost = () => {
   };
 
   const handleAddComment = async (post_id, postIndex, newComment) => {
-    // if (!newComment.text.trim()) return; // Prevent adding empty comments
+    // Log the entire newComment object and the text field for debugging
+    console.log("New Comment Object:", newComment);
+    console.log("New Comment Text:", newComment.comment_text); // Access correct field
+
+    // Ensure that newComment.comment_text is not empty
+    if (
+      !newComment ||
+      !newComment.comment_text ||
+      newComment.comment_text.trim() === ""
+    ) {
+      console.error("Comment text is missing or empty.");
+      return; // Exit early if comment text is invalid
+    }
 
     // Optimistically update the local state
     setPosts((prevPosts) => {
@@ -181,18 +193,26 @@ const NewPost = () => {
     try {
       const token = localStorage.getItem("token"); // Get the auth token from local storage
 
+      // Log newComment.comment_text for debugging before sending request
+      console.log("Sending comment text:", newComment.comment_text);
+
       // Send the POST request with correct data structure
-      await axios.post(
+      const response = await axios.post(
         `http://localhost:3000/api/comment/${post_id}`,
-        { comment_text: newComment.text }, // Use comment_text as per the backend requirement
+        { comment_text: newComment.comment_text }, // Use comment_text as per the backend requirement
         {
           headers: {
             Authorization: `Bearer ${token}`, // Include the token in the headers
           },
         }
       );
+
+      console.log("Comment posted successfully:", response.data); // Log the successful response
     } catch (error) {
-      console.error("Error posting comment:", error); // Handle any errors
+      console.error(
+        "Error posting comment:",
+        error.response ? error.response.data : error.message
+      ); // Handle and log detailed errors
     }
   };
 
