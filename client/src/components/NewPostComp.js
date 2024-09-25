@@ -70,17 +70,26 @@ const NewPost = () => {
           ...post,
           likes_count: post.likes_count || 0,
           is_liked: post.is_liked || false,
+          comments: post.comments.map((comment) => ({
+            ...comment,
+            profile_picture:
+              comment.profile_picture || "path/to/default-image.jpg", // Use a default image if not available
+          })),
         }));
 
-        // Sort posts by 'created_at' timestamp in descending order (newest first)
+        // Log the entire fetched posts with comments
+        console.log("Fetched posts with comments:", postsWithDefaults);
+
+        // Check if comments include profile pictures
+        postsWithDefaults.forEach((post) => {
+          console.log(`Post ID ${post.post_id} comments:`, post.comments);
+        });
+
         const sortedPosts = postsWithDefaults.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
 
-        console.log("Fetched posts with likes:", sortedPosts);
-
         setPosts(sortedPosts);
-        // Clear and update local storage
         localStorage.removeItem(`posts_${auth.userId}`);
         localStorage.setItem(
           `posts_${auth.userId}`,
@@ -182,6 +191,7 @@ const NewPost = () => {
         updatedPosts[postIndex].comments.unshift({
           ...newComment,
           userName: `${auth.givenName} ${auth.familyName}`, // Include both names
+          profile_picture: auth.profilePicture, // Include the profile picture
         });
       }
       return updatedPosts; // Return the updated state
@@ -445,18 +455,16 @@ const NewPost = () => {
             </ControlsContainer>
 
             <CommentSection>
-              {/* Display existing comments */}
-              {post.comments && post.comments.length > 0 ? (
-                post.comments.map((comment, commentIndex) => (
+              {post.comments.length > 0 ? (
+                post.comments.map((comment, index) => (
                   <div
-                    key={commentIndex}
+                    key={index}
                     style={{
                       marginBottom: "20px",
                       display: "flex",
                       alignItems: "flex-start",
                     }}
                   >
-                    {/* Profile Picture and Name */}
                     <div
                       style={{
                         display: "flex",
@@ -471,20 +479,17 @@ const NewPost = () => {
                           marginRight: "10px",
                         }}
                       >
-                        {comment.profile_picture && (
-                          <img
-                            src={`http://localhost:3000/${comment.profile_picture}`} // Profile picture URL
-                            alt="Profile"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              borderRadius: "50%", // Circular image
-                              objectFit: "cover", // Ensure the image covers the container
-                            }}
-                          />
-                        )}
+                        <img
+                          src={`http://localhost:3000/${auth.profilePicture}`}
+                          alt="User Profile"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
+                        />
                       </div>
-
                       <div>
                         <p style={{ margin: "0", fontWeight: "bold" }}>
                           {comment.userName}
