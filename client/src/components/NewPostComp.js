@@ -65,20 +65,20 @@ const NewPost = () => {
         },
       });
 
+      console.log("Fetched posts response:", response.data);
+
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
           likes_count: post.likes_count || 0,
           is_liked: post.is_liked || false,
+
           comments: post.comments.map((comment) => ({
             ...comment,
             profile_picture:
               comment.profile_picture || "path/to/default-image.jpg", // Use a default image if not available
           })),
         }));
-
-        // Log the entire fetched posts with comments
-        console.log("Fetched posts with comments:", postsWithDefaults);
 
         // Check if comments include profile pictures
         postsWithDefaults.forEach((post) => {
@@ -107,9 +107,7 @@ const NewPost = () => {
     fetchPosts();
   }, [fetchPosts]);
 
-  useEffect(() => {
-    console.log("Posts state:", posts); // Log posts state
-  }, [posts]);
+  useEffect(() => {}, [posts]);
 
   const handleCommentChange = (event) => {
     setContent(event.target.value);
@@ -167,62 +165,62 @@ const NewPost = () => {
   };
 
   const handleAddComment = async (post_id, postIndex, newComment) => {
-    // Log the entire newComment object and the text field for debugging
-    console.log("New Comment Object:", newComment);
-    console.log("New Comment Text:", newComment.comment_text); // Access correct field
+    console.log(
+      "handleAddComment called with:",
+      post_id,
+      postIndex,
+      newComment
+    );
 
-    // Ensure that newComment.comment_text is not empty
-    if (
-      !newComment ||
-      !newComment.comment_text ||
-      newComment.comment_text.trim() === ""
-    ) {
-      console.error("Comment text is missing or empty.");
-      return; // Exit early if comment text is invalid
-    }
+    // Check if auth object has the name fields
+    const userName = `${auth.givenName || ""} ${auth.familyName || ""}`.trim();
 
     // Optimistically update the local state
     setPosts((prevPosts) => {
-      const updatedPosts = [...prevPosts]; // Copy the posts array to avoid mutation
+      const updatedPosts = [...prevPosts];
       if (updatedPosts[postIndex]) {
-        // Ensure comments array exists and prepend new comment
         updatedPosts[postIndex].comments =
           updatedPosts[postIndex].comments || [];
         updatedPosts[postIndex].comments.unshift({
           ...newComment,
-          userName: `${auth.givenName} ${auth.familyName}`, // Include both names
-          profile_picture: auth.profilePicture, // Include the profile picture
+          userName: userName, // Use the constructed userName here
+          profile_picture: auth.profilePicture, // Ensure profile picture is also set
         });
       }
-      return updatedPosts; // Return the updated state
+      return updatedPosts;
     });
 
     setContent(""); // Clear the comment input field
 
     // Make the Axios request to the server
     try {
-      const token = localStorage.getItem("token"); // Get the auth token from local storage
+      const token = localStorage.getItem("token");
 
-      // Log newComment.comment_text for debugging before sending request
-      console.log("Sending comment text:", newComment.comment_text);
-
-      // Send the POST request with correct data structure
-      const response = await axios.post(
+      // Send the POST request with only the necessary data
+      await axios.post(
         `http://localhost:3000/api/comment/${post_id}`,
-        { comment_text: newComment.comment_text }, // Use comment_text as per the backend requirement
+        { comment_text: newComment.comment_text },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the headers
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      console.log("Comment posted successfully:", response.data); // Log the successful response
+      // Fetch the updated posts data
+      const response = await axios.get("http://localhost:3000/api/posts", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Update the state with the fetched posts
+      setPosts(response.data.posts);
     } catch (error) {
       console.error(
         "Error posting comment:",
         error.response ? error.response.data : error.message
-      ); // Handle and log detailed errors
+      );
     }
   };
 
@@ -456,53 +454,65 @@ const NewPost = () => {
 
             <CommentSection>
               {post.comments.length > 0 ? (
-                post.comments.map((comment, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      marginBottom: "20px",
-                      display: "flex",
-                      alignItems: "flex-start",
-                    }}
-                  >
+                post.comments.map((comment, index) => {
+                  // Log comment data before rendering
+                  console.log("Rendering Comment:", {
+                    userName: auth.givenName + " " + auth.familyName,
+                    comment_text: comment.comment_text,
+                    profile_picture: comment.profile_picture,
+                  });
+
+                  return (
                     <div
+                      key={index}
                       style={{
+                        marginBottom: "20px",
                         display: "flex",
                         alignItems: "flex-start",
-                        marginRight: "10px",
                       }}
                     >
                       <div
                         style={{
-                          width: "50px",
-                          height: "50px",
+                          display: "flex",
+                          alignItems: "flex-start",
                           marginRight: "10px",
                         }}
                       >
-                        <img
-                          src={`http://localhost:3000/${auth.profilePicture}`}
-                          alt="User Profile"
+                        <div
                           style={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "50%",
-                            objectFit: "cover",
+                            width: "50px",
+                            height: "50px",
+                            marginRight: "10px",
                           }}
-                        />
-                      </div>
-                      <div>
-                        <p style={{ margin: "0", fontWeight: "bold" }}>
-                          {comment.userName}
-                        </p>
-                        <p style={{ margin: "0" }}>{comment.comment_text}</p>
+                        >
+                          <img
+                            src={`http://localhost:3000/${auth.profilePicture}`}
+                            alt="User Profile"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </div>
+                        <div>
+                          <p style={{ margin: "0", fontWeight: "bold" }}>
+                            {auth.givenName + " " + auth.familyName}
+                          </p>{" "}
+                          {/* User's Name */}
+                          <p style={{ margin: "0" }}>
+                            {comment.comment_text}
+                          </p>{" "}
+                          {/* Comment Text */}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <p>No comments yet.</p>
               )}
-
               {/* New Comment Input Section */}
               {isAuthenticated && (
                 <div
@@ -546,13 +556,14 @@ const NewPost = () => {
                   {/* Submit Comment Button */}
                   <SubmitCommentContainer>
                     <LetterIconBtn
-                      onClick={() =>
+                      onClick={() => {
+                        console.log("Submit comment button clicked");
                         handleAddComment(post.post_id, index, {
                           userName: `${auth.givenName} ${auth.familyName}`,
                           comment_text: content,
                           profile_picture: auth.profilePicture,
-                        })
-                      }
+                        });
+                      }}
                     />
                   </SubmitCommentContainer>
                 </div>
