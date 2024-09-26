@@ -65,8 +65,6 @@ const NewPost = () => {
         },
       });
 
-      console.log("Fetched posts response:", response.data);
-
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
@@ -81,9 +79,7 @@ const NewPost = () => {
         }));
 
         // Check if comments include profile pictures
-        postsWithDefaults.forEach((post) => {
-          console.log(`Post ID ${post.post_id} comments:`, post.comments);
-        });
+        postsWithDefaults.forEach((post) => {});
 
         const sortedPosts = postsWithDefaults.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
@@ -455,13 +451,6 @@ const NewPost = () => {
             <CommentSection>
               {post.comments.length > 0 ? (
                 post.comments.map((comment, index) => {
-                  // Log comment data before rendering
-                  console.log("Rendering Comment:", {
-                    userName: auth.givenName + " " + auth.familyName,
-                    comment_text: comment.comment_text,
-                    profile_picture: comment.profile_picture,
-                  });
-
                   return (
                     <div
                       key={index}
@@ -557,7 +546,6 @@ const NewPost = () => {
                   <SubmitCommentContainer>
                     <LetterIconBtn
                       onClick={() => {
-                        console.log("Submit comment button clicked");
                         handleAddComment(post.post_id, index, {
                           userName: `${auth.givenName} ${auth.familyName}`,
                           comment_text: content,
