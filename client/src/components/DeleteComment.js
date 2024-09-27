@@ -1,54 +1,58 @@
+// In NewPost.js or a new file if preferred
 import React from "react";
-import styled from "styled-components";
 import axios from "axios";
+import styled from "styled-components";
 
 const StyledDeleteCommentButton = styled.button`
-  background-color: white;
-  color: black;
-  padding: 10px 20px;
+  background-color: white; /* Change color for visibility */
+  color: white;
+  padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
+  margin-left: 20px;
+  margin-top: 7px;
 
   &:hover {
-    font-size: 40px;
+    font-size: 25px;
   }
 `;
 
-const handleDeleteComment = async (commentId) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    console.error("Authorization token is missing.");
+const DeleteCommentButton = ({ commentId, onDelete }) => {
+  const handleDelete = async () => {
+    onDelete(commentId);
     return;
-  }
 
-  try {
-    const response = await axios.delete(
-      `http://localhost:3000/api/comment/${commentId}`,
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Authorization token is missing.");
+      return;
+    }
 
-      {
+    try {
+      await axios.delete(`http://localhost:3000/api/comment/${commentId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
-    console.log("Comment deleted successfully:", response.data);
-  } catch (error) {
-    console.error(
-      "Error deleting comment:",
-      error.response ? error.response.data : error.message
-    );
-  }
-};
+      });
 
-const DeleteComment = ({ commentId, buttonText = "🗑️" }) => {
+      onDelete(commentId);
+      console.log("Comment deleted successfully.");
+    } catch (error) {
+      console.error(
+        "Error deleting comment:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
   return (
-    <StyledDeleteCommentButton onClick={() => handleDeleteComment(commentId)}>
-      {buttonText}
+    <StyledDeleteCommentButton onClick={handleDelete}>
+      🗑️
     </StyledDeleteCommentButton>
   );
 };
 
-export default DeleteComment;
+export default DeleteCommentButton;

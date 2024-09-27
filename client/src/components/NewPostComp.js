@@ -41,7 +41,7 @@ import {
 import EditPostPopUp from "../components/EditPostPopUp";
 import CommentTextarea from "../components/CommentInput";
 
-import DeleteComment from "../components/DeleteComment";
+import DeleteCommentButton from "../components/DeleteComment";
 // Function to format dates
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -219,6 +219,12 @@ const NewPost = () => {
         error.response ? error.response.data : error.message
       );
     }
+  };
+
+  const handleDeleteComment = (commentId) => {
+    console.log("handleDeleteComment called with:", commentId);
+
+    console.log("posts:", posts);
   };
 
   const handleRemovePost = async (postId) => {
@@ -496,7 +502,10 @@ const NewPost = () => {
                           </p>{" "}
                           {/* Comment Text */}
                         </div>
-                        <DeleteComment commentId={comment.comment_id} />
+                        <DeleteCommentButton
+                          onDelete={handleDeleteComment}
+                          commentId={comment.comment_id}
+                        />
                       </div>
                     </div>
                   );

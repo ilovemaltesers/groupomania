@@ -60,6 +60,14 @@ const createComment = async (req, res) => {
 const deleteComment = async (req, res) => {
   const { comment_id } = req.params;
 
+  // Convert comment_id to an integer
+  const parsedCommentId = parseInt(comment_id, 10);
+
+  // Check if the conversion was successful
+  if (isNaN(parsedCommentId)) {
+    return res.status(400).json({ message: "Invalid comment ID" });
+  }
+
   let client;
 
   try {
@@ -72,7 +80,7 @@ const deleteComment = async (req, res) => {
       RETURNING *;
     `;
 
-    const values = [comment_id];
+    const values = [parsedCommentId]; // Use the integer value
     const result = await client.query(deleteCommentQuery, values);
     console.log("Comment deleted successfully:", result.rows[0]);
     res.status(200).json(result.rows[0]);
@@ -87,4 +95,30 @@ const deleteComment = async (req, res) => {
   }
 };
 
-module.exports = { createComment, deleteComment };
+const getAllComments = async (req, res) => {
+  let client;
+
+  try {
+    client = await db();
+    console.log("Successfully connected to PostgreSQL database");
+
+    const getAllCommentsQuery = `
+
+
+    SELECT * FROM public.comments;
+    `;
+    const result = await client.query(getAllCommentsQuery);
+    console.log("Comments retrieved successfully:", result.rows);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error while retrieving comments:", error);
+    res.status(500).json({ message: "Internal server error" });
+  } finally {
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
+  }
+};
+
+module.exports = { createComment, deleteComment, getAllComments };

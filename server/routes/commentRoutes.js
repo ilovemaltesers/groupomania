@@ -8,6 +8,8 @@ router.post("/:post_id", verifyToken, commentContr.createComment);
 
 router.delete("/:comment_id", verifyToken, commentContr.deleteComment);
 
+router.get("/", verifyToken, commentContr.getAllComments);
+
 // router.put("/:post_id", verifyToken, commentContr.editComment);
 
 // router.get("/:post_id", verifyToken, commentContr.getAllComments);
