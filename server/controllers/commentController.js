@@ -57,4 +57,34 @@ const createComment = async (req, res) => {
   }
 };
 
-module.exports = { createComment };
+const deleteComment = async (req, res) => {
+  const { comment_id } = req.params;
+
+  let client;
+
+  try {
+    client = await db();
+    console.log("Successfully connected to PostgreSQL database");
+
+    const deleteCommentQuery = `
+      DELETE FROM public.comments
+      WHERE comment_id = $1
+      RETURNING *;
+    `;
+
+    const values = [comment_id];
+    const result = await client.query(deleteCommentQuery, values);
+    console.log("Comment deleted successfully:", result.rows[0]);
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error("Error while deleting a comment:", error); // Check this log for errors
+    res.status(500).json({ message: "Internal server error" });
+  } finally {
+    if (client) {
+      await client.end();
+      console.log("Database connection closed.");
+    }
+  }
+};
+
+module.exports = { createComment, deleteComment };

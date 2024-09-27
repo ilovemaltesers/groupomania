@@ -41,6 +41,7 @@ import {
 import EditPostPopUp from "../components/EditPostPopUp";
 import CommentTextarea from "../components/CommentInput";
 
+import DeleteComment from "../components/DeleteComment";
 // Function to format dates
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -442,7 +443,7 @@ const NewPost = () => {
                   <RemovePostButton
                     onClick={() => handleRemovePost(post.post_id)}
                   >
-                    <span className="text">Remove</span> 🗑️
+                    <span className="text">Remove </span> 🗑️
                   </RemovePostButton>
                 </RemoveEditButtonsContainer>
               )}
@@ -495,6 +496,7 @@ const NewPost = () => {
                           </p>{" "}
                           {/* Comment Text */}
                         </div>
+                        <DeleteComment commentId={comment.comment_id} />
                       </div>
                     </div>
                   );

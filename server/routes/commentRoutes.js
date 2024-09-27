@@ -6,8 +6,10 @@ const verifyToken = require("../middleware/authMiddleware");
 
 router.post("/:post_id", verifyToken, commentContr.createComment);
 
+router.delete("/:comment_id", verifyToken, commentContr.deleteComment);
+
 // router.put("/:post_id", verifyToken, commentContr.editComment);
-// router.delete("/:post_id", verifyToken, commentContr.deleteComment);
+
 // router.get("/:post_id", verifyToken, commentContr.getAllComments);
 
 module.exports = router;
