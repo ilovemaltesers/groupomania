@@ -221,10 +221,53 @@ const NewPost = () => {
     }
   };
 
-  const handleDeleteComment = (commentId) => {
-    console.log("handleDeleteComment called with:", commentId);
+  // const handleDeleteComment = (commentId) => {
+  //   console.log("handleDeleteComment called with:", commentId);
 
-    console.log("posts:", posts);
+  //   console.log("posts:", posts);
+  // };
+
+  const handleDeleteComment = async (postId, commentId) => {
+    console.log("handleDeleteComment called with:", postId, commentId);
+
+    try {
+      // Optimistically update the state before making the API call
+      setPosts((prevPosts) => {
+        return prevPosts.map((post) => {
+          if (post.post_id === postId) {
+            // Filter out the comment with the matching commentId
+            const updatedComments = post.comments.filter(
+              (comment) => comment.comment_id !== commentId
+            );
+            return {
+              ...post,
+              comments: updatedComments,
+            };
+          }
+          return post;
+        });
+      });
+
+      // Make the delete request to the backend
+      await axios.delete(`http://localhost:3000/api/comment/${commentId}`, {
+        headers: {
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
+
+      // Optionally, re-fetch posts from the server if you want to ensure consistency
+      // const response = await axios.get("http://localhost:3000/api/posts", {
+      //   headers: {
+      //     Authorization: `Bearer ${auth.token}`,
+      //   },
+      // });
+      // setPosts(response.data.posts);
+    } catch (error) {
+      console.error(
+        "Error deleting comment:",
+        error.response ? error.response.data : error.message
+      );
+    }
   };
 
   const handleRemovePost = async (postId) => {
@@ -503,7 +546,12 @@ const NewPost = () => {
                           {/* Comment Text */}
                         </div>
                         <DeleteCommentButton
-                          onDelete={handleDeleteComment}
+                          onDelete={() =>
+                            handleDeleteComment(
+                              post.post_id,
+                              comment.comment_id
+                            )
+                          }
                           commentId={comment.comment_id}
                         />
                       </div>
