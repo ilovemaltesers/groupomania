@@ -71,14 +71,19 @@ const NewPost = () => {
           ...post,
           likes_count: post.likes_count || 0,
           is_liked: post.is_liked || false,
-
           comments: post.comments.map((comment) => ({
             ...comment,
+            given_name: comment.given_name || "Anonymous", // Fallback for missing name
+            family_name: comment.family_name || "", // Fallback for missing last name
             profile_picture:
-              comment.profile_picture || "path/to/default-image.jpg", // Use a default image if not available
+              comment.profile_picture || "path/to/default-image.jpg", // Fallback for profile picture
           })),
         }));
 
+        // Log each post's comments
+        postsWithDefaults.forEach((post, index) => {
+          console.log(`Comments for Post ${index + 1}:`, post.comments);
+        });
         // Check if comments include profile pictures
         postsWithDefaults.forEach((post) => {});
 
@@ -537,7 +542,7 @@ const NewPost = () => {
                         </div>
                         <div>
                           <p style={{ margin: "0", fontWeight: "bold" }}>
-                            {auth.givenName + " " + auth.familyName}
+                            {comment.given_name + " " + comment.family_name}
                           </p>{" "}
                           {/* User's Name */}
                           <p style={{ margin: "0" }}>

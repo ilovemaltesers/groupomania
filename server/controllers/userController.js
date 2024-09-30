@@ -14,24 +14,21 @@ const signup = async (req, res) => {
     return res.status(400).send("Passwords do not match");
   }
 
-  let client;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    client = await db();
-    console.log("Connected to the database.");
 
     // Check if user already exists
-    const userExists = await client.query(
+    const userExistsResult = await db(
       "SELECT * FROM public.users WHERE email = $1",
       [email]
     );
 
-    if (userExists.rows.length > 0) {
+    if (userExistsResult.rows.length > 0) {
       return res.status(400).send("User already exists");
     }
 
     // Insert user into the database
-    await client.query(
+    await db(
       "INSERT INTO public.users (family_name, given_name, email, password) VALUES ($1, $2, $3, $4)",
       [familyName, givenName, email, hashedPassword]
     );
@@ -40,11 +37,6 @@ const signup = async (req, res) => {
   } catch (error) {
     console.error("Error during signup:", error);
     res.status(500).send("Error during signup");
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
@@ -52,13 +44,9 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  let client;
   try {
-    client = await db();
-    console.log("Connected to the database.");
-
     // Retrieve user details including email and profile picture
-    const userResult = await client.query(
+    const userResult = await db(
       "SELECT _id, family_name, given_name, email, profile_picture, password FROM public.users WHERE email = $1",
       [email]
     );
@@ -87,17 +75,12 @@ const login = async (req, res) => {
       userId: user._id,
       familyName: user.family_name,
       givenName: user.given_name,
-      email: user.email, // Include email in the response
-      profilePicture: user.profile_picture, // Include profile picture in the response
+      email: user.email,
+      profilePicture: user.profile_picture,
     });
   } catch (error) {
     console.error("Error during login:", error);
     res.status(500).send("Error during login");
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
@@ -113,15 +96,13 @@ const uploadProfilePicture = async (req, res) => {
     return res.status(401).send({ message: "User not authenticated" });
   }
 
-  let client;
   try {
     const filePath = path.join("images", req.file.filename);
 
-    client = await db(); // Initialize client here
-    await client.query(
-      "UPDATE public.users SET profile_picture = $1 WHERE _id = $2",
-      [filePath, userId]
-    );
+    await db("UPDATE public.users SET profile_picture = $1 WHERE _id = $2", [
+      filePath,
+      userId,
+    ]);
 
     res.status(200).json({
       message: "Profile picture uploaded successfully!",
@@ -135,11 +116,6 @@ const uploadProfilePicture = async (req, res) => {
   } catch (error) {
     console.error("Error uploading profile picture:", error);
     res.status(500).send("Error uploading profile picture");
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
@@ -151,10 +127,8 @@ const getProfilePicture = async (req, res) => {
     return res.status(401).send({ message: "User not authenticated" });
   }
 
-  let client;
   try {
-    client = await db(); // Initialize client here
-    const user = await client.query(
+    const user = await db(
       "SELECT profile_picture FROM public.users WHERE _id = $1",
       [userId]
     );
@@ -175,29 +149,20 @@ const getProfilePicture = async (req, res) => {
   } catch (error) {
     console.error("Error getting profile picture:", error);
     res.status(500).send("Error getting profile picture");
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
+// Post role about me function
 const postRoleAboutMe = async (req, res) => {
   const { roleTitle, aboutMe } = req.body;
-  console.log("Role Title:", roleTitle);
-  console.log("About Me:", aboutMe);
   const userId = req.userId;
 
   if (!userId) {
     return res.status(401).send({ message: "User not authenticated" });
   }
 
-  let client;
-
   try {
-    client = await db();
-    await client.query(
+    await db(
       "UPDATE public.users SET title_role = $1, about_me = $2 WHERE _id = $3",
       [roleTitle, aboutMe, userId]
     );
@@ -206,35 +171,22 @@ const postRoleAboutMe = async (req, res) => {
   } catch (error) {
     console.error("Error updating role and about me:", error);
     res.status(500).send("Error updating role and about me");
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
+// Get role about me function
 const getRoleAboutMe = async (req, res) => {
-  console.log("Entered getRoleAboutMe");
   const userId = req.userId;
-
-  console.log("User ID in controller function:", userId);
 
   if (!userId) {
     return res.status(401).send({ message: "User not authenticated" });
   }
 
-  let client;
   try {
-    client = await db();
-    console.log("Successfully connected to PostgreSQL database");
-
-    const user = await client.query(
+    const user = await db(
       "SELECT title_role, about_me FROM public.users WHERE _id = $1",
       [userId]
     );
-
-    console.log("Query result:", user.rows); // Log the result of the query
 
     if (user.rows.length === 0) {
       return res.status(404).send("User not found");
@@ -249,30 +201,20 @@ const getRoleAboutMe = async (req, res) => {
   } catch (error) {
     console.error("Error getting role and about me:", error);
     res.status(500).send("Error getting role and about me");
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
+// Delete account function
 const deleteAccount = async (req, res) => {
   const userId = req.userId;
-  console.log("User ID in deleteAccount:", userId);
 
   if (!userId) {
-    console.error("User ID is not provided or user is not authenticated");
     return res.status(401).send({ message: "User not authenticated" });
   }
 
-  let client;
   try {
-    console.log("Connecting to the database...");
-    client = await db();
-
     // 1. Get the user's profile picture path
-    const userResult = await client.query(
+    const userResult = await db(
       "SELECT profile_picture FROM public.users WHERE _id = $1",
       [userId]
     );
@@ -292,7 +234,7 @@ const deleteAccount = async (req, res) => {
     }
 
     // 2. Get the paths of all media uploads (images) from the user's posts
-    const postImagesResult = await client.query(
+    const postImagesResult = await db(
       "SELECT media_upload FROM public.posts WHERE user_id = $1",
       [userId]
     );
@@ -303,7 +245,6 @@ const deleteAccount = async (req, res) => {
     postImages.forEach((post) => {
       const postImagePath = post.media_upload; // Assuming media_upload stores the image path
       if (postImagePath) {
-        // Convert the URL to a relative path and delete the image
         const fullPostImagePath = path.join(
           __dirname,
           "..",
@@ -321,20 +262,15 @@ const deleteAccount = async (req, res) => {
     });
 
     // 4. Delete the user's posts from the database
-    await client.query("DELETE FROM public.posts WHERE user_id = $1", [userId]);
-    console.log("Posts deleted successfully from the database");
+    await db("DELETE FROM public.posts WHERE user_id = $1", [userId]);
 
     // 5. Delete the user from the database
-    const deleteResult = await client.query(
-      "DELETE FROM public.users WHERE _id = $1",
-      [userId]
-    );
-
-    console.log("Query result:", deleteResult);
+    const deleteResult = await db("DELETE FROM public.users WHERE _id = $1", [
+      userId,
+    ]);
 
     // Check if any rows were deleted
     if (deleteResult.rowCount === 0) {
-      console.log("User not found or already deleted");
       return res.status(404).send({ message: "User not found" });
     }
 
@@ -342,11 +278,6 @@ const deleteAccount = async (req, res) => {
   } catch (error) {
     console.error("Error in deleteAccount:", error);
     res.status(500).send("Error deleting account");
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 

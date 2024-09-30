@@ -3,6 +3,7 @@ const { db } = require("../connect.js");
 
 const JWT_SECRET = "blablabla";
 
+// Create Comment Function
 const createComment = async (req, res) => {
   const { post_id } = req.params;
 
@@ -30,12 +31,7 @@ const createComment = async (req, res) => {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 
-  let client;
-
   try {
-    client = await db();
-    console.log("Successfully connected to PostgreSQL database");
-
     const createCommentQuery = `
       INSERT INTO public.comments (user_id, post_id, comment_text, created_at)
       VALUES ($1, $2, $3, NOW())
@@ -43,20 +39,16 @@ const createComment = async (req, res) => {
     `;
 
     const values = [userId, post_id, comment_text];
-    const result = await client.query(createCommentQuery, values);
+    const result = await db(createCommentQuery, values);
     console.log("Comment created successfully:", result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error("Error while creating a comment:", error); // Check this log for errors
+    console.error("Error while creating a comment:", error);
     res.status(500).json({ message: "Internal server error" });
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
+// Delete Comment Function
 const deleteComment = async (req, res) => {
   const { comment_id } = req.params;
 
@@ -68,12 +60,7 @@ const deleteComment = async (req, res) => {
     return res.status(400).json({ message: "Invalid comment ID" });
   }
 
-  let client;
-
   try {
-    client = await db();
-    console.log("Successfully connected to PostgreSQL database");
-
     const deleteCommentQuery = `
       DELETE FROM public.comments
       WHERE comment_id = $1
@@ -81,43 +68,31 @@ const deleteComment = async (req, res) => {
     `;
 
     const values = [parsedCommentId]; // Use the integer value
-    const result = await client.query(deleteCommentQuery, values);
+    const result = await db(deleteCommentQuery, values);
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
     console.log("Comment deleted successfully:", result.rows[0]);
     res.status(200).json(result.rows[0]);
   } catch (error) {
-    console.error("Error while deleting a comment:", error); // Check this log for errors
+    console.error("Error while deleting a comment:", error);
     res.status(500).json({ message: "Internal server error" });
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
+// Get All Comments Function
 const getAllComments = async (req, res) => {
-  let client;
-
   try {
-    client = await db();
-    console.log("Successfully connected to PostgreSQL database");
+    const getAllCommentsQuery = `SELECT * FROM public.comments;`;
+    const result = await db(getAllCommentsQuery);
 
-    const getAllCommentsQuery = `
-
-
-    SELECT * FROM public.comments;
-    `;
-    const result = await client.query(getAllCommentsQuery);
     console.log("Comments retrieved successfully:", result.rows);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error while retrieving comments:", error);
     res.status(500).json({ message: "Internal server error" });
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 
