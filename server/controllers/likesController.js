@@ -23,18 +23,14 @@ const likePost = async (req, res) => {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 
-  let client;
   try {
-    client = await db();
-    console.log("Successfully connected to PostgreSQL database");
-
     // Check if the user has already liked the post
     const checkLikeQuery = `
       SELECT * FROM public.likes
       WHERE post_id = $1 AND user_id = $2;
     `;
     const checkLikeValues = [post_id, userId];
-    const likeResult = await client.query(checkLikeQuery, checkLikeValues);
+    const likeResult = await db(checkLikeQuery, checkLikeValues);
     console.log("Like query result:", likeResult.rows);
 
     if (likeResult.rows.length > 0) {
@@ -47,7 +43,7 @@ const likePost = async (req, res) => {
         WHERE post_id = $1 AND user_id = $2;
       `;
       const removeLikeValues = [post_id, userId];
-      await client.query(removeLikeQuery, removeLikeValues);
+      await db(removeLikeQuery, removeLikeValues);
 
       // Update the likes count in the posts table, ensuring it doesn't go below 0
       const updateLikesCountQuery = `
@@ -57,7 +53,7 @@ const likePost = async (req, res) => {
         RETURNING likes_count;
       `;
       const updateLikesCountValues = [post_id];
-      const updateLikesCountResult = await client.query(
+      const updateLikesCountResult = await db(
         updateLikesCountQuery,
         updateLikesCountValues
       );
@@ -82,7 +78,7 @@ const likePost = async (req, res) => {
         RETURNING *;
       `;
       const likeValues = [post_id, userId];
-      const likeInsertResult = await client.query(likeQuery, likeValues);
+      const likeInsertResult = await db(likeQuery, likeValues);
       console.log("Like insert result:", likeInsertResult.rows);
 
       if (likeInsertResult.rows.length > 0) {
@@ -94,7 +90,7 @@ const likePost = async (req, res) => {
           RETURNING likes_count;
         `;
         const updateLikesCountValues = [post_id];
-        const updateLikesCountResult = await client.query(
+        const updateLikesCountResult = await db(
           updateLikesCountQuery,
           updateLikesCountValues
         );
@@ -115,11 +111,6 @@ const likePost = async (req, res) => {
   } catch (error) {
     console.error("Error during post like:", error);
     res.status(500).json({ message: "Error during post like", error });
-  } finally {
-    if (client) {
-      await client.end();
-      console.log("Database connection closed.");
-    }
   }
 };
 

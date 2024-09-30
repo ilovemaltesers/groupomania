@@ -205,9 +205,11 @@ const getRoleAboutMe = async (req, res) => {
 };
 
 // Delete account function
+
 const deleteAccount = async (req, res) => {
   const userId = req.userId;
 
+  // Check if the user is authenticated
   if (!userId) {
     return res.status(401).send({ message: "User not authenticated" });
   }
@@ -248,7 +250,7 @@ const deleteAccount = async (req, res) => {
         const fullPostImagePath = path.join(
           __dirname,
           "..",
-          "images",
+          "images", // Assuming the images are stored in an 'images' directory
           path.basename(postImagePath)
         );
         fs.unlink(fullPostImagePath, (err) => {
@@ -261,10 +263,16 @@ const deleteAccount = async (req, res) => {
       }
     });
 
-    // 4. Delete the user's posts from the database
+    // 4. Delete the user's comments from the database
+    await db("DELETE FROM public.comments WHERE user_id = $1", [userId]);
+
+    // 5. Delete the user's likes from the database
+    await db("DELETE FROM public.likes WHERE user_id = $1", [userId]);
+
+    // 6. Delete the user's posts from the database
     await db("DELETE FROM public.posts WHERE user_id = $1", [userId]);
 
-    // 5. Delete the user from the database
+    // 7. Delete the user from the database
     const deleteResult = await db("DELETE FROM public.users WHERE _id = $1", [
       userId,
     ]);
@@ -274,11 +282,26 @@ const deleteAccount = async (req, res) => {
       return res.status(404).send({ message: "User not found" });
     }
 
-    res.status(200).send("Account and associated posts deleted successfully!");
+    // Successful deletion response
+    res
+      .status(200)
+      .send(
+        "Account and associated posts, comments, likes, and profile picture deleted successfully!"
+      );
   } catch (error) {
     console.error("Error in deleteAccount:", error);
     res.status(500).send("Error deleting account");
   }
+};
+
+module.exports = {
+  signup,
+  login,
+  uploadProfilePicture,
+  getProfilePicture,
+  postRoleAboutMe,
+  getRoleAboutMe,
+  deleteAccount,
 };
 
 module.exports = {
