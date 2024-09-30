@@ -530,7 +530,7 @@ const NewPost = () => {
                           }}
                         >
                           <img
-                            src={`http://localhost:3000/${auth.profilePicture}`}
+                            src={`http://localhost:3000/${comment.profile_picture}`}
                             alt="User Profile"
                             style={{
                               width: "100%",
@@ -538,17 +538,16 @@ const NewPost = () => {
                               borderRadius: "50%",
                               objectFit: "cover",
                             }}
+                            onError={(e) => {
+                              e.target.src = "path/to/default-image.jpg"; // Fallback for error loading profile picture
+                            }}
                           />
                         </div>
                         <div>
                           <p style={{ margin: "0", fontWeight: "bold" }}>
                             {comment.given_name + " " + comment.family_name}
-                          </p>{" "}
-                          {/* User's Name */}
-                          <p style={{ margin: "0" }}>
-                            {comment.comment_text}
-                          </p>{" "}
-                          {/* Comment Text */}
+                          </p>
+                          <p style={{ margin: "0" }}>{comment.comment_text}</p>
                         </div>
                         <DeleteCommentButton
                           onDelete={() =>
