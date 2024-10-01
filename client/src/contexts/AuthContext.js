@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    // Retrieve all values from localStorage
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
     const givenName = localStorage.getItem("givenName");
@@ -33,7 +32,6 @@ export const AuthProvider = ({ children }) => {
     const email = localStorage.getItem("email");
     const profilePicture = localStorage.getItem("profilePicture");
 
-    // Set the auth state if the data is present
     if (token && userId && givenName) {
       setAuth({ token, userId, givenName, familyName, email, profilePicture });
     }

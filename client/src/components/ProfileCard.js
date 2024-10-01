@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 
-import { MdFace2 } from "react-icons/md";
 import {
   Container,
   Row,
@@ -14,13 +13,12 @@ import {
 } from "react-bootstrap";
 import TitleLoggedUser from "./TitleLoggedUser";
 
+import {
+  StyledAboutMeText,
+  ImagePlaceholderIcon,
+} from "../styles/stylesProfilePage";
+
 // Styled components
-const ImagePlaceholderIcon = styled(MdFace2)`
-  font-size: 10em;
-  margin: 20px 0;
-  width: 100px;
-  height: 100px;
-`;
 
 const StyledContainer = styled(Container)`
   height: 100vh;
@@ -358,7 +356,9 @@ const ProfileCard = () => {
                 {/* Centered Title and About Me */}
                 <div className="mt-4">
                   <h3>{roleTitle || "Your Role Title"}</h3>
-                  <p>{aboutMe || "Write something about yourself..."}</p>
+                  <StyledAboutMeText>
+                    {aboutMe || "Write something about yourself..."}
+                  </StyledAboutMeText>
                 </div>
               </LeftColumn>
               <RightColumn md={6}>

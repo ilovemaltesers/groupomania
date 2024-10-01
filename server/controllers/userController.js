@@ -266,11 +266,11 @@ const deleteAccount = async (req, res) => {
     // 4. Delete the user's comments from the database
     await db("DELETE FROM public.comments WHERE user_id = $1", [userId]);
 
-    // 5. Delete the user's likes from the database
-    await db("DELETE FROM public.likes WHERE user_id = $1", [userId]);
-
-    // 6. Delete the user's posts from the database
+    // 5. Delete the user's posts from the database
     await db("DELETE FROM public.posts WHERE user_id = $1", [userId]);
+
+    // 6. Delete the user's likes from the database
+    await db("DELETE FROM public.likes WHERE user_id = $1", [userId]);
 
     // 7. Delete the user from the database
     const deleteResult = await db("DELETE FROM public.users WHERE _id = $1", [
@@ -292,16 +292,6 @@ const deleteAccount = async (req, res) => {
     console.error("Error in deleteAccount:", error);
     res.status(500).send("Error deleting account");
   }
-};
-
-module.exports = {
-  signup,
-  login,
-  uploadProfilePicture,
-  getProfilePicture,
-  postRoleAboutMe,
-  getRoleAboutMe,
-  deleteAccount,
 };
 
 module.exports = {

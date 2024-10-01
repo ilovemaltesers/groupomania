@@ -20,18 +20,18 @@ const LoginFormComp = () => {
         }
       );
 
-      // Log the full API response for debugging
-      console.log("Full API Response:", response.data);
-
+      // Destructure the response
       const { token, userId, givenName, familyName, email, profilePicture } =
         response.data;
+
+      // Call login from AuthContext
       login(token, userId, givenName, familyName, email, profilePicture);
 
       alert("Login successful");
       navigate("/feed"); // Redirect to feed page on successful login
     } catch (error) {
       console.error("Login error:", error);
-      alert(`Login failed: ${error.response.data}`);
+      alert(`Login failed: ${error.response?.data || error.message}`);
     }
   };
 
