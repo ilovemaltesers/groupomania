@@ -1,111 +1,22 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import styled from "styled-components";
 
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  Form,
-  Modal,
-} from "react-bootstrap";
+import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import TitleLoggedUser from "./TitleLoggedUser";
 
 import {
   StyledAboutMeText,
   ImagePlaceholderIcon,
+  StyledContainer,
+  StyledCard,
+  LeftColumn,
+  RightColumn,
+  ButtonUploadImg,
+  ButtonSaveChanges,
+  ButtonDeleteAccount,
+  ProfilePictureWrapper,
+  ImageUploadInput,
 } from "../styles/stylesProfilePage";
-
-// Styled components
-
-const StyledContainer = styled(Container)`
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  overflow: hidden;
-`;
-
-const StyledCard = styled(Card)`
-  width: 100%;
-  max-width: 800px;
-  height: auto;
-  padding: 40px;
-  border-radius: 30px;
-  box-shadow: 0 4px 15px rgba(175, 228, 236);
-`;
-
-const LeftColumn = styled(Col)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center; /* Center text horizontally */
-`;
-
-const RightColumn = styled(Col)`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; /* Evenly spaces out the buttons */
-  height: 100%; /* Ensures column takes full height */
-  padding: 20px 0;
-`;
-
-const ButtonUploadImg = styled(Button)`
-  background-color: #bdebff;
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  &:hover {
-    background-color: bisque;
-    color: black;
-  }
-`;
-
-const ButtonSaveChanges = styled(Button)`
-  background-color: #bdebff;
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  &:hover {
-    background-color: bisque;
-    color: black;
-  }
-`;
-
-const ButtonDeleteAccount = styled(Button)`
-  background-color: #bdebff;
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  &:hover {
-    background-color: darkred;
-    color: white;
-  }
-`;
-
-const ImageUploadInput = styled.input`
-  display: none;
-`;
-
-const ProfilePictureWrapper = styled.div`
-  margin-top: 20px;
-`;
 
 const ProfileCard = () => {
   const [image, setImage] = useState(null);
