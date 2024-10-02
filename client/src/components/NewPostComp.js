@@ -351,13 +351,20 @@ const NewPost = () => {
       );
 
       const { likesCount } = response.data;
+      console.log(response.data);
 
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post.post_id === postId ? { ...post, likes_count: likesCount } : post
+          post.post_id === postId
+            ? {
+                ...post,
+                likes_count: likesCount,
+                is_liked: likesCount > 0 ? true : false,
+              }
+            : post
         )
       );
-
+      console.log(posts);
       const updatedPosts = posts.map((post) =>
         post.post_id === postId ? { ...post, likes_count: likesCount } : post
       );

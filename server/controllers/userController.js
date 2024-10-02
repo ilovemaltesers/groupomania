@@ -106,12 +106,13 @@ const uploadProfilePicture = async (req, res) => {
 
     res.status(200).json({
       message: "Profile picture uploaded successfully!",
-      file: {
-        filename: req.file.filename,
-        path: filePath,
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-      },
+      imageUrl: filePath,
+      // file: {
+      //   filename: req.file.filename,
+      //   path: filePath,
+      //   mimetype: req.file.mimetype,
+      //   size: req.file.size,
+      // },
     });
   } catch (error) {
     console.error("Error uploading profile picture:", error);

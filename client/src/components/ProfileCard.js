@@ -134,7 +134,10 @@ const ProfileCard = () => {
         }
       );
 
-      setImage(`http://localhost:3000/${response.data.imageUrl}`);
+      const imageUrl = `http://localhost:3000/${response.data.imageUrl}`;
+
+      setImage(imageUrl);
+      console.log(image);
     } catch (error) {
       console.error(
         "Error uploading image:",
