@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Navbar, Container, Card, Col, Button } from "react-bootstrap";
 import { IoLogOutOutline } from "react-icons/io5";
 import { MdFace2 } from "react-icons/md";
+
 const ProfileNavbar = styled(Navbar)`
   background-color: #bdebff;
 `;
@@ -35,7 +36,7 @@ const StyledAboutMeText = styled.p`
 
 const ImagePlaceholderIcon = styled(MdFace2)`
   font-size: 10em;
-  margin: 20px 0;
+
   width: 100px;
   height: 100px;
 `;

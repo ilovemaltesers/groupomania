@@ -277,28 +277,28 @@ const ProfileCard = () => {
                   onClick={() => setShowModal(true)}
                   className="mt-3"
                 >
-                  Edit Profile 🪄
+                  Edit Profile&nbsp; 🪄
                 </ButtonSaveChanges>
 
                 {/* Move Upload/Edit Image Button before Change Password */}
                 <ButtonUploadImg
                   onClick={() => document.getElementById("file-input").click()}
                 >
-                  Upload/Edit Image 📸
+                  Upload/Edit Image&nbsp;📸
                 </ButtonUploadImg>
 
                 <ButtonSaveChanges
                   onClick={() => setShowPasswordModal(true)}
                   className="mt-3"
                 >
-                  Change Password 🔐
+                  Change Password&nbsp;🔐
                 </ButtonSaveChanges>
 
                 <ButtonDeleteAccount
                   onClick={handleDeleteAccount}
                   className="mt-3"
                 >
-                  Delete Account 🗑️
+                  Delete Account&nbsp;🗑️
                 </ButtonDeleteAccount>
               </RightColumn>
             </Row>
