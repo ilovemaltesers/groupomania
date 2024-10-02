@@ -3,6 +3,8 @@ import axios from "axios";
 
 import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import TitleLoggedUser from "./TitleLoggedUser";
+import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 import {
   StyledAboutMeText,
@@ -19,6 +21,8 @@ import {
 } from "../styles/stylesProfilePage";
 
 const ProfileCard = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const [roleTitle, setRoleTitle] = useState("");
   const [aboutMe, setAboutMe] = useState("");
@@ -229,6 +233,9 @@ const ProfileCard = () => {
           },
         }
       );
+
+      logout();
+      navigate("/signup");
 
       console.log("Account deleted successfully:", response.data);
     } catch (error) {
