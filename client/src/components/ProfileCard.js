@@ -34,7 +34,7 @@ const StyledCard = styled(Card)`
   max-width: 800px;
   height: auto;
   padding: 40px;
-  border-radius: 12px;
+  border-radius: 30px;
   box-shadow: 0 4px 15px rgba(175, 228, 236);
 `;
 

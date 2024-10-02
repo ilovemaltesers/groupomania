@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     const givenName = localStorage.getItem("givenName");
     const familyName = localStorage.getItem("familyName");
     const email = localStorage.getItem("email");
-    const profilePicture = localStorage.getItem("profilePicture");
+    const profilePicture = localStorage.getItem("profilePicture"); // Make sure this is loaded
 
     return token
       ? { token, userId, givenName, familyName, email, profilePicture }
@@ -93,5 +93,3 @@ export const AuthProvider = ({ children }) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
-export default AuthContext;

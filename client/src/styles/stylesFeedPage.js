@@ -7,6 +7,12 @@ import { FaRegComment } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { BsEnvelopeHeart } from "react-icons/bs";
 
+const DefaultAvatarIcon = styled(MdFace2)`
+  font-size: 50px; /* Match the size of the Avatar */
+  margin-right: 10px; /* Space between icon and text */
+  line-height: 1; /* Aligns icon and text vertically */
+`;
+
 // Style for the created at text
 const CreatedAtText = styled.p`
   font-size: 0.8em;
@@ -426,4 +432,5 @@ export {
   PreviewImage,
   SubmitCommentContainer,
   LetterIconBtn,
+  DefaultAvatarIcon,
 };

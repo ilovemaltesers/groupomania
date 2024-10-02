@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../contexts/AuthContext";
+
 import { format } from "date-fns";
 
 import {
@@ -37,7 +38,9 @@ import {
   PreviewImage,
   SubmitCommentContainer,
   LetterIconBtn,
+  DefaultAvatarIcon,
 } from "../styles/stylesFeedPage";
+
 import EditPostPopUp from "../components/EditPostPopUp";
 import CommentTextarea from "../components/CommentInput";
 
@@ -50,6 +53,8 @@ const formatDate = (dateString) => {
 
 const NewPost = () => {
   const { isAuthenticated, auth } = useAuth();
+  console.log("Auth object:", auth);
+
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
@@ -65,6 +70,8 @@ const NewPost = () => {
           Authorization: `Bearer ${auth.token}`,
         },
       });
+
+      console.log("Fetched Posts:", response.data);
 
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
@@ -108,8 +115,6 @@ const NewPost = () => {
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
-
-  useEffect(() => {}, [posts]);
 
   const handleCommentChange = (event) => {
     setContent(event.target.value);
@@ -226,12 +231,6 @@ const NewPost = () => {
     }
   };
 
-  // const handleDeleteComment = (commentId) => {
-  //   console.log("handleDeleteComment called with:", commentId);
-
-  //   console.log("posts:", posts);
-  // };
-
   const handleDeleteComment = async (postId, commentId) => {
     console.log("handleDeleteComment called with:", postId, commentId);
 
@@ -253,20 +252,11 @@ const NewPost = () => {
         });
       });
 
-      // Make the delete request to the backend
       await axios.delete(`http://localhost:3000/api/comment/${commentId}`, {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
       });
-
-      // Optionally, re-fetch posts from the server if you want to ensure consistency
-      // const response = await axios.get("http://localhost:3000/api/posts", {
-      //   headers: {
-      //     Authorization: `Bearer ${auth.token}`,
-      //   },
-      // });
-      // setPosts(response.data.posts);
     } catch (error) {
       console.error(
         "Error deleting comment:",
@@ -529,19 +519,29 @@ const NewPost = () => {
                             marginRight: "10px",
                           }}
                         >
-                          <img
-                            src={`http://localhost:3000/${comment.profile_picture}`}
-                            alt="User Profile"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              borderRadius: "50%",
-                              objectFit: "cover",
-                            }}
-                            onError={(e) => {
-                              e.target.src = "path/to/default-image.jpg"; // Fallback for error loading profile picture
-                            }}
-                          />
+                          {console.log(
+                            "comment.profile_picture:",
+                            comment.profile_picture
+                          )}
+                          {comment.profile_picture ? (
+                            <img
+                              src={`http://localhost:3000/${comment.profile_picture}`}
+                              alt="User Profile"
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                borderRadius: "50%",
+                                objectFit: "cover",
+                              }}
+                              onError={(e) => {
+                                e.target.onerror = null; // Prevent infinite loop
+                                e.target.src = ""; // Clear the source
+                              }}
+                            />
+                          ) : (
+                            (console.log("rendering default avatar"),
+                            (<DefaultAvatarIcon />))
+                          )}
                         </div>
                         <div>
                           <p style={{ margin: "0", fontWeight: "bold" }}>
