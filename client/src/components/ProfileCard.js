@@ -232,10 +232,6 @@ const ProfileCard = () => {
       return;
     }
 
-    console.log("Token:", token);
-    console.log("Current Password:", currentPassword);
-    console.log("New Password:", newPassword);
-
     try {
       await axios.post(
         "http://localhost:3000/api/user/profile/change-password",

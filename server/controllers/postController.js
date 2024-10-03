@@ -209,15 +209,10 @@ const deletePost = async (req, res) => {
   }
 };
 
-// Update a post
 const updatePost = async (req, res) => {
   const { post_id } = req.params;
   const { content } = req.body;
   const file = req.file;
-
-  let newMediaUpload = file
-    ? `${req.protocol}://${req.get("host")}/images/${file.filename}`
-    : null;
 
   try {
     // Fetch the existing post data before the update
@@ -228,6 +223,13 @@ const updatePost = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
+    const existingPost = preUpdateResult.rows[0];
+
+    // If no new file is uploaded, retain the old media_upload
+    const newMediaUpload = file
+      ? `${req.protocol}://${req.get("host")}/images/${file.filename}`
+      : existingPost.media_upload; // Keep the existing media if no new file is uploaded
+
     // Perform the update operation
     const updateQuery = `
       UPDATE public.posts
@@ -235,14 +237,26 @@ const updatePost = async (req, res) => {
       WHERE post_id = $3
       RETURNING *;
     `;
-    const updateValues = [content || null, newMediaUpload, post_id];
+    const updateValues = [
+      content || existingPost.content,
+      newMediaUpload,
+      post_id,
+    ];
 
     const updateResult = await db(updateQuery, updateValues);
 
     if (updateResult.rows.length > 0) {
+      // Send the updated post data back to the front-end
+      const updatedPost = updateResult.rows[0];
+
       res.status(200).json({
         message: "Post successfully updated",
-        post: updateResult.rows[0],
+        post: {
+          ...updatedPost,
+          // Ensuring fallback for fields required by the front end
+          likes_count: existingPost.likes_count || 0,
+          is_liked: existingPost.is_liked || false,
+        },
       });
     } else {
       res.status(404).json({ message: "Post not found" });

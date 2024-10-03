@@ -53,7 +53,6 @@ const formatDate = (dateString) => {
 
 const NewPost = () => {
   const { isAuthenticated, auth } = useAuth();
-  console.log("Auth object:", auth);
 
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -71,8 +70,6 @@ const NewPost = () => {
         },
       });
 
-      console.log("Fetched Posts:", response.data);
-
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
@@ -88,9 +85,7 @@ const NewPost = () => {
         }));
 
         // Log each post's comments
-        postsWithDefaults.forEach((post, index) => {
-          console.log(`Comments for Post ${index + 1}:`, post.comments);
-        });
+        postsWithDefaults.forEach((post, index) => {});
         // Check if comments include profile pictures
         postsWithDefaults.forEach((post) => {});
 
@@ -300,8 +295,13 @@ const NewPost = () => {
     try {
       const formData = new FormData();
       formData.append("content", updatedPost.content || "");
+
+      // Check if the user uploaded a new image; otherwise, append the existing image URL
       if (updatedPost.image) {
-        formData.append("image", updatedPost.image);
+        formData.append("image", updatedPost.image); // If new image is provided, use it
+      } else if (updatedPost.media_upload) {
+        // If no new image is uploaded, send the current image URL to retain it
+        formData.append("existing_image", updatedPost.media_upload);
       }
 
       const response = await axios.put(
@@ -321,7 +321,7 @@ const NewPost = () => {
             ? {
                 ...post,
                 ...updatedPost,
-                media_upload: response.data.post.media_upload,
+                media_upload: response.data.post.media_upload, // Retain or update the image
               }
             : post
         );
@@ -526,10 +526,6 @@ const NewPost = () => {
                             marginRight: "10px",
                           }}
                         >
-                          {console.log(
-                            "comment.profile_picture:",
-                            comment.profile_picture
-                          )}
                           {comment.profile_picture ? (
                             <img
                               src={`http://localhost:3000/${comment.profile_picture}`}
