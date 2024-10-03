@@ -94,11 +94,6 @@ const NewPost = () => {
         );
 
         setPosts(sortedPosts);
-        localStorage.removeItem(`posts_${auth.userId}`);
-        localStorage.setItem(
-          `posts_${auth.userId}`,
-          JSON.stringify(sortedPosts)
-        );
       } else {
         console.error("Fetched data is not an array:", response.data);
       }
@@ -154,10 +149,7 @@ const NewPost = () => {
         };
 
         setPosts((prevPosts) => [newPost, ...prevPosts]);
-        localStorage.setItem(
-          `posts_${userId}`,
-          JSON.stringify([newPost, ...posts])
-        );
+
         setContent("");
         setImage(null);
       } catch (error) {
@@ -192,13 +184,11 @@ const NewPost = () => {
       return updatedPosts;
     });
 
-    setContent(""); // Clear the comment input field
+    setContent("");
 
-    // Make the Axios request to the server
     try {
       const token = localStorage.getItem("token");
 
-      // Send the POST request with only the necessary data
       await axios.post(
         `http://localhost:3000/api/comment/${post_id}`,
         { comment_text: newComment.comment_text },
@@ -209,14 +199,12 @@ const NewPost = () => {
         }
       );
 
-      // Fetch the updated posts data
       const response = await axios.get("http://localhost:3000/api/posts", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      // Update the state with the fetched posts
       setPosts(response.data.posts);
     } catch (error) {
       console.error(
@@ -227,8 +215,6 @@ const NewPost = () => {
   };
 
   const handleDeleteComment = async (postId, commentId) => {
-    console.log("handleDeleteComment called with:", postId, commentId);
-
     try {
       // Optimistically update the state before making the API call
       setPosts((prevPosts) => {
@@ -274,7 +260,6 @@ const NewPost = () => {
       if (response.status === 200) {
         const updatedPosts = posts.filter((post) => post.post_id !== postId);
         setPosts(updatedPosts);
-        localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
       } else {
         console.error("Failed to remove post:", response.data);
       }
@@ -326,7 +311,7 @@ const NewPost = () => {
             : post
         );
         setPosts(updatedPosts);
-        localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
+        // localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
       } else {
         console.error(
           "Failed to update the post. Server returned:",
@@ -367,10 +352,6 @@ const NewPost = () => {
       console.log(posts);
       const updatedPosts = posts.map((post) =>
         post.post_id === postId ? { ...post, likes_count: likesCount } : post
-      );
-      localStorage.setItem(
-        `posts_${auth.userId}`,
-        JSON.stringify(updatedPosts)
       );
     } catch (error) {
       console.error("Error updating like status:", error);
