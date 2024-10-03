@@ -23,4 +23,6 @@ router.get("/profile/role/aboutme", verifyToken, userContr.getRoleAboutMe);
 
 router.delete("/profile/delete/account", verifyToken, userContr.deleteAccount);
 
+router.post("/profile/change-password", verifyToken, userContr.changePassword);
+
 module.exports = router;

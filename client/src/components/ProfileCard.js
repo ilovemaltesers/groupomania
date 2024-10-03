@@ -18,6 +18,7 @@ import {
   ButtonDeleteAccount,
   ProfilePictureWrapper,
   ImageUploadInput,
+  SaveChangedPasswordButton,
 } from "../styles/stylesProfilePage";
 
 const ProfileCard = () => {
@@ -35,6 +36,8 @@ const ProfileCard = () => {
     roleTitle: "",
     aboutMe: "",
   });
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
 
   // Fetch profile image on component mount
   useEffect(() => {
@@ -183,42 +186,6 @@ const ProfileCard = () => {
     }
   };
 
-  // Handle password change
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      console.error("Passwords do not match");
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("Token is not available");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/api/user/change-password",
-        { currentPassword, newPassword },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("Password changed successfully:", response.data);
-      setShowPasswordModal(false); // Close password modal after success
-    } catch (error) {
-      console.error(
-        "Error changing password:",
-        error.response ? error.response.data : error.message
-      );
-    }
-  };
-
   const handleDeleteAccount = async () => {
     const token = localStorage.getItem("token");
     console.log("Token:", token);
@@ -245,6 +212,47 @@ const ProfileCard = () => {
       console.error(
         "Error deleting account:",
         error.response ? error.response.data : error.message
+      );
+    }
+  };
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setPasswordError(""); // Reset error state
+    setPasswordSuccessMessage(""); // Reset success message
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords do not match.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setPasswordError("User token is not available.");
+      return;
+    }
+
+    console.log("Token:", token);
+    console.log("Current Password:", currentPassword);
+    console.log("New Password:", newPassword);
+
+    try {
+      await axios.post(
+        "http://localhost:3000/api/user/profile/change-password",
+        { currentPassword, newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setPasswordSuccessMessage("Your password has been changed successfully!");
+      setShowPasswordModal(false); // Close password modal after success
+    } catch (error) {
+      setPasswordError(
+        error.response ? error.response.data : "Error changing password."
       );
     }
   };
@@ -354,6 +362,12 @@ const ProfileCard = () => {
                 <Modal.Title>Change Password</Modal.Title>
               </Modal.Header>
               <Modal.Body>
+                {passwordError && (
+                  <div style={{ color: "red" }}>{passwordError}</div>
+                )}
+                {passwordSuccessMessage && (
+                  <div style={{ color: "green" }}>{passwordSuccessMessage}</div>
+                )}
                 <Form onSubmit={handleChangePassword}>
                   <Form.Group>
                     <Form.Label>Current Password</Form.Label>
@@ -372,16 +386,16 @@ const ProfileCard = () => {
                     />
                   </Form.Group>
                   <Form.Group className="mt-3">
-                    <Form.Label>Confirm Password</Form.Label>
+                    <Form.Label>Confirm New Password</Form.Label>
                     <Form.Control
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </Form.Group>
-                  <Button type="submit" className="mt-3">
+                  <SaveChangedPasswordButton type="submit" className="mt-3">
                     Save Password
-                  </Button>
+                  </SaveChangedPasswordButton>
                 </Form>
               </Modal.Body>
             </Modal>

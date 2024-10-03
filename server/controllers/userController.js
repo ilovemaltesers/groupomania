@@ -295,6 +295,50 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.userId;
+
+  if (!userId) {
+    return res.status(401).send({ message: "User not authenticated" });
+  }
+
+  try {
+    const userResult = await db(
+      "SELECT password FROM public.users WHERE _id = $1",
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(400).send("User does not exist");
+    }
+
+    const userPassword = userResult.rows[0].password;
+
+    // Verify the current password
+    const isPasswordCorrect = await bcrypt.compare(
+      currentPassword,
+      userPassword
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(400).send("Incorrect password");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await db("UPDATE public.users SET password = $1 WHERE _id = $2", [
+      hashedPassword,
+      userId,
+    ]);
+
+    res.status(200).send("Password updated successfully!");
+  } catch (error) {
+    console.error("Error during password change:", error);
+    res.status(500).send("Error during password change");
+  }
+};
+
 module.exports = {
   signup,
   login,
@@ -303,4 +347,5 @@ module.exports = {
   postRoleAboutMe,
   getRoleAboutMe,
   deleteAccount,
+  changePassword,
 };

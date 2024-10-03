@@ -3,6 +3,21 @@ import { Navbar, Container, Card, Col, Button } from "react-bootstrap";
 import { IoLogOutOutline } from "react-icons/io5";
 import { MdFace2 } from "react-icons/md";
 
+const SaveChangedPasswordButton = styled(Button)`
+  background-color: #bdebff;
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  &:hover {
+    background-color: bisque;
+    color: black;
+  }
+`;
+
 const ProfileNavbar = styled(Navbar)`
   background-color: #bdebff;
 `;
@@ -143,4 +158,5 @@ export {
   ButtonDeleteAccount,
   ProfilePictureWrapper,
   ImageUploadInput,
+  SaveChangedPasswordButton,
 };

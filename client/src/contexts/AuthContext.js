@@ -45,15 +45,6 @@ export const AuthProvider = ({ children }) => {
     email,
     profilePicture
   ) => {
-    console.log("Logging in with:", {
-      token,
-      userId,
-      givenName,
-      familyName,
-      email,
-      profilePicture,
-    });
-
     // Store each value in localStorage
     localStorage.setItem("token", token);
     localStorage.setItem("userId", userId);
