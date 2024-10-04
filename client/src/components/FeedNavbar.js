@@ -8,7 +8,7 @@ import { BsFillPersonVcardFill } from "react-icons/bs";
 import { useAuth } from "../contexts/AuthContext";
 
 const CustomNavbar = styled(Navbar)`
-  background-color: #bdebff;
+  background-color: ${(props) => props.theme.primary};
 `;
 
 const ProfileIcon = styled(BsFillPersonVcardFill)`
