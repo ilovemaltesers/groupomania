@@ -53,6 +53,7 @@ const formatDate = (dateString) => {
 
 const NewPost = () => {
   const { isAuthenticated, auth } = useAuth();
+  console.log(useAuth());
 
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -75,6 +76,7 @@ const NewPost = () => {
           ...post,
           likes_count: post.likes_count || 0,
           is_liked: post.is_liked || false,
+
           comments: post.comments.map((comment) => ({
             ...comment,
             given_name: comment.given_name || "Anonymous", // Fallback for missing name
@@ -400,15 +402,20 @@ const NewPost = () => {
         posts.map((post, index) => (
           <PostCard key={post.post_id}>
             <CreatorNameContainer>
-              {post.profile_picture && (
+              {/* Check if profile_picture exists, if not show DefaultAvatarIcon */}
+              {post.profile_picture ? (
                 <Avatar
                   src={`http://localhost:3000/${post.profile_picture}`}
                   alt="Profile"
                   onError={(e) => {
-                    e.target.src = ""; // Handle image error
+                    e.target.onerror = null; // Prevent infinite loop
+                    e.target.src = "/path/to/default-avatar.jpg"; // Default avatar path
                   }}
                 />
+              ) : (
+                <DefaultAvatarIcon /> // Fallback to default avatar if no profile picture
               )}
+
               <NameAndCreatedAtContainer>
                 <CreatorNameText>
                   {post.given_name} {post.family_name}
@@ -425,7 +432,7 @@ const NewPost = () => {
                 src={post.media_upload}
                 alt="Post Media"
                 onError={(e) => {
-                  e.target.src = "/path/to/default-image.jpg";
+                  <DefaultAvatarIcon />;
                 }}
               />
             )}
@@ -577,7 +584,9 @@ const NewPost = () => {
                           objectFit: "cover", // Ensure the image covers the container
                         }}
                       />
-                    ) : null}
+                    ) : (
+                      <DefaultAvatarIcon />
+                    )}
                   </div>
 
                   {/* Comment Textarea */}
