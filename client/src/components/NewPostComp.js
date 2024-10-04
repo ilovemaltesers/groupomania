@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect, useCallback } from "react";
+
 import { useAuth } from "../contexts/AuthContext";
 
 import { format } from "date-fns";
@@ -71,12 +72,14 @@ const NewPost = () => {
         },
       });
 
+      console.log(response.data);
+
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
           likes_count: post.likes_count || 0,
           is_liked: post.is_liked || false,
-
+          profile_picture: post.profile_picture || <DefaultAvatarIcon />,
           comments: post.comments.map((comment) => ({
             ...comment,
             given_name: comment.given_name || "Anonymous", // Fallback for missing name

@@ -39,6 +39,7 @@ const getAllPosts = async (req, res) => {
 
     // Access the rows from the posts result
     const posts = postsResult.rows;
+    console.log(posts);
 
     // Fetch comments for all posts
     const commentsResult = await db(`

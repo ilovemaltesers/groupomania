@@ -76,7 +76,7 @@ const NewPostBody = styled(Card)`
   margin: 20px 0;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(175, 228, 236);
-  border-radius: 3%;
+  border-radius: 25px;
 `;
 
 // Style for the "Tell me" text
@@ -157,7 +157,7 @@ const PostCard = styled(Card)`
   margin: 10px 0;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(175, 228, 236);
-  border-radius: 3%;
+  border-radius: 25px;
 `;
 
 // Style for images in posts

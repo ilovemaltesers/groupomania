@@ -4,7 +4,6 @@ import styled from "styled-components";
 import logo from "../assets/images/feed-logo.svg";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { IoIosLogOut } from "react-icons/io";
-
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -65,6 +64,12 @@ const LogoutIcon = styled(IoIosLogOut)`
   }
 `;
 
+const IconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Pushes the icons to the right of the logo */
+`;
+
 const FeedNavbar = () => {
   const { logout } = useAuth();
 
@@ -85,12 +90,12 @@ const FeedNavbar = () => {
           />
         </Navbar.Brand>
         <Nav className="ml-auto align-items-center">
-          <Link to="/profile">
-            {" "}
-            {/* Replace "/profile" with your actual profile page route */}
-            <ProfileIcon />
-          </Link>
-          <LogoutIcon style={{ marginLeft: "10px" }} onClick={handleLogout} />
+          <IconContainer>
+            <Link to="/profile">
+              <ProfileIcon />
+            </Link>
+            <LogoutIcon style={{ marginLeft: "10px" }} onClick={handleLogout} />
+          </IconContainer>
         </Nav>
       </Container>
     </CustomNavbar>
