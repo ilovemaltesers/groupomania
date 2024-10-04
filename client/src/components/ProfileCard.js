@@ -5,7 +5,7 @@ import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import TitleLoggedUser from "./TitleLoggedUser";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-
+import ThemeToggleSwitch from "../components/ToggleSwitchTheme";
 import {
   StyledAboutMeText,
   ImagePlaceholderIcon,
@@ -314,6 +314,7 @@ const ProfileCard = () => {
                 >
                   Delete Account&nbsp;🗑️
                 </ButtonDeleteAccount>
+                <ThemeToggleSwitch />
               </RightColumn>
             </Row>
 

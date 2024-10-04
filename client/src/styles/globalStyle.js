@@ -10,8 +10,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'Montserrat', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
+    
   }
 `;
 
