@@ -1,25 +1,10 @@
 import styled from "styled-components";
-import { Navbar, Container, Card, Col, Button } from "react-bootstrap";
+import { Navbar, Container, Card, Col, Button, Modal } from "react-bootstrap";
 import { IoLogOutOutline } from "react-icons/io5";
 import { MdFace2 } from "react-icons/md";
 
-const SaveChangedPasswordButton = styled(Button)`
-  background-color: #bdebff;
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  &:hover {
-    background-color: bisque;
-    color: black;
-  }
-`;
-
 const ProfileNavbar = styled(Navbar)`
-  background-color: #bdebff;
+  background-color: ${(props) => props.theme.primary};
 `;
 
 const NavContainer = styled(Container)`
@@ -27,7 +12,7 @@ const NavContainer = styled(Container)`
   flex-wrap: inherit;
   align-items: center;
   justify-content: space-between;
-  background-color: #bdebff;
+  background-color: ${(props) => props.theme.primary};
 `;
 
 const LogoutIcon = styled(IoLogOutOutline)`
@@ -41,12 +26,22 @@ const LogoutIcon = styled(IoLogOutOutline)`
   }
 `;
 
+const ProfileNameText = styled.h1`
+  font-size: 1.75em;
+  color: ${(props) => props.theme.quinary};
+`;
+
+const YourRoleText = styled.h2`
+  font-size: 1.5em;
+  color: ${(props) => props.theme.quinary};
+`;
+
 const StyledAboutMeText = styled.p`
-  font-size: 1.25em; /* You can adjust this value as needed */
+  font-size: 1.25em;
   line-height: 1.6;
   text-align: center;
   margin-top: 10px;
-  color: #333; /* Adjust text color if needed */
+  color: ${(props) => props.theme.quinary};
 `;
 
 const ImagePlaceholderIcon = styled(MdFace2)`
@@ -63,6 +58,7 @@ const StyledContainer = styled(Container)`
   align-items: center;
   padding: 20px;
   overflow: hidden;
+  background-color: ${(props) => props.theme.background};
 `;
 
 const StyledCard = styled(Card)`
@@ -71,7 +67,8 @@ const StyledCard = styled(Card)`
   height: auto;
   padding: 40px;
   border-radius: 30px;
-  box-shadow: 0 4px 15px rgba(175, 228, 236);
+  box-shadow: 0 4px 15px ${(props) => props.theme.boxShadow};
+  background-color: ${(props) => props.theme.card_background};
 `;
 
 const LeftColumn = styled(Col)`
@@ -91,46 +88,61 @@ const RightColumn = styled(Col)`
 `;
 
 const ButtonUploadImg = styled(Button)`
-  background-color: #bdebff;
+  background-color: ${(props) => props.theme.primary};
   color: black;
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
   margin-top: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   &:hover {
-    background-color: bisque;
+    background-color: ${(props) => props.theme.secondary};
     color: black;
   }
 `;
 
 const ButtonSaveChanges = styled(Button)`
-  background-color: #bdebff;
+  background-color: ${(props) => props.theme.primary};
   color: black;
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
   margin-top: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   &:hover {
-    background-color: bisque;
+    background-color: ${(props) => props.theme.secondary};
+    color: black;
+  }
+`;
+
+const SaveChangedPasswordButton = styled(Button)`
+  background-color: ${(props) => props.theme.primary};
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  &:hover {
+    background-color: ${(props) => props.theme.secondary};
     color: black;
   }
 `;
 
 const ButtonDeleteAccount = styled(Button)`
-  background-color: #bdebff;
+  background-color: ${(props) => props.theme.primary};
   color: black;
   padding: 10px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: pointer;
   margin-top: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   &:hover {
-    background-color: darkred;
+    background-color: ${(props) => props.theme.secondary};
     color: white;
   }
 `;
@@ -147,6 +159,8 @@ export {
   ProfileNavbar,
   LogoutIcon,
   NavContainer,
+  ProfileNameText,
+  YourRoleText,
   StyledAboutMeText,
   ImagePlaceholderIcon,
   StyledContainer,

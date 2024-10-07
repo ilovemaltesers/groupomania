@@ -4,9 +4,9 @@ import { useAuth } from "../contexts/AuthContext";
 import styled from "styled-components";
 
 const UserText = styled.h1`
-  font-size: 2em;
+  font-size: 2.5em;
 
-  color: darkslategray;
+  color: ${(props) => props.theme.quinary};
 `;
 
 const TitleLoggedUser = () => {

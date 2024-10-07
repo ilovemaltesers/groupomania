@@ -19,6 +19,7 @@ import {
   ProfilePictureWrapper,
   ImageUploadInput,
   SaveChangedPasswordButton,
+  YourRoleText,
 } from "../styles/stylesProfilePage";
 
 const ProfileCard = () => {
@@ -280,7 +281,8 @@ const ProfileCard = () => {
 
                 {/* Centered Title and About Me */}
                 <div className="mt-4">
-                  <h3>{roleTitle || "Your Role Title"}</h3>
+                  <YourRoleText>{roleTitle || "Your Role Title"}</YourRoleText>
+
                   <StyledAboutMeText>
                     {aboutMe || "Write something about yourself..."}
                   </StyledAboutMeText>

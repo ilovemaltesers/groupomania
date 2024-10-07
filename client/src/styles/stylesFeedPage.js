@@ -77,6 +77,7 @@ const FeedMainContainer = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.background};
   padding: 20px;
+  min-height: 100vh;
 `;
 
 // Style for the new post body card

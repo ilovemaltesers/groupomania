@@ -62,7 +62,7 @@ const StyledEditPostContainer = styled.div`
   top: 50%;
   left: 60%;
   transform: translate(-50%, -50%);
-  background-color: white;
+  color: ${(theme) => theme.card_background};
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
