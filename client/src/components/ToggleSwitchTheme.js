@@ -1,9 +1,9 @@
 // ToggleSwitchTheme.js
-
 import React from "react";
 import styled from "styled-components";
 import { useTheme } from "../contexts/ThemeContext";
 
+// Styled-components for the toggle switch and its elements
 const ToggleWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -25,7 +25,8 @@ const ToggleInput = styled.input`
   height: 0;
 
   &:checked + span {
-    background-color: ${({ theme }) => theme.primary};
+    background-color: ${({ theme }) =>
+      theme.primary}; /* Use theme's primary color */
   }
 
   &:checked + span:before {
@@ -57,6 +58,13 @@ const ToggleSlider = styled.span`
   }
 `;
 
+// Styled-component for the toggle text, with dynamic color based on theme
+const ToggleText = styled.span`
+  margin-left: 10px; /* Add space between toggle and text */
+  color: ${({ theme }) => theme.quinary}; /* Use theme's text color */
+`;
+
+// ThemeToggleSwitch component
 const ThemeToggleSwitch = () => {
   const { toggleTheme, theme } = useTheme(); // Access theme and toggle function
 
@@ -66,11 +74,11 @@ const ThemeToggleSwitch = () => {
         <ToggleInput
           type="checkbox"
           onChange={toggleTheme}
-          checked={theme === "dark"} // Toggle between light and dark mode
+          checked={theme === "dark"} // Check if dark mode is active
         />
         <ToggleSlider />
       </ToggleLabel>
-      <span>{theme === "light" ? "Light Mode" : "Dark Mode"}</span>
+      <ToggleText>{theme === "light" ? "Light Mode" : "Dark Mode"}</ToggleText>
     </ToggleWrapper>
   );
 };
