@@ -1,6 +1,7 @@
 export const lightTheme = {
   background: "white",
   card_background: "white",
+  icons: "#5a5a5a", //slate
 
   button_text_deselected: "black",
   text: "black",
@@ -15,6 +16,7 @@ export const lightTheme = {
 
 export const darkTheme = {
   background: "black",
+  icons: "#5a5a5a", //slate
   card_background: "#5a5a5a", //slate
   text: "white",
   button_text_deselected: "black",

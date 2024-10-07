@@ -2,6 +2,38 @@ import styled from "styled-components";
 import { Navbar, Container, Card, Col, Button, Modal } from "react-bootstrap";
 import { IoLogOutOutline } from "react-icons/io5";
 import { MdFace2 } from "react-icons/md";
+import { TiEdit } from "react-icons/ti";
+import { IoMdImages } from "react-icons/io";
+import { PiPasswordBold } from "react-icons/pi";
+import { IoTrashBinOutline } from "react-icons/io5";
+
+const RubbishIcon = styled(IoTrashBinOutline)`
+  font-size: 32px;
+  color: ${(props) => props.theme.icons};
+  cursor: pointer;
+  padding-bottom: 5px;
+`;
+
+const PasswordIcon = styled(PiPasswordBold)`
+  font-size: 35px;
+  color: ${(props) => props.theme.icons};
+  cursor: pointer;
+  padding-bottom: 5px;
+`;
+
+const ImageIcon = styled(IoMdImages)`
+  font-size: 35px;
+  color: ${(props) => props.theme.icons};
+  cursor: pointer;
+  padding-bottom: 5px;
+`;
+
+const EditPenIcon = styled(TiEdit)`
+  font-size: 35px;
+  color: ${(props) => props.theme.icons};
+  cursor: pointer;
+  padding-bottom: 5px;
+`;
 
 const ProfileNavbar = styled(Navbar)`
   background-color: ${(props) => props.theme.primary};
@@ -156,6 +188,10 @@ const ImageUploadInput = styled.input`
 `;
 
 export {
+  RubbishIcon,
+  PasswordIcon,
+  ImageIcon,
+  EditPenIcon,
   ProfileNavbar,
   LogoutIcon,
   NavContainer,

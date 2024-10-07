@@ -6,7 +6,12 @@ import TitleLoggedUser from "./TitleLoggedUser";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ThemeToggleSwitch from "../components/ToggleSwitchTheme";
+
 import {
+  RubbishIcon,
+  PasswordIcon,
+  EditPenIcon,
+  ImageIcon,
   StyledAboutMeText,
   ImagePlaceholderIcon,
   StyledContainer,
@@ -293,28 +298,31 @@ const ProfileCard = () => {
                   onClick={() => setShowModal(true)}
                   className="mt-3"
                 >
-                  Edit Profile&nbsp; 🪄
+                  Edit Profile&nbsp;
+                  <EditPenIcon />
                 </ButtonSaveChanges>
 
-                {/* Move Upload/Edit Image Button before Change Password */}
                 <ButtonUploadImg
                   onClick={() => document.getElementById("file-input").click()}
                 >
-                  Upload/Edit Image&nbsp;📸
+                  Upload/Edit Image&nbsp;
+                  <ImageIcon /> {/* Replace the emoji here */}
                 </ButtonUploadImg>
 
                 <ButtonSaveChanges
                   onClick={() => setShowPasswordModal(true)}
                   className="mt-3"
                 >
-                  Change Password&nbsp;🔐
+                  Change Password&nbsp;
+                  <PasswordIcon />
                 </ButtonSaveChanges>
 
                 <ButtonDeleteAccount
                   onClick={handleDeleteAccount}
                   className="mt-3"
                 >
-                  Delete Account&nbsp;🗑️
+                  Delete Account&nbsp;
+                  <RubbishIcon />
                 </ButtonDeleteAccount>
                 <ThemeToggleSwitch />
               </RightColumn>
@@ -398,13 +406,6 @@ const ProfileCard = () => {
                 </Form>
               </Modal.Body>
             </Modal>
-
-            <ImageUploadInput
-              id="file-input"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
           </StyledCard>
         </Col>
       </Row>
