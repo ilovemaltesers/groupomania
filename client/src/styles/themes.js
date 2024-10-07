@@ -26,5 +26,5 @@ export const darkTheme = {
   quaternary: "#42520e", //dark olive green
   quinary: "#dbdbdb", //silver
   senery: "#561e98", //purple navy
-  boxShadow: "#86ae12", //lime
+  boxShadow: "#42520e",
 };

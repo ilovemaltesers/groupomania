@@ -40,6 +40,10 @@ import {
   SubmitCommentContainer,
   LetterIconBtn,
   DefaultAvatarIcon,
+  PostText,
+  CommentNameText,
+  CommentText,
+  RubbishBin,
 } from "../styles/stylesFeedPage";
 
 import EditPostPopUp from "../components/EditPostPopUp";
@@ -428,8 +432,9 @@ const NewPost = () => {
                 </CreatedAtText>
               </NameAndCreatedAtContainer>
             </CreatorNameContainer>
+            {/* Use PostText for rendering post content */}
+            {post.content && <PostText>{post.content}</PostText>}
 
-            {post.content && <p>{post.content}</p>}
             {post.media_upload && (
               <StyledImage
                 src={post.media_upload}
@@ -485,7 +490,7 @@ const NewPost = () => {
                   <RemovePostButton
                     onClick={() => handleRemovePost(post.post_id)}
                   >
-                    <span className="text">Remove </span> 🗑️
+                    <span className="text">Remove </span>
                   </RemovePostButton>
                 </RemoveEditButtonsContainer>
               )}
@@ -538,20 +543,23 @@ const NewPost = () => {
                           )}
                         </div>
                         <div>
-                          <p style={{ margin: "0", fontWeight: "bold" }}>
+                          {/* Use CommentNameText for the comment name */}
+                          <CommentNameText>
                             {comment.given_name + " " + comment.family_name}
-                          </p>
-                          <p style={{ margin: "0" }}>{comment.comment_text}</p>
+                          </CommentNameText>
+                          {/* Use CommentText for the comment body */}
+                          <CommentText>{comment.comment_text}</CommentText>
                         </div>
-                        <DeleteCommentButton
-                          onDelete={() =>
+                        <RubbishBin>
+                          onClick=
+                          {() =>
                             handleDeleteComment(
                               post.post_id,
                               comment.comment_id
                             )
                           }
                           commentId={comment.comment_id}
-                        />
+                        </RubbishBin>
                       </div>
                     </div>
                   );

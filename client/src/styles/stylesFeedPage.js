@@ -6,6 +6,14 @@ import { RiHeartsLine, RiHeartsFill } from "react-icons/ri";
 import { FaRegComment } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { BsEnvelopeHeart } from "react-icons/bs";
+import { IoTrashBinOutline } from "react-icons/io5";
+
+const RubbishBin = styled(IoTrashBinOutline)`
+  font-size: 30px;
+  color: ${({ theme }) => theme.quinary};
+  margin-left: 25px;
+  margin-top: 15px;
+`;
 
 const DefaultAvatarIcon = styled(MdFace2)`
   font-size: 50px; /* Match the size of the Avatar */
@@ -170,6 +178,15 @@ const PostCard = styled(Card)`
   box-shadow: 0 4px 12px ${({ theme }) => theme.boxShadow};
   border-radius: 25px;
   background-color: ${({ theme }) => theme.card_background};
+`;
+
+const PostText = styled.p`
+  font-size: 1em; /* Adjust font size for the post text */
+  color: ${({ theme }) => theme.quinary}; /* Text color from theme */
+  line-height: 1.5; /* Line height for better readability */
+  margin: 0 0 15px; /* Add margin to space out the post text from other elements */
+  word-wrap: break-word; /* Ensure long text wraps within the container */
+  text-align: left; /* Align text to the left (adjust if needed) */
 `;
 
 // Style for images in posts
@@ -338,6 +355,20 @@ const CommentSection = styled.div`
   padding: 10px; /* Padding to ensure content is not touching edges */
 `;
 
+const CommentNameText = styled.p`
+  font-size: 1em; /* Adjust font size as needed */
+  font-weight: bold; /* Bold text for comment names */
+  color: ${({ theme }) => theme.quinary}; /* Use the theme's primary color */
+  margin: 0; /* Ensure no extra margins */
+`;
+
+const CommentText = styled.p`
+  font-size: 0.9em; /* Slightly smaller than the name */
+  color: ${({ theme }) => theme.quinary}; /* Use theme's text color */
+  margin: 0; /* Ensure no extra margins */
+  line-height: 1.4; /* Add some line spacing for readability */
+`;
+
 const CommentAvatarContainer = styled.div`
   display: flex;
   align-items: center;
@@ -375,8 +406,8 @@ const CommentAvatarPlaceholder = styled(IoPersonCircleSharp)`
 
 // Style for the publish comment button
 const PublishCommentButton = styled.button`
-  background-color: #bdebff;
-  color: black;
+  background-color: ${({ theme }) => theme.primary};
+  color: ${({ theme }) => theme.button_text_deselected};
   padding: 5px 10px;
   border: none;
   border-radius: 4px;
@@ -445,4 +476,8 @@ export {
   SubmitCommentContainer,
   LetterIconBtn,
   DefaultAvatarIcon,
+  PostText,
+  CommentNameText,
+  CommentText,
+  RubbishBin,
 };
