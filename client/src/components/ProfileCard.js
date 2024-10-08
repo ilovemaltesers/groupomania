@@ -306,8 +306,17 @@ const ProfileCard = () => {
                   onClick={() => document.getElementById("file-input").click()}
                 >
                   Upload/Edit Image&nbsp;
-                  <ImageIcon /> {/* Replace the emoji here */}
+                  <ImageIcon />
                 </ButtonUploadImg>
+
+                {/* Hidden file input */}
+                <input
+                  id="file-input"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  style={{ display: "none" }} // Hide the file input
+                />
 
                 <ButtonSaveChanges
                   onClick={() => setShowPasswordModal(true)}
