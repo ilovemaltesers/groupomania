@@ -1,3 +1,5 @@
+import { ModalTitle } from "react-bootstrap";
+
 export const lightTheme = {
   background: "white",
   card_background: "white",
@@ -14,6 +16,12 @@ export const lightTheme = {
   boxShadow: "#bdebff",
   login_primary: "#74abb5", //blue
   login_secondary: "#afe4ec", //light blue
+  modalBackground: "white",
+  modalText: "#5a5a5a", //slate
+  modalTitleColor: "#5a5a5a", //slate
+  modalButtonColor: "#bdebff", //baby blue
+  modalButtonText: "#5a5a5a", //slate
+  modalButtonSelected: "bisque",
 };
 
 export const darkTheme = {
@@ -33,4 +41,10 @@ export const darkTheme = {
   boxShadow: "#42520e",
   login_primary: "#a5d907",
   login_secondary: "#86ae12",
+  modalBackground: "#5a5a5a",
+  modalText: "white",
+  modalTitleColor: "#86ae12", // lime
+  modalButtonColor: "#86ae12", // lime
+  modalButtonText: "black",
+  modalButtonSelected: "#86ae12", // lime
 };

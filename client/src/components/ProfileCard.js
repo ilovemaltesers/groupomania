@@ -6,6 +6,11 @@ import TitleLoggedUser from "./TitleLoggedUser";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ThemeToggleSwitch from "../components/ToggleSwitchTheme";
+import {
+  StyledModal,
+  StyledButton,
+  StyledFormLabel,
+} from "../styles/styledModal";
 
 import {
   RubbishIcon,
@@ -338,14 +343,19 @@ const ProfileCard = () => {
             </Row>
 
             {/* Modal for editing profile */}
-            <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+            <StyledModal
+              show={showModal}
+              onHide={() => setShowModal(false)}
+              centered
+            >
               <Modal.Header closeButton>
                 <Modal.Title>Edit Profile</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Form onSubmit={titleRoleAboutMe}>
                   <Form.Group>
-                    <Form.Label>Role Title</Form.Label>
+                    <StyledFormLabel>Role Title</StyledFormLabel>
+
                     <Form.Control
                       type="text"
                       value={roleTitle}
@@ -353,7 +363,7 @@ const ProfileCard = () => {
                     />
                   </Form.Group>
                   <Form.Group className="mt-3">
-                    <Form.Label>About Me</Form.Label>
+                    <StyledFormLabel>About Me</StyledFormLabel>{" "}
                     <Form.Control
                       as="textarea"
                       rows={3}
@@ -361,15 +371,15 @@ const ProfileCard = () => {
                       onChange={(e) => setAboutMe(e.target.value)}
                     />
                   </Form.Group>
-                  <Button type="submit" className="mt-3">
+                  <StyledButton type="submit" className="mt-3">
                     Save Changes
-                  </Button>
+                  </StyledButton>
                 </Form>
               </Modal.Body>
-            </Modal>
+            </StyledModal>
 
             {/* Modal for changing password */}
-            <Modal
+            <StyledModal
               show={showPasswordModal}
               onHide={() => setShowPasswordModal(false)}
               centered
@@ -409,12 +419,12 @@ const ProfileCard = () => {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                   </Form.Group>
-                  <SaveChangedPasswordButton type="submit" className="mt-3">
+                  <StyledButton type="submit" className="mt-3">
                     Save Password
-                  </SaveChangedPasswordButton>
+                  </StyledButton>
                 </Form>
               </Modal.Body>
-            </Modal>
+            </StyledModal>
           </StyledCard>
         </Col>
       </Row>
