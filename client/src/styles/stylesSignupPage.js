@@ -111,10 +111,10 @@ export const SignupLogo = styled.img`
 `;
 
 export const GroupomaniaText = styled.h1`
+  color: ${(props) => props.theme.login_primary} !important;
   font-size: 3rem;
   font-weight: bold;
   text-align: center;
-  color: ${(props) => props.theme.secondary};
 `;
 
 export const Label = styled.label`
