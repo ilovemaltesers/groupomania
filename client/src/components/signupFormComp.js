@@ -4,6 +4,7 @@ import axios from "axios";
 import { SignupButton } from "../styles/stylesSignupPage";
 import { signupSchema } from "../schemas/index";
 import { useNavigate } from "react-router-dom";
+import { Label } from "../styles/stylesSignupPage";
 
 function SignupFormComp() {
   const navigate = useNavigate();
@@ -13,8 +14,6 @@ function SignupFormComp() {
         "http://localhost:3000/api/user/signup",
         values
       );
-
-      console.log("Signup successful", response.data);
 
       actions.resetForm();
       navigate("/login");
@@ -47,7 +46,7 @@ function SignupFormComp() {
     <form onSubmit={formik.handleSubmit} autoComplete="off">
       {/* Family Name Field */}
       <div className="form-group">
-        <label htmlFor="familyName">Family Name</label>
+        <Label htmlFor="familyName">Family Name</Label>
         <input
           id="familyName"
           type="text"
@@ -66,7 +65,7 @@ function SignupFormComp() {
 
       {/* Given Name Field */}
       <div className="form-group">
-        <label htmlFor="givenName">Given Name</label>
+        <Label htmlFor="givenName">Given Name</Label>
         <input
           id="givenName"
           type="text"
@@ -85,7 +84,7 @@ function SignupFormComp() {
 
       {/* Email Field */}
       <div className="form-group">
-        <label htmlFor="email">Email address</label>
+        <Label htmlFor="email">Email address</Label>
         <input
           id="email"
           type="email"
@@ -102,7 +101,7 @@ function SignupFormComp() {
 
       {/* Password Field */}
       <div className="form-group">
-        <label htmlFor="password">Password</label>
+        <Label htmlFor="password">Password</Label>
         <input
           id="password"
           type="password"
@@ -121,7 +120,7 @@ function SignupFormComp() {
 
       {/* Confirm Password Field */}
       <div className="form-group">
-        <label htmlFor="confirmPassword">Confirm Password</label>
+        <Label htmlFor="confirmPassword">Confirm Password</Label>
         <input
           id="confirmPassword"
           type="password"

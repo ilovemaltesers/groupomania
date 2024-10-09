@@ -9,9 +9,11 @@ export const lightTheme = {
   primary: "#bdebff", //baby blue
   secondary: "bisque", //bisque
   tertiary: "fuchsia", //fuchsia
-  quaternary: "#afe4ec;", //light blue
+  quaternary: "#afe4ec", //light blue
   quinary: "#5a5a5a",
   boxShadow: "#bdebff",
+  login_primary: "#74abb5", //blue
+  login_secondary: "#afe4ec", //light blue
 };
 
 export const darkTheme = {
@@ -29,4 +31,6 @@ export const darkTheme = {
   quinary: "#dbdbdb", //silver
   senery: "#561e98", //purple navy
   boxShadow: "#42520e",
+  login_primary: "#a5d907",
+  login_secondary: "#86ae12",
 };

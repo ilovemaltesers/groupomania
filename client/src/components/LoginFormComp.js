@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { LoginButton } from "../styles/stylesLoginPage";
 import { loginSchema } from "../schemas/index";
 import { useAuth } from "../contexts/AuthContext";
+import { Label } from "../styles/stylesLoginPage";
 
 const LoginFormComp = () => {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const LoginFormComp = () => {
     <form onSubmit={formik.handleSubmit}>
       {/* Form inputs for email and password */}
       <div className="form-group">
-        <label htmlFor="email">Email address</label>
+        <Label htmlFor="email">Email address</Label>
         <input
           id="email"
           name="email"
@@ -66,7 +67,7 @@ const LoginFormComp = () => {
         )}
       </div>
       <div className="form-group">
-        <label htmlFor="password">Password</label>
+        <Label htmlFor="password">Password</Label>
         <input
           id="password"
           name="password"
