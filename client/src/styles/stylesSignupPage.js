@@ -40,10 +40,9 @@ const SignupButton = styled.button`
   display: block;
   width: 100%;
   margin-top: 30px;
-  background-color: ${(props) =>
-    props.theme.login_primary}; /* Set a custom color for signup button */
-  border-color: ${(props) => props.theme.login_primary}; /* Border color */
-  color: black; /* Button text color */
+  background-color: ${(props) => props.theme.login_primary};
+  border-color: ${(props) => props.theme.login_primary};
+  color: ${(props) => props.theme.button_text_deselected};
   padding: 12px 20px;
   font-size: 1rem;
   cursor: pointer;
@@ -61,18 +60,20 @@ const SignupButton = styled.button`
   user-select: none;
 
   &:hover {
-    background-color: ${(props) => props.theme.secondary}; /* Set hover color */
+    background-color: ${(props) =>
+      props.theme.login_secondary}; /* Change color on hover */
   }
 
   &:active {
-    background-color: ${(props) => props.theme.login_primary} !important;
-    border-color: ${(props) => props.theme.login_primary} !important;
-    color: ${(props) => props.theme.button_text_active} !important;
+    background-color: ${(props) => props.theme.login_secondary} !important;
+    border-color: ${(props) => props.theme.login_secondary} !important;
+    color: ${(props) => props.theme.button_text_deselected} !important;
   }
 
   &:focus {
     outline: none; /* Remove default focus outline */
     box-shadow: none; /* Remove focus shadow */
+    color: ${(props) => props.theme.button_text_deselected};
   }
 `;
 
