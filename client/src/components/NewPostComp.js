@@ -49,7 +49,7 @@ import {
 import EditPostPopUp from "../components/EditPostPopUp";
 import CommentTextarea from "../components/CommentInput";
 
-import DeleteCommentButton from "../components/DeleteComment";
+// import DeleteCommentButton from "../components/DeleteComment";
 // Function to format dates
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -550,16 +550,15 @@ const NewPost = () => {
                           {/* Use CommentText for the comment body */}
                           <CommentText>{comment.comment_text}</CommentText>
                         </div>
-                        <RubbishBin>
-                          onClick=
-                          {() =>
+                        <RubbishBin
+                          onClick={() =>
                             handleDeleteComment(
                               post.post_id,
                               comment.comment_id
                             )
                           }
                           commentId={comment.comment_id}
-                        </RubbishBin>
+                        ></RubbishBin>
                       </div>
                     </div>
                   );
