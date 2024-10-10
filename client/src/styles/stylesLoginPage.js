@@ -27,7 +27,8 @@ const LoginBox = styled.div`
   }
   input.input-error,
   select.input-error {
-    border: 1px solid ${(props) => props.theme.button_text_deselected}
+    border: 1px solid ${(props) => props.theme.button_text_deselected};
+  }
 `;
 
 const LoginButton = styled.button`
@@ -89,6 +90,17 @@ const GroupomaniaText = styled.h1`
 const LoginLogo = styled.img`
   width: 50px;
   height: 60px;
+  rect {
+    fill: ${(props) => props.theme.logoBackground};
+    position: absolute;
+    z-index: 1;
+  }
+  path,
+  g {
+    fill: ${(props) => props.theme.logoOutline};
+    position: relative;
+    z-index: 2;
+  }
 `;
 
 const Label = styled.label`

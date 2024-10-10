@@ -10,14 +10,17 @@ import {
 
 import SignupFormComp from "../components/SignupFormComp";
 
-import logo from "../assets/images/signup-logo.svg";
+import { ReactComponent as Logo } from "../assets/images/signup-logo.svg"; // Import the SVG as a React component
 
 const SignupPage = () => {
   return (
     <Background>
       <SignupBox>
         <TitleContainer>
-          <SignupLogo src={logo} alt="signup logo" />
+          {/* Render the SVG as a React component */}
+          <SignupLogo>
+            <Logo />
+          </SignupLogo>
           <GroupomaniaText>Groupomania</GroupomaniaText>
         </TitleContainer>
         <SignupFormComp />

@@ -70,7 +70,12 @@ const ProfileCard = () => {
         );
 
         // Set image URL for display
-        setImage(`http://localhost:3000/${response.data.imageUrl}`);
+
+        setImage(
+          response.data.imageUrl
+            ? `http://localhost:3000/${response.data.imageUrl}`
+            : ""
+        );
       } catch (error) {
         console.error(
           "Error fetching image:",
@@ -120,6 +125,7 @@ const ProfileCard = () => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
+
       setImage(imageUrl);
       saveImage(file); // Call save image function
     }
@@ -151,7 +157,6 @@ const ProfileCard = () => {
       const imageUrl = `http://localhost:3000/${response.data.imageUrl}`;
 
       setImage(imageUrl);
-      console.log(image);
     } catch (error) {
       console.error(
         "Error uploading image:",
@@ -199,7 +204,7 @@ const ProfileCard = () => {
 
   const handleDeleteAccount = async () => {
     const token = localStorage.getItem("token");
-    console.log("Token:", token);
+
     if (!token) {
       console.error("Token is not available");
       return;
@@ -273,7 +278,7 @@ const ProfileCard = () => {
               <LeftColumn md={6}>
                 <TitleLoggedUser />
                 <ProfilePictureWrapper>
-                  {image ? (
+                  {image && (
                     <img
                       src={image}
                       alt="Profile"
@@ -284,9 +289,8 @@ const ProfileCard = () => {
                         borderRadius: "50%",
                       }}
                     />
-                  ) : (
-                    <ImagePlaceholderIcon />
                   )}
+                  {!image && <ImagePlaceholderIcon />}
                 </ProfilePictureWrapper>
 
                 {/* Centered Title and About Me */}

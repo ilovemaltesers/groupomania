@@ -140,12 +140,12 @@ const getProfilePicture = async (req, res) => {
 
     const profilePicture = user.rows[0].profile_picture;
 
-    if (!profilePicture) {
-      return res.status(404).send("Profile picture not found");
-    }
+    // if (!profilePicture) {
+    //   return res.status(404).send("Profile picture not found");
+    // }
 
     res.status(200).json({
-      imageUrl: profilePicture,
+      imageUrl: profilePicture ? profilePicture : "",
     });
   } catch (error) {
     console.error("Error getting profile picture:", error);

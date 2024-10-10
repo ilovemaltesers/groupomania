@@ -104,11 +104,31 @@ export const TitleContainer = styled.div`
   }
 `;
 
-export const SignupLogo = styled.img`
+export const SignupLogo = styled.svg`
   max-width: 100px;
   height: auto;
   margin-bottom: 10px;
-  color: black;
+  position: relative; /* Position the entire SVG for z-index control */
+
+  /* Background Rectangle */
+  rect {
+    fill: ${(props) =>
+      props.theme.logoBackground}; /* Use the theme color for background */
+    position: absolute; /* Absolute positioning to place it behind other elements */
+    top: 0;
+    left: 0;
+    width: 100%; /* Ensure it fills the SVG container */
+    height: 100%; /* Ensure it fills the SVG container */
+    z-index: 1; /* Background should be behind */
+  }
+
+  /* Outline Path and Group */
+  path,
+  g {
+    fill: ${(props) => props.theme.logoOutline};
+    position: relative; /* Position for layering */
+    z-index: 2; /* Ensure outline is on top */
+  }
 `;
 
 export const GroupomaniaText = styled.h1`
