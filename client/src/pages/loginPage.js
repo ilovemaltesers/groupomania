@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Background,
   LoginBox,
@@ -6,18 +7,21 @@ import {
   TitleContainer,
 } from "../styles/stylesLoginPage";
 
-import Logo from "../assets/images/signup-logo.svg";
-import LoginformComp from "../components/LoginFormComp";
+import { ReactComponent as Logo } from "../assets/images/signup-logo.svg"; // Import the SVG as a React component
+import LoginFormComp from "../components/LoginFormComp";
 
 const LoginPage = () => {
   return (
     <Background>
       <LoginBox>
         <TitleContainer>
-          <LoginLogo src={Logo} alt="Groupomania Logo" />
+          {/* Render the Logo component wrapped in LoginLogo styled component */}
+          <LoginLogo>
+            <Logo />
+          </LoginLogo>
           <GroupomaniaText>Groupomania</GroupomaniaText>
         </TitleContainer>
-        <LoginformComp></LoginformComp>
+        <LoginFormComp />
       </LoginBox>
     </Background>
   );

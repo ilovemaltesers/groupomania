@@ -1,7 +1,7 @@
 // App.js
 import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
-import SignupPage from "./pages/signupPage";
+import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import FeedPage from "./pages/FeedPage";
 import ProfilePage from "./pages/ProfilePage";

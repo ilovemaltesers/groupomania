@@ -87,7 +87,7 @@ const GroupomaniaText = styled.h1`
   margin-top: 6px;
 `;
 
-const LoginLogo = styled.img`
+const LoginLogo = styled.svg`
   width: 50px;
   height: 60px;
   rect {
