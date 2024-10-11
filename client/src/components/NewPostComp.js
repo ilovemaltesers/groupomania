@@ -58,6 +58,8 @@ const formatDate = (dateString) => {
 
 const NewPost = () => {
   const { isAuthenticated, auth } = useAuth();
+  console.log(auth);
+
   console.log(useAuth());
 
   const [content, setContent] = useState("");
@@ -75,9 +77,6 @@ const NewPost = () => {
           Authorization: `Bearer ${auth.token}`,
         },
       });
-
-      console.log(response.data);
-
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
@@ -86,22 +85,15 @@ const NewPost = () => {
           profile_picture: post.profile_picture || <DefaultAvatarIcon />,
           comments: post.comments.map((comment) => ({
             ...comment,
-            given_name: comment.given_name || "Anonymous", // Fallback for missing name
-            family_name: comment.family_name || "", // Fallback for missing last name
+            given_name: comment.given_name || "Anonymous",
+            family_name: comment.family_name || "",
             profile_picture:
-              comment.profile_picture || "path/to/default-image.jpg", // Fallback for profile picture
+              comment.profile_picture || "path/to/default-image.jpg",
           })),
         }));
-
-        // Log each post's comments
-        postsWithDefaults.forEach((post, index) => {});
-        // Check if comments include profile pictures
-        postsWithDefaults.forEach((post) => {});
-
         const sortedPosts = postsWithDefaults.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
-
         setPosts(sortedPosts);
       } else {
         console.error("Fetched data is not an array:", response.data);
@@ -109,10 +101,12 @@ const NewPost = () => {
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  }, [auth.token, auth.userId]);
+  }, [auth.token]); // Make sure to only depend on the token if userId is stable
 
   useEffect(() => {
-    fetchPosts();
+    if (auth.token) {
+      fetchPosts();
+    }
   }, [fetchPosts]);
 
   const handleCommentChange = (event) => {
@@ -193,11 +187,13 @@ const NewPost = () => {
       return updatedPosts;
     });
 
+    // Clear the content field after adding the comment
     setContent("");
 
     try {
-      const token = localStorage.getItem("token");
+      const token = auth.token;
 
+      // Send the comment to the server
       await axios.post(
         `http://localhost:3000/api/comment/${post_id}`,
         { comment_text: newComment.comment_text },
@@ -208,18 +204,29 @@ const NewPost = () => {
         }
       );
 
-      const response = await axios.get("http://localhost:3000/api/posts", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setPosts(response.data.posts);
+      // If comment is successfully added, we don't need to re-fetch all posts.
+      // The comment is already added optimistically, so no need to reset the posts.
     } catch (error) {
       console.error(
         "Error posting comment:",
         error.response ? error.response.data : error.message
       );
+
+      // Optionally, roll back the change if the comment was not added successfully
+      setPosts((prevPosts) => {
+        const updatedPosts = [...prevPosts];
+        if (updatedPosts[postIndex]) {
+          updatedPosts[postIndex].comments = updatedPosts[
+            postIndex
+          ].comments.filter(
+            (comment) => comment.comment_text !== newComment.comment_text
+          );
+        }
+        return updatedPosts;
+      });
+
+      // Handle the error accordingly, for example, by showing a message to the user
+      alert("There was an error adding your comment. Please try again.");
     }
   };
 
@@ -557,8 +564,7 @@ const NewPost = () => {
                               comment.comment_id
                             )
                           }
-                          commentId={comment.comment_id}
-                        ></RubbishBin>
+                        />
                       </div>
                     </div>
                   );
