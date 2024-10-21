@@ -24,7 +24,7 @@ const LoginFormComp = () => {
       // Destructure the response
       const { token, userId, givenName, familyName, email, profilePicture } =
         response.data;
-
+      console.log(response.data);
       // Call login from AuthContext
       login(token, userId, givenName, familyName, email, profilePicture);
 

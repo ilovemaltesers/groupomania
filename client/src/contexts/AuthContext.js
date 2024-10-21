@@ -1,4 +1,10 @@
-import React, { createContext, useState, useContext, useMemo } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+} from "react";
 
 const AuthContext = createContext();
 
@@ -6,8 +12,11 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  // Initialize auth state with values from localStorage
-  const [auth, setAuth] = useState(() => {
+  const [auth, setAuth] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate fetching auth data from localStorage or an API
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
     const givenName = localStorage.getItem("givenName");
@@ -15,12 +24,16 @@ export const AuthProvider = ({ children }) => {
     const email = localStorage.getItem("email");
     const profilePicture = localStorage.getItem("profilePicture");
 
-    return token
-      ? { token, userId, givenName, familyName, email, profilePicture }
-      : {}; // Return empty object instead of null
-  });
+    if (token) {
+      setAuth({ token, userId, givenName, familyName, email, profilePicture });
+    } else {
+      setAuth(null);
+    }
+    // Set loading to false after fetching from localStorage
+    setLoading(false);
+  }, []);
 
-  // Login function to store auth data in localStorage and state
+  // Login function
   const login = (
     token,
     userId,
@@ -29,7 +42,6 @@ export const AuthProvider = ({ children }) => {
     email,
     profilePicture
   ) => {
-    // Store each value in localStorage
     localStorage.setItem("token", token);
     localStorage.setItem("userId", userId);
     localStorage.setItem("givenName", givenName);
@@ -37,13 +49,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("email", email);
     localStorage.setItem("profilePicture", profilePicture);
 
-    // Update the auth state with all fields
     setAuth({ token, userId, givenName, familyName, email, profilePicture });
   };
 
-  // Logout function to remove auth data from localStorage and reset state
+  // Logout function
   const logout = () => {
-    // Remove all auth data from localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("givenName");
@@ -51,14 +61,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("email");
     localStorage.removeItem("profilePicture");
 
-    // Reset auth state to empty object
-    setAuth({});
+    setAuth(null);
   };
 
-  // Check if the user is authenticated (based on the presence of a token)
   const isAuthenticated = !!auth?.token;
 
-  // Memoize context value to optimize re-renders
   const value = useMemo(
     () => ({
       isAuthenticated,
@@ -68,6 +75,10 @@ export const AuthProvider = ({ children }) => {
     }),
     [auth, isAuthenticated]
   );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   // Provide the context to children
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

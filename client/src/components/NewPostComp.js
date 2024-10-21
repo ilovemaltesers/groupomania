@@ -58,9 +58,7 @@ const formatDate = (dateString) => {
 
 const NewPost = () => {
   const { isAuthenticated, auth } = useAuth();
-  console.log(auth);
-
-  console.log(useAuth());
+  console.log("auth", auth);
 
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -82,13 +80,12 @@ const NewPost = () => {
           ...post,
           likes_count: post.likes_count || 0,
           is_liked: post.is_liked || false,
-          profile_picture: post.profile_picture || <DefaultAvatarIcon />,
+          profile_picture: post.profile_picture || "",
           comments: post.comments.map((comment) => ({
             ...comment,
             given_name: comment.given_name || "Anonymous",
             family_name: comment.family_name || "",
-            profile_picture:
-              comment.profile_picture || "path/to/default-image.jpg",
+            profile_picture: comment.profile_picture || "",
           })),
         }));
         const sortedPosts = postsWithDefaults.sort(
@@ -144,7 +141,7 @@ const NewPost = () => {
           ...response.data.post,
           user_id: auth.userId,
           profile_picture: auth.profilePicture,
-          given_name: auth.givenName, // Add the user name fields here
+          given_name: auth.givenName,
           family_name: auth.familyName,
           comments: [],
           isLiked: false,
@@ -155,6 +152,9 @@ const NewPost = () => {
 
         setContent("");
         setImage(null);
+
+        // Fetch the latest posts after adding a new one
+        fetchPosts();
       } catch (error) {
         console.error("Error creating post:", error);
       }
@@ -162,14 +162,6 @@ const NewPost = () => {
   };
 
   const handleAddComment = async (post_id, postIndex, newComment) => {
-    console.log(
-      "handleAddComment called with:",
-      post_id,
-      postIndex,
-      newComment
-    );
-
-    // Check if auth object has the name fields
     const userName = `${auth.givenName || ""} ${auth.familyName || ""}`.trim();
 
     // Optimistically update the local state
@@ -180,20 +172,18 @@ const NewPost = () => {
           updatedPosts[postIndex].comments || [];
         updatedPosts[postIndex].comments.unshift({
           ...newComment,
-          userName: userName, // Use the constructed userName here
-          profile_picture: auth.profilePicture, // Ensure profile picture is also set
+          userName: userName,
+          profile_picture: auth.profilePicture,
         });
       }
       return updatedPosts;
     });
 
-    // Clear the content field after adding the comment
     setContent("");
 
     try {
       const token = auth.token;
 
-      // Send the comment to the server
       await axios.post(
         `http://localhost:3000/api/comment/${post_id}`,
         { comment_text: newComment.comment_text },
@@ -204,15 +194,10 @@ const NewPost = () => {
         }
       );
 
-      // If comment is successfully added, we don't need to re-fetch all posts.
-      // The comment is already added optimistically, so no need to reset the posts.
+      // Fetch the latest posts after adding a comment
+      fetchPosts();
     } catch (error) {
-      console.error(
-        "Error posting comment:",
-        error.response ? error.response.data : error.message
-      );
-
-      // Optionally, roll back the change if the comment was not added successfully
+      console.error("Error posting comment:", error);
       setPosts((prevPosts) => {
         const updatedPosts = [...prevPosts];
         if (updatedPosts[postIndex]) {
@@ -225,7 +210,6 @@ const NewPost = () => {
         return updatedPosts;
       });
 
-      // Handle the error accordingly, for example, by showing a message to the user
       alert("There was an error adding your comment. Please try again.");
     }
   };
@@ -352,7 +336,6 @@ const NewPost = () => {
       );
 
       const { likesCount } = response.data;
-      console.log(response.data);
 
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
@@ -365,7 +348,7 @@ const NewPost = () => {
             : post
         )
       );
-      console.log(posts);
+
       const updatedPosts = posts.map((post) =>
         post.post_id === postId ? { ...post, likes_count: likesCount } : post
       );
@@ -417,14 +400,15 @@ const NewPost = () => {
           <PostCard key={post.post_id}>
             <CreatorNameContainer>
               {/* Check if profile_picture exists, if not show DefaultAvatarIcon */}
+
               {post.profile_picture ? (
                 <Avatar
                   src={`http://localhost:3000/${post.profile_picture}`}
                   alt="Profile"
-                  onError={(e) => {
-                    e.target.onerror = null; // Prevent infinite loop
-                    e.target.src = "/path/to/default-avatar.jpg"; // Default avatar path
-                  }}
+                  // onError={(e) => {
+                  //   e.target.onerror = null; // Prevent infinite loop
+                  //   e.target.src = "/path/to/default-avatar.jpg"; // Default avatar path
+                  // }}
                 />
               ) : (
                 <DefaultAvatarIcon /> // Fallback to default avatar if no profile picture
@@ -545,8 +529,7 @@ const NewPost = () => {
                               }}
                             />
                           ) : (
-                            (console.log("rendering default avatar"),
-                            (<DefaultAvatarIcon />))
+                            <DefaultAvatarIcon />
                           )}
                         </div>
                         <div>
