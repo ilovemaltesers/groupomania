@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import { Row, Col, Button, Form, Modal } from "react-bootstrap";
 import TitleLoggedUser from "./TitleLoggedUser";
 import { useAuth } from "../contexts/AuthContext";
@@ -11,7 +10,6 @@ import {
   StyledButton,
   StyledFormLabel,
 } from "../styles/styledModal";
-
 import {
   RubbishIcon,
   PasswordIcon,
@@ -33,7 +31,7 @@ import {
 } from "../styles/stylesProfilePage";
 
 const ProfileCard = () => {
-  const { auth, setAuth, logout } = useAuth();
+  const { auth, updateProfilePicture, logout } = useAuth();
   const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const [roleTitle, setRoleTitle] = useState("");
@@ -41,8 +39,8 @@ const ProfileCard = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showModal, setShowModal] = useState(false); // For controlling profile edit modal
-  const [showPasswordModal, setShowPasswordModal] = useState(false); // For controlling password modal
+  const [showModal, setShowModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [submittedData, setSubmittedData] = useState({
     roleTitle: "",
     aboutMe: "",
@@ -50,9 +48,9 @@ const ProfileCard = () => {
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
 
-  // Fetch profile image on component mount
+  // Fetch profile image and data on component mount
   useEffect(() => {
-    const fetchImage = async () => {
+    const fetchProfileData = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -60,7 +58,19 @@ const ProfileCard = () => {
           return;
         }
 
-        const response = await axios.get(
+        const profileResponse = await axios.get(
+          "http://localhost:3000/api/user/profile/role/aboutme",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setRoleTitle(profileResponse.data.roleTitle);
+        setAboutMe(profileResponse.data.aboutMe);
+
+        const imageResponse = await axios.get(
           "http://localhost:3000/api/user/profile-picture",
           {
             headers: {
@@ -69,54 +79,19 @@ const ProfileCard = () => {
           }
         );
 
-        // Set image URL for display
-
         setImage(
-          response.data.imageUrl
-            ? `http://localhost:3000/${response.data.imageUrl}`
+          imageResponse.data.imageUrl
+            ? `http://localhost:3000/${imageResponse.data.imageUrl}`
             : ""
         );
       } catch (error) {
         console.error(
-          "Error fetching image:",
+          "Error fetching profile data or image:",
           error.response ? error.response.data : error.message
         );
       }
     };
 
-    fetchImage();
-  }, []);
-
-  const fetchProfileData = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        console.error("Token is not available");
-        return;
-      }
-
-      const response = await axios.get(
-        "http://localhost:3000/api/user/profile/role/aboutme",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Set profile data
-      setRoleTitle(response.data.roleTitle);
-      setAboutMe(response.data.aboutMe);
-    } catch (error) {
-      console.error(
-        "Error fetching profile data:",
-        error.response ? error.response.data : error.message
-      );
-    }
-  };
-
-  useEffect(() => {
     fetchProfileData();
   }, []);
 
@@ -125,8 +100,7 @@ const ProfileCard = () => {
     const file = event.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-
-      setImage(imageUrl);
+      setImage(imageUrl); // Preview the uploaded image
       saveImage(file); // Call save image function
     }
   };
@@ -155,13 +129,7 @@ const ProfileCard = () => {
       );
 
       const imageUrl = `http://localhost:3000/${response.data.imageUrl}`;
-
-      setImage(imageUrl);
-      // Update the auth context with the new profile picture URL
-      setAuth({
-        ...auth, // Keep the current auth state
-        profilePicture: imageUrl, // Update only the profile picture
-      });
+      updateProfilePicture(imageUrl); // Update the profile picture in context
     } catch (error) {
       console.error(
         "Error uploading image:",
@@ -173,9 +141,7 @@ const ProfileCard = () => {
   // Handle profile form submission
   const titleRoleAboutMe = async (e) => {
     e.preventDefault();
-
     const token = localStorage.getItem("token");
-    console.log("Token:", token);
 
     if (!token) {
       console.error("Token is not available");
@@ -185,7 +151,7 @@ const ProfileCard = () => {
     const formData = { roleTitle, aboutMe };
 
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:3000/api/user/profile/role/aboutme",
         formData,
         {
@@ -198,7 +164,7 @@ const ProfileCard = () => {
 
       setSubmittedData(formData); // Store submitted data
       setShowModal(false); // Close profile modal
-      console.log("Profile updated successfully:", response.data);
+      console.log("Profile updated successfully");
     } catch (error) {
       console.error(
         "Error updating profile:",
@@ -216,7 +182,7 @@ const ProfileCard = () => {
     }
 
     try {
-      const response = await axios.delete(
+      await axios.delete(
         "http://localhost:3000/api/user/profile/delete/account",
         {
           headers: {
@@ -227,8 +193,7 @@ const ProfileCard = () => {
 
       logout();
       navigate("/signup");
-
-      console.log("Account deleted successfully:", response.data);
+      console.log("Account deleted successfully");
     } catch (error) {
       console.error(
         "Error deleting account:",
@@ -283,25 +248,24 @@ const ProfileCard = () => {
               <LeftColumn md={6}>
                 <TitleLoggedUser />
                 <ProfilePictureWrapper>
-                  {image && (
+                  {image ? (
                     <img
                       src={image}
                       alt="Profile"
                       style={{
                         width: "100px",
                         height: "100px",
-                        margin: "20px 0", // Space between image and text
+                        margin: "20px 0",
                         borderRadius: "50%",
                       }}
                     />
+                  ) : (
+                    <ImagePlaceholderIcon />
                   )}
-                  {!image && <ImagePlaceholderIcon />}
                 </ProfilePictureWrapper>
 
-                {/* Centered Title and About Me */}
                 <div className="mt-4">
                   <YourRoleText>{roleTitle || "Your Role Title"}</YourRoleText>
-
                   <StyledAboutMeText>
                     {aboutMe || "Write something about yourself..."}
                   </StyledAboutMeText>
@@ -323,7 +287,6 @@ const ProfileCard = () => {
                   <ImageIcon />
                 </ButtonUploadImg>
 
-                {/* Hidden file input */}
                 <input
                   id="file-input"
                   type="file"
@@ -364,7 +327,6 @@ const ProfileCard = () => {
                 <Form onSubmit={titleRoleAboutMe}>
                   <Form.Group>
                     <StyledFormLabel>Role Title</StyledFormLabel>
-
                     <Form.Control
                       type="text"
                       value={roleTitle}
@@ -372,7 +334,7 @@ const ProfileCard = () => {
                     />
                   </Form.Group>
                   <Form.Group className="mt-3">
-                    <StyledFormLabel>About Me</StyledFormLabel>{" "}
+                    <StyledFormLabel>About Me</StyledFormLabel>
                     <Form.Control
                       as="textarea"
                       rows={3}

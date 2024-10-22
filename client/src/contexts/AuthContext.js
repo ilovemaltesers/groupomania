@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate fetching auth data from localStorage or an API
+    // Simulate fetching auth data from localStorage
     const token = localStorage.getItem("token");
     const userId = localStorage.getItem("userId");
     const givenName = localStorage.getItem("givenName");
@@ -64,6 +64,15 @@ export const AuthProvider = ({ children }) => {
     setAuth(null);
   };
 
+  // Function to update profile picture
+  const updateProfilePicture = (newProfilePicture) => {
+    localStorage.setItem("profilePicture", newProfilePicture);
+    setAuth((prevAuth) => ({
+      ...prevAuth,
+      profilePicture: newProfilePicture,
+    }));
+  };
+
   const isAuthenticated = !!auth?.token;
 
   const value = useMemo(
@@ -72,6 +81,7 @@ export const AuthProvider = ({ children }) => {
       auth,
       login,
       logout,
+      updateProfilePicture, // Add the new function to the context
     }),
     [auth, isAuthenticated]
   );

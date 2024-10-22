@@ -59,20 +59,20 @@ const formatDate = (dateString) => {
 
 const NewPost = () => {
   const { isAuthenticated, auth } = useAuth();
-  console.log("auth", auth);
-
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
   const [posts, setPosts] = useState([]);
   const [showEditPostPopUp, setShowEditPostPopUp] = useState(false);
   const [postToEdit, setPostToEdit] = useState(null);
-  const [profilePicture, setProfilePicture] = useState(auth.profilePicture);
+  const [profilePicture, setProfilePicture] = useState(null);
 
   const userId = auth.userId;
 
   useEffect(() => {
-    setProfilePicture(auth.profilePicture);
-  }, [auth.profilePicture]);
+    if (auth && auth.profilePicture) {
+      setProfilePicture(auth.profilePicture);
+    }
+  }, [auth]);
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -81,7 +81,7 @@ const NewPost = () => {
           Authorization: `Bearer ${auth.token}`,
         },
       });
-      console.log("Response data:", response.data);
+
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
@@ -107,7 +107,7 @@ const NewPost = () => {
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
-  }, [auth.token]); // Make sure to only depend on the token if userId is stable
+  }, [auth.token]);
 
   useEffect(() => {
     if (auth.token) {
@@ -483,15 +483,6 @@ const NewPost = () => {
                 </CommentIconContainer>
               </LikesandCommentsIconContainer>
 
-              {console.log(
-                "isAuthenticated:",
-                isAuthenticated,
-                "auth.userId:",
-                auth?.userId,
-                "post.user_id:",
-                post?.user_id
-              )}
-
               {isAuthenticated && post?.user_id === auth?.userId && (
                 <RemoveEditButtonsContainer>
                   <EditPostButton onClick={() => handleEditPost(post.post_id)}>
@@ -507,7 +498,7 @@ const NewPost = () => {
             </ControlsContainer>
 
             <CommentSection>
-              {post.comments.length > 0 ? (
+              {post.comments && post.comments.length > 0 ? ( // Ensure comments exist and have length
                 post.comments.map((comment, index) => {
                   return (
                     <div
@@ -532,15 +523,15 @@ const NewPost = () => {
                             marginRight: "10px",
                           }}
                         >
-                          {profilePicture ? (
+                          {comment.profile_picture ? (
                             <img
-                              src={`http://localhost:3000/${profilePicture}`}
+                              src={`http://localhost:3000/${comment.profile_picture}`}
                               alt="User Profile"
                               style={{
                                 width: "100%",
                                 height: "100%",
-                                borderRadius: "50%", // Circular image
-                                objectFit: "cover", // Ensure the image covers the container
+                                borderRadius: "50%",
+                                objectFit: "cover",
                               }}
                             />
                           ) : (
@@ -548,21 +539,21 @@ const NewPost = () => {
                           )}
                         </div>
                         <div>
-                          {/* Use CommentNameText for the comment name */}
                           <CommentNameText>
                             {comment.given_name + " " + comment.family_name}
                           </CommentNameText>
-                          {/* Use CommentText for the comment body */}
                           <CommentText>{comment.comment_text}</CommentText>
                         </div>
-                        <RubbishBin
-                          onClick={() =>
-                            handleDeleteComment(
-                              post.post_id,
-                              comment.comment_id
-                            )
-                          }
-                        />
+                        {comment.user_id === auth.userId && ( // Check if the comment belongs to the logged-in user
+                          <RubbishBin
+                            onClick={() =>
+                              handleDeleteComment(
+                                post.post_id,
+                                comment.comment_id
+                              )
+                            }
+                          />
+                        )}
                       </div>
                     </div>
                   );
@@ -580,6 +571,7 @@ const NewPost = () => {
                   }}
                 >
                   {/* Avatar for the user posting the comment */}
+                  {/* Avatar for the user posting the comment */}
                   <div
                     style={{
                       width: "50px",
@@ -588,19 +580,16 @@ const NewPost = () => {
                     }}
                   >
                     {auth.profilePicture ? (
-                      (console.log("auth.profilePicture", auth.profilePicture),
-                      (
-                        <img
-                          src={`http://localhost:3000/${auth.profilePicture}`}
-                          alt="User Profile"
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "50%", // Circular image
-                            objectFit: "cover", // Ensure the image covers the container
-                          }}
-                        />
-                      ))
+                      <img
+                        src={`http://localhost:3000/${auth.profilePicture}`}
+                        alt="User Profile"
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                      />
                     ) : (
                       <DefaultAvatarIcon />
                     )}
