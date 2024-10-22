@@ -437,6 +437,12 @@ const LetterIconBtn = styled(BsEnvelopeHeart)`
   }
 `;
 
+const NoCommentsText = styled.p`
+  font-size: 1em;
+  color: ${({ theme }) => theme.quinary};
+  margin: 0;
+`;
+
 export {
   FeedMainContainer,
   NewPostBody,
@@ -481,4 +487,5 @@ export {
   CommentNameText,
   CommentText,
   RubbishBin,
+  NoCommentsText,
 };

@@ -6,10 +6,18 @@ import { LoginButton } from "../styles/stylesLoginPage";
 import { loginSchema } from "../schemas/index";
 import { useAuth } from "../contexts/AuthContext";
 import { Label } from "../styles/stylesLoginPage";
+import { useEffect } from "react";
 
 const LoginFormComp = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, auth } = useAuth(); // Get login and auth from context
+
+  // Log auth state when it changes (step 3)
+  useEffect(() => {
+    if (auth) {
+      console.log("Auth state updated after login:", auth);
+    }
+  }, [auth]); // Runs when auth changes
 
   const handleSubmit = async (values) => {
     try {
@@ -24,7 +32,9 @@ const LoginFormComp = () => {
       // Destructure the response
       const { token, userId, givenName, familyName, email, profilePicture } =
         response.data;
-      console.log(response.data);
+
+      console.log("Response data:", response.data); // Check the full response
+
       // Call login from AuthContext
       login(token, userId, givenName, familyName, email, profilePicture);
 

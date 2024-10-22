@@ -44,6 +44,7 @@ import {
   CommentNameText,
   CommentText,
   RubbishBin,
+  NoCommentsText,
 } from "../styles/stylesFeedPage";
 
 import EditPostPopUp from "../components/EditPostPopUp";
@@ -65,8 +66,13 @@ const NewPost = () => {
   const [posts, setPosts] = useState([]);
   const [showEditPostPopUp, setShowEditPostPopUp] = useState(false);
   const [postToEdit, setPostToEdit] = useState(null);
+  const [profilePicture, setProfilePicture] = useState(auth.profilePicture);
 
   const userId = auth.userId;
+
+  useEffect(() => {
+    setProfilePicture(auth.profilePicture);
+  }, [auth.profilePicture]);
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -75,6 +81,7 @@ const NewPost = () => {
           Authorization: `Bearer ${auth.token}`,
         },
       });
+      console.log("Response data:", response.data);
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
@@ -112,6 +119,7 @@ const NewPost = () => {
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
+
     if (file) {
       setImage(file);
     }
@@ -473,7 +481,16 @@ const NewPost = () => {
                 </CommentIconContainer>
               </LikesandCommentsIconContainer>
 
-              {isAuthenticated && post.user_id === auth.userId && (
+              {console.log(
+                "isAuthenticated:",
+                isAuthenticated,
+                "auth.userId:",
+                auth?.userId,
+                "post.user_id:",
+                post?.user_id
+              )}
+
+              {isAuthenticated && post?.user_id === auth?.userId && (
                 <RemoveEditButtonsContainer>
                   <EditPostButton onClick={() => handleEditPost(post.post_id)}>
                     <span className="text">Edit</span> 🪄✨
@@ -513,19 +530,15 @@ const NewPost = () => {
                             marginRight: "10px",
                           }}
                         >
-                          {comment.profile_picture ? (
+                          {profilePicture ? (
                             <img
-                              src={`http://localhost:3000/${comment.profile_picture}`}
+                              src={`http://localhost:3000/${profilePicture}`}
                               alt="User Profile"
                               style={{
                                 width: "100%",
                                 height: "100%",
-                                borderRadius: "50%",
-                                objectFit: "cover",
-                              }}
-                              onError={(e) => {
-                                e.target.onerror = null; // Prevent infinite loop
-                                e.target.src = ""; // Clear the source
+                                borderRadius: "50%", // Circular image
+                                objectFit: "cover", // Ensure the image covers the container
                               }}
                             />
                           ) : (
@@ -553,7 +566,7 @@ const NewPost = () => {
                   );
                 })
               ) : (
-                <p>No comments yet.</p>
+                <NoCommentsText>No comments available.</NoCommentsText>
               )}
               {/* New Comment Input Section */}
               {isAuthenticated && (
@@ -573,16 +586,19 @@ const NewPost = () => {
                     }}
                   >
                     {auth.profilePicture ? (
-                      <img
-                        src={`http://localhost:3000/${auth.profilePicture}`}
-                        alt="User Profile"
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: "50%", // Circular image
-                          objectFit: "cover", // Ensure the image covers the container
-                        }}
-                      />
+                      (console.log("auth.profilePicture", auth.profilePicture),
+                      (
+                        <img
+                          src={`http://localhost:3000/${auth.profilePicture}`}
+                          alt="User Profile"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "50%", // Circular image
+                            objectFit: "cover", // Ensure the image covers the container
+                          }}
+                        />
+                      ))
                     ) : (
                       <DefaultAvatarIcon />
                     )}

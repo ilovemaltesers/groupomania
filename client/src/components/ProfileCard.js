@@ -33,7 +33,7 @@ import {
 } from "../styles/stylesProfilePage";
 
 const ProfileCard = () => {
-  const { logout } = useAuth();
+  const { auth, setAuth, logout } = useAuth();
   const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const [roleTitle, setRoleTitle] = useState("");
@@ -157,6 +157,11 @@ const ProfileCard = () => {
       const imageUrl = `http://localhost:3000/${response.data.imageUrl}`;
 
       setImage(imageUrl);
+      // Update the auth context with the new profile picture URL
+      setAuth({
+        ...auth, // Keep the current auth state
+        profilePicture: imageUrl, // Update only the profile picture
+      });
     } catch (error) {
       console.error(
         "Error uploading image:",

@@ -76,7 +76,7 @@ const login = async (req, res) => {
       familyName: user.family_name,
       givenName: user.given_name,
       email: user.email,
-      profilePicture: user.profile_picture,
+      profilePicture: user.profile_picture || null,
     });
   } catch (error) {
     console.error("Error during login:", error);
