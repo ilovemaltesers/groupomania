@@ -62,9 +62,9 @@ const StyledEditPostContainer = styled.div`
   top: 50%;
   left: 60%;
   transform: translate(-50%, -50%);
-  color: ${(theme) => theme.card_background};
+  background-color: ${({ theme }) => theme.card_background};
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px ${({ theme }) => theme.boxShadow};
   padding: 20px;
   z-index: 1000;
   width: 500px;
@@ -97,8 +97,7 @@ const ImagePreview = styled.img`
 `;
 
 const SubmitEditButton = styled.button`
-  background-color: #bdebff;
-  color: black;
+  background-color: ${({ theme }) => theme.primary};
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -111,7 +110,7 @@ const SubmitEditButton = styled.button`
 `;
 
 const CancelEditButton = styled.button`
-  background-color: #bdebff;
+  background-color: ${({ theme }) => theme.primary};
   color: black;
   padding: 10px 20px;
   border: none;
