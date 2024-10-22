@@ -94,7 +94,9 @@ const NewPost = () => {
             family_name: comment.family_name || "",
             profile_picture: comment.profile_picture || "",
           })),
+          is_owner: post.user_id === auth.userId, // Check if the logged-in user is the post owner
         }));
+
         const sortedPosts = postsWithDefaults.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );

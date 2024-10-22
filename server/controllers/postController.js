@@ -10,7 +10,7 @@ const getAllPosts = async (req, res) => {
   try {
     const userId = req.userId;
 
-    // Fetch all posts with associated user info
+    // Fetch all posts with associated user info, including the user_id of the post
     const postsResult = await db(
       `
       SELECT 
@@ -18,6 +18,7 @@ const getAllPosts = async (req, res) => {
         posts.content,
         posts.media_upload,
         posts.created_at,
+        posts.user_id, -- Include the user_id here
         users.given_name,
         users.family_name,
         users.profile_picture,
@@ -39,7 +40,6 @@ const getAllPosts = async (req, res) => {
 
     // Access the rows from the posts result
     const posts = postsResult.rows;
-    console.log(posts);
 
     // Fetch comments for all posts
     const commentsResult = await db(`
@@ -57,7 +57,6 @@ const getAllPosts = async (req, res) => {
         users ON comments.user_id = users._id;
     `);
 
-    // Access the comments rows
     const commentsData = commentsResult.rows;
 
     // Group comments by post_id for easy lookup
@@ -75,7 +74,7 @@ const getAllPosts = async (req, res) => {
       comments: commentsByPostId[post.post_id] || [],
     }));
 
-    // Return the combined data
+    // Return the combined data, now including the user_id field
     res.json(postsWithComments);
   } catch (error) {
     console.error("Error fetching posts:", error);
