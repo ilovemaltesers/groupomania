@@ -207,8 +207,6 @@ const RemoveEditButtonsContainer = styled.div`
   gap: 10px;
 `;
 
-// Remove Post Button
-// Edit Post Button
 const EditPostButton = styled.button`
   background-color: ${({ theme }) => theme.primary};
   color: ${({ theme }) => theme.button_text_deselected};
@@ -226,7 +224,9 @@ const EditPostButton = styled.button`
   justify-content: center;
 
   &:hover {
-    background-color: ${({ theme }) => theme.tertiary};
+    background-color: ${({ theme }) =>
+      theme.secondary}; /* Change hover color to use theme */
+    color: ${({ theme }) => theme.button_text_deselected};
   }
 
   /* Medium Screen (Tablets) */
@@ -265,7 +265,9 @@ const RemovePostButton = styled.button`
   justify-content: center;
 
   &:hover {
-    background-color: ${({ theme }) => theme.button_text_deselected};
+    background-color: ${({ theme }) =>
+      theme.secondary}; /* Change hover color to use theme */
+    color: ${({ theme }) => theme.button_text_deselected};
   }
 
   /* Medium Screen (Tablets) */

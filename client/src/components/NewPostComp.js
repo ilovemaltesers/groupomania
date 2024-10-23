@@ -71,8 +71,10 @@ const NewPost = () => {
   useEffect(() => {
     if (auth && auth.profilePicture) {
       setProfilePicture(auth.profilePicture);
+    } else {
+      setProfilePicture(null); // Clear the profile picture if none is set
     }
-  }, [auth]);
+  }, [auth.profilePicture]); // Track changes to profilePicture
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -82,6 +84,8 @@ const NewPost = () => {
         },
       });
 
+      console.log("Posts response:", response.data);
+
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,
@@ -90,6 +94,8 @@ const NewPost = () => {
           profile_picture: post.profile_picture || "",
           comments: post.comments.map((comment) => ({
             ...comment,
+            user_id: comment.user_id || "",
+
             given_name: comment.given_name || "Anonymous",
             family_name: comment.family_name || "",
             profile_picture: comment.profile_picture || "",
@@ -500,6 +506,8 @@ const NewPost = () => {
             <CommentSection>
               {post.comments && post.comments.length > 0 ? ( // Ensure comments exist and have length
                 post.comments.map((comment, index) => {
+                  console.log("Comment user_id:", comment.user_id);
+                  console.log("Auth userId:", auth.userId);
                   return (
                     <div
                       key={index}
@@ -544,7 +552,7 @@ const NewPost = () => {
                           </CommentNameText>
                           <CommentText>{comment.comment_text}</CommentText>
                         </div>
-                        {comment.user_id === auth.userId && ( // Check if the comment belongs to the logged-in user
+                        {comment.user_id === auth.userId && (
                           <RubbishBin
                             onClick={() =>
                               handleDeleteComment(
@@ -571,7 +579,7 @@ const NewPost = () => {
                   }}
                 >
                   {/* Avatar for the user posting the comment */}
-                  {/* Avatar for the user posting the comment */}
+
                   <div
                     style={{
                       width: "50px",
@@ -579,15 +587,15 @@ const NewPost = () => {
                       marginRight: "10px",
                     }}
                   >
-                    {auth.profilePicture ? (
+                    {profilePicture ? (
                       <img
-                        src={`http://localhost:3000/${auth.profilePicture}`}
+                        src={`http://localhost:3000/${profilePicture}`}
                         alt="User Profile"
                         style={{
                           width: "100%",
                           height: "100%",
-                          borderRadius: "50%",
-                          objectFit: "cover",
+                          borderRadius: "50%", // Circular image
+                          objectFit: "cover", // Ensure the image covers the container
                         }}
                       />
                     ) : (
