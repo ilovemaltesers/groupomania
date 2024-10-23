@@ -7,7 +7,6 @@ import { FaRegComment } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { BsEnvelopeHeart } from "react-icons/bs";
 import { IoTrashBinOutline } from "react-icons/io5";
-import { RiDeleteBin2Line } from "react-icons/ri";
 import { GrEdit } from "react-icons/gr";
 
 const EditPostIcon = styled(GrEdit)`
@@ -16,7 +15,7 @@ const EditPostIcon = styled(GrEdit)`
   color: ${({ theme }) => theme.button_text_deselected};
 `;
 
-const RubbishBinDeletePost = styled(RiDeleteBin2Line)`
+const RubbishBinDeletePost = styled(IoTrashBinOutline)`
   margin-left: 7px;
   font-size: 1.25em;
   color: ${({ theme }) => theme.button_text_deselected};
