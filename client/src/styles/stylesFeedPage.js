@@ -7,6 +7,20 @@ import { FaRegComment } from "react-icons/fa";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { BsEnvelopeHeart } from "react-icons/bs";
 import { IoTrashBinOutline } from "react-icons/io5";
+import { RiDeleteBin2Line } from "react-icons/ri";
+import { GrEdit } from "react-icons/gr";
+
+const EditPostIcon = styled(GrEdit)`
+  margin-left: 7px;
+  font-size: 1.25em;
+  color: ${({ theme }) => theme.button_text_deselected};
+`;
+
+const RubbishBinDeletePost = styled(RiDeleteBin2Line)`
+  margin-left: 7px;
+  font-size: 1.25em;
+  color: ${({ theme }) => theme.button_text_deselected};
+`;
 
 const RubbishBin = styled(IoTrashBinOutline)`
   font-size: 30px;
@@ -489,5 +503,7 @@ export {
   CommentNameText,
   CommentText,
   RubbishBin,
+  RubbishBinDeletePost,
+  EditPostIcon,
   NoCommentsText,
 };

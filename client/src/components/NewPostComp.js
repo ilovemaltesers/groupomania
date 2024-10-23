@@ -44,6 +44,8 @@ import {
   CommentNameText,
   CommentText,
   RubbishBin,
+  RubbishBinDeletePost,
+  EditPostIcon,
   NoCommentsText,
 } from "../styles/stylesFeedPage";
 
@@ -492,12 +494,14 @@ const NewPost = () => {
               {isAuthenticated && post?.user_id === auth?.userId && (
                 <RemoveEditButtonsContainer>
                   <EditPostButton onClick={() => handleEditPost(post.post_id)}>
-                    <span className="text">Edit</span> 🪄✨
+                    <span className="text">Edit</span>
+                    <EditPostIcon />
                   </EditPostButton>
                   <RemovePostButton
                     onClick={() => handleRemovePost(post.post_id)}
                   >
                     <span className="text">Remove </span>
+                    <RubbishBinDeletePost />
                   </RemovePostButton>
                 </RemoveEditButtonsContainer>
               )}
