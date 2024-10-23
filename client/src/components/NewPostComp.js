@@ -513,8 +513,8 @@ const NewPost = () => {
             <CommentSection>
               {post.comments && post.comments.length > 0 ? ( // Ensure comments exist and have length
                 post.comments.map((comment, index) => {
-                  console.log("Comment user_id:", comment.user_id);
-                  console.log("Auth userId:", auth.userId);
+                  console.log("Comment user_id:", typeof comment.user_id);
+                  console.log("Auth userId:", typeof auth.userId);
                   return (
                     <div
                       key={index}
@@ -559,7 +559,7 @@ const NewPost = () => {
                           </CommentNameText>
                           <CommentText>{comment.comment_text}</CommentText>
                         </div>
-                        {comment.user_id === auth.userId && (
+                        {comment.user_id === Number(auth.userId) && (
                           <RubbishBin
                             onClick={() =>
                               handleDeleteComment(

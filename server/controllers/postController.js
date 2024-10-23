@@ -48,6 +48,7 @@ const getAllPosts = async (req, res) => {
         comments.post_id,
         comments.comment_text,
         comments.created_at,
+        comments.user_id,
         users.given_name,
         users.family_name,
         users.profile_picture
