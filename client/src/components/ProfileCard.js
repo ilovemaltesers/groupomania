@@ -128,7 +128,7 @@ const ProfileCard = () => {
         }
       );
 
-      const imageUrl = `http://localhost:3000/${response.data.imageUrl}`;
+      const imageUrl = `${response.data.imageUrl}`;
       updateProfilePicture(imageUrl); // Update the profile picture in context
     } catch (error) {
       console.error(

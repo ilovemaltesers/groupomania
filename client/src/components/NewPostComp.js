@@ -73,6 +73,7 @@ const NewPost = () => {
   useEffect(() => {
     if (auth && auth.profilePicture) {
       setProfilePicture(auth.profilePicture);
+      console.log("Profile picture:", auth.profilePicture);
     } else {
       setProfilePicture(null); // Clear the profile picture if none is set
     }
@@ -190,6 +191,7 @@ const NewPost = () => {
           updatedPosts[postIndex].comments || [];
         updatedPosts[postIndex].comments.unshift({
           ...newComment,
+          user_id: auth.userId,
           userName: userName,
           profile_picture: auth.profilePicture,
         });
@@ -216,6 +218,7 @@ const NewPost = () => {
       fetchPosts();
     } catch (error) {
       console.error("Error posting comment:", error);
+      // Handle the error appropriately, e.g., rollback optimistic update
       setPosts((prevPosts) => {
         const updatedPosts = [...prevPosts];
         if (updatedPosts[postIndex]) {
