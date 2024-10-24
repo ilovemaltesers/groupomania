@@ -10,15 +10,14 @@ const StyledTextarea = styled.textarea`
   padding-left: 10px;
   border: 1px solid #bdebff;
   border-radius: 15px;
-  resize: none; /* Prevent resizing of the textarea */
-  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  resize: none;
+  box-sizing: border-box;
   margin-top: 10px;
   margin-left: -12px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
-  font-size: 1em; /* Adjust font size to match line height */
-  line-height: 1em; /* Line height should be the same as height for consistency */
-  overflow: hidden; /* Hide overflow if any */
-  text-align: left; /* Optional: Adjust text alignment */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  line-height: 1em;
+  overflow: hidden;
+  text-align: left;
 
   &:focus {
     border-color: #007bff; /* Change to your desired color */
