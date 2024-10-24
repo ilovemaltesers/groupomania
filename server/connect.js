@@ -2,21 +2,21 @@ const { Pool } = require("pg");
 require("dotenv").config();
 
 const pool = new Pool({
-  user: "postgres",
-  password: "",
-  host: "localhost",
-  port: "5432",
-  database: "postgres",
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_DATABASE,
 });
 
 const db = async (query, params) => {
-  const client = await pool.connect(); // Get a client from the pool
+  const client = await pool.connect();
   try {
     const result = await client.query(query, params); // Run the query
     return result; // Return the query result
   } catch (error) {
     console.error("Error executing query:", error);
-    throw error; // Rethrow the error for handling elsewhere
+    throw error;
   } finally {
     client.release(); // Release the client back to the pool
   }
