@@ -1,6 +1,6 @@
 # Groupomania App
 
-This documentation provides instructions on how to set up and run the "Groupomania" application locally. The application is built using React and Express, with a MySQL database. Additionally, a SQL dump file is included to help you populate your database with initial data.
+This documentation provides instructions on how to set up and run the "Groupomania" application locally. The application is built using React and Express, with PostgreSQL database. Additionally, a SQL dump file is included to help you populate your database with initial data.
 
 ## Prerequisites
 
@@ -8,7 +8,7 @@ Before you begin, ensure you have the following installed on your machine:
 
 Node.js (v14.x or later)  
 npm (Node Package Manager)  
-MySQL (v8.x or later)
+PostgreSQL
 
 ## Getting Started
 
