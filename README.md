@@ -20,10 +20,9 @@ MySQL (v8.x or later)
    `npm install`  
    `cd server` (back-end)
    `npm install`
-3. Database Setup:  
-    .Create a MySQL database for your project.  
-    .Import the SQL dump file located in the project's root directory:  
-    `mysql -u your-username -p your-database-name < GroupomaniaBackup.sql`
+3. Database Setup:
+   In PostgreSQL
+   Create a new database, restore database
 
    Alternatively you can just copy and paste the dumpfile into your IDE (e.g., pgAdmin) and run the query. This will populate and create all the schemas.
 
