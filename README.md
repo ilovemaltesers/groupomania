@@ -23,8 +23,7 @@ MySQL (v8.x or later)
 3. Database Setup:
    In PostgreSQL
    Create a new database, restore database
-
-   Alternatively you can just copy and paste the dumpfile into your IDE (e.g., pgAdmin) and run the query. This will populate and create all the schemas.
+   In the root of the project there is a folder called SQL. Inside is a file for database backup. Select this file.
 
 4. Configuration:  
    Please see my environment file .env in the server project to access the configuration credentials for the database etc.

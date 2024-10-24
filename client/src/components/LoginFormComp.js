@@ -30,7 +30,6 @@ const LoginFormComp = () => {
       );
 
       console.log(process.env.REACT_APP_API_URL);
-      console.log;
 
       // Destructure the response
       const { token, userId, givenName, familyName, email, profilePicture } =
