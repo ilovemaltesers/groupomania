@@ -48,6 +48,8 @@ const ProfileCard = () => {
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccessMessage, setPasswordSuccessMessage] = useState("");
 
+  console.log(process.env.REACT_APP_BACKEND_URL);
+
   // Fetch profile image and data on component mount
   useEffect(() => {
     const fetchProfileData = async () => {
