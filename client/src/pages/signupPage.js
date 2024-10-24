@@ -8,7 +8,7 @@ import {
   GroupomaniaText,
 } from "../styles/stylesSignupPage";
 
-import SignupFormComp from "../components/SignupFormComp2";
+import SignupFormComp from "../components/SignupFormComp";
 
 import { ReactComponent as Logo } from "../assets/images/signup-logo.svg"; // Import the SVG as a React component
 
