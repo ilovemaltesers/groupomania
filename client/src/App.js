@@ -12,6 +12,7 @@ import { ThemeContextProvider } from "./contexts/ThemeContext";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
+  console.log(process.env.REACT_APP_API_URL);
   return (
     <>
       <ThemeContextProvider>
