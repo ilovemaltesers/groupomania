@@ -28,4 +28,4 @@ MySQL (v8.x or later)
    Alternatively you can just copy and paste the dumpfile into your IDE (e.g., pgAdmin) and run the query. This will populate and create all the schemas.
 
 4. Configuration:  
-   Please see environment file .env in the project to access the configuration credentials etc.
+   Please see my environment file .env in the server project to access the configuration credentials for the database etc.
