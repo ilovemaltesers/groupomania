@@ -68,8 +68,6 @@ const NewPost = () => {
   const [postToEdit, setPostToEdit] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null);
 
-  const userId = auth.userId;
-
   useEffect(() => {
     if (auth && auth.profilePicture) {
       setProfilePicture(auth.profilePicture);

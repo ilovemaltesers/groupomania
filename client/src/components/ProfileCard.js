@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Row, Col, Button, Form, Modal } from "react-bootstrap";
+import { Row, Col, Form, Modal } from "react-bootstrap";
 import TitleLoggedUser from "./TitleLoggedUser";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -25,13 +25,11 @@ import {
   ButtonSaveChanges,
   ButtonDeleteAccount,
   ProfilePictureWrapper,
-  ImageUploadInput,
-  SaveChangedPasswordButton,
   YourRoleText,
 } from "../styles/stylesProfilePage";
 
 const ProfileCard = () => {
-  const { auth, updateProfilePicture, logout } = useAuth();
+  const { updateProfilePicture, logout } = useAuth();
   const navigate = useNavigate();
   const [image, setImage] = useState(null);
   const [roleTitle, setRoleTitle] = useState("");
