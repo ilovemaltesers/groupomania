@@ -48,21 +48,18 @@ const CreatorNameText = styled.h3`
   color: ${({ theme }) => theme.quinary};
 `;
 
-// Style for the container holding the creator's name and created a text
 const NameAndCreatedAtContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 `;
 
-// Style for the container holding the avatar/icon and name/created at texts
 const CreatorNameContainer = styled.div`
   display: flex;
   align-items: flex-start; /* Align items to the start vertically */
   margin-bottom: 15px;
 `;
 
-// Style for the avatar image
 const Avatar = styled.img`
   width: 50px;
   height: 50px;
@@ -73,15 +70,13 @@ const Avatar = styled.img`
   margin-top: 5px;
 `;
 
-// Style for the empty avatar icon
 const EmptyAvatarIcon = styled(MdFace2)`
-  font-size: 50px; /* Match the size of the Avatar */
-  margin-right: 10px; /* Space between icon and text */
-  line-height: 1; /* Aligns icon and text vertically */
+  font-size: 50px;
+  margin-right: 10px;
+  line-height: 1;
   color: ${({ theme }) => theme.quinary};
 `;
 
-// Style for the main container of the feed
 const FeedMainContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -91,7 +86,6 @@ const FeedMainContainer = styled.div`
   min-height: 100vh;
 `;
 
-// Style for the new post body card
 const NewPostBody = styled(Card)`
   width: 100%;
   max-width: 500px;
@@ -102,13 +96,11 @@ const NewPostBody = styled(Card)`
   background-color: ${({ theme }) => theme.card_background};
 `;
 
-// Style for the "Tell me" text
 const TellMeText = styled.h4`
   font-size: 1.25em;
   color: ${({ theme }) => theme.quinary};
 `;
 
-// Style for the textarea in the new post form
 const NewPostTextarea = styled.textarea`
   width: 100%;
   min-height: 3em;
@@ -117,7 +109,6 @@ const NewPostTextarea = styled.textarea`
   resize: vertical;
 `;
 
-// Style for the container holding the new post buttons
 const NewPostButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -138,7 +129,6 @@ const PreviewImage = styled.img`
   object-fit: contain;
 `;
 
-// Style for the submit new post button
 const SubmitNewPostButton = styled.button`
   background-color: ${({ theme }) => theme.primary};
   color: ${({ theme }) => theme.button_text_deselected};
@@ -157,7 +147,6 @@ const SubmitNewPostButton = styled.button`
   }
 `;
 
-// Style for the upload image button
 const UploadImageButton = styled.button`
   background-color: ${({ theme }) => theme.primary};
   color: ${({ theme }) => theme.button_text_deselected};
