@@ -73,7 +73,6 @@ const NewPost = () => {
   useEffect(() => {
     if (auth && auth.profilePicture) {
       setProfilePicture(auth.profilePicture);
-      console.log("Profile picture:", auth.profilePicture);
     } else {
       setProfilePicture(null); // Clear the profile picture if none is set
     }
@@ -81,11 +80,14 @@ const NewPost = () => {
 
   const fetchPosts = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/post", {
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/post`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
 
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
@@ -144,7 +146,7 @@ const NewPost = () => {
         }
 
         const response = await axios.post(
-          "http://localhost:3000/api/post",
+          `${process.env.REACT_APP_API_URL}/post`,
           formData,
           {
             headers: {
@@ -203,7 +205,7 @@ const NewPost = () => {
       const token = auth.token;
 
       await axios.post(
-        `http://localhost:3000/api/comment/${post_id}`,
+        `${process.env.REACT_APP_API_URL}/comment/${post_id}`,
         { comment_text: newComment.comment_text },
         {
           headers: {
@@ -252,11 +254,14 @@ const NewPost = () => {
         });
       });
 
-      await axios.delete(`http://localhost:3000/api/comment/${commentId}`, {
-        headers: {
-          Authorization: `Bearer ${auth.token}`,
-        },
-      });
+      await axios.delete(
+        `${process.env.REACT_APP_API_URL}/comment/${commentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${auth.token}`,
+          },
+        }
+      );
     } catch (error) {
       console.error(
         "Error deleting comment:",
@@ -268,7 +273,7 @@ const NewPost = () => {
   const handleRemovePost = async (postId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/post/${postId}`,
+        `${process.env.REACT_APP_API_URL}/post/${postId}`,
         {
           headers: {
             Authorization: `Bearer ${auth.token}`,
@@ -309,7 +314,7 @@ const NewPost = () => {
       }
 
       const response = await axios.put(
-        `http://localhost:3000/api/post/${updatedPost.post_id}`,
+        `${process.env.REACT_APP_API_URL}/post/${updatedPost.post_id}`,
         formData,
         {
           headers: {
@@ -345,7 +350,7 @@ const NewPost = () => {
   const handleLikeToggle = async (postId) => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/like/${postId}`,
+        `${process.env.REACT_APP_API_URL}/like/${postId}`,
         {},
         {
           headers: {
@@ -511,8 +516,6 @@ const NewPost = () => {
             <CommentSection>
               {post.comments && post.comments.length > 0 ? ( // Ensure comments exist and have length
                 post.comments.map((comment, index) => {
-                  console.log("Comment user_id:", typeof comment.user_id);
-                  console.log("Auth userId:", typeof auth.userId);
                   return (
                     <div
                       key={index}
