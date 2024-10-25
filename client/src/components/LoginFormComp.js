@@ -15,7 +15,6 @@ const LoginFormComp = () => {
   // Log auth state when it changes (step 3)
   useEffect(() => {
     if (auth) {
-      console.log("Auth state updated after login:", auth);
     }
   }, [auth]); // Runs when auth changes
 
@@ -30,13 +29,9 @@ const LoginFormComp = () => {
         }
       );
 
-      console.log(process.env.REACT_APP_API_URL);
-
       // Destructure the response
       const { token, userId, givenName, familyName, email, profilePicture } =
         response.data;
-
-      console.log("Response data:", response.data); // Check the full response
 
       // Call login from AuthContext
       login(token, userId, givenName, familyName, email, profilePicture);

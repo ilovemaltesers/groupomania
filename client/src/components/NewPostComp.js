@@ -87,8 +87,6 @@ const NewPost = () => {
         },
       });
 
-      console.log("Posts response:", response.data);
-
       if (Array.isArray(response.data)) {
         const postsWithDefaults = response.data.map((post) => ({
           ...post,

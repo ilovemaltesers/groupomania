@@ -11,7 +11,8 @@ function SignupFormComp() {
   const onSubmit = async (values, actions) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/user/signup",
+        `${process.env.REACT_APP_API_URL}/user/signup`,
+
         values
       );
 
