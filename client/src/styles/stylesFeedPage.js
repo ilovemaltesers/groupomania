@@ -29,12 +29,11 @@ const RubbishBin = styled(IoTrashBinOutline)`
 `;
 
 const DefaultAvatarIcon = styled(MdFace2)`
-  font-size: 50px; /* Match the size of the Avatar */
-  margin-right: 10px; /* Space between icon and text */
-  line-height: 1; /* Aligns icon and text vertically */
+  font-size: 50px;
+  margin-right: 10px;
+  line-height: 1;
 `;
 
-// Style for the created at text
 const CreatedAtText = styled.p`
   font-size: 0.8em;
   color: ${({ theme }) => theme.quinary};
@@ -42,15 +41,14 @@ const CreatedAtText = styled.p`
   font-style: italic;
 `;
 
-// Style for the creator's name text
 const CreatorNameText = styled.h3`
   font-size: 1.5em;
-  margin: 0; /* Adjust as needed */
-  line-height: 1.5; /* Ensure vertical alignment */
+  margin: 0;
+  line-height: 1.5;
   color: ${({ theme }) => theme.quinary};
 `;
 
-// Style for the container holding the creator's name and created at text
+// Style for the container holding the creator's name and created a text
 const NameAndCreatedAtContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -170,20 +168,17 @@ const UploadImageButton = styled.button`
   margin-top: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   &:hover {
-    background-color: ${({ theme }) =>
-      theme.secondary}; /* Change hover color to use theme */
+    background-color: ${({ theme }) => theme.secondary};
     color: ${({ theme }) => theme.button_text_deselected};
   }
 `;
 
-// Style for the plane icon in the new post form
 const PlaneIcon = styled(FaTelegramPlane)`
   margin-left: 7px;
   font-size: 1.25em;
   color: ${({ theme }) => theme.button_text_deselected};
 `;
 
-// Style for the post card
 const PostCard = styled(Card)`
   width: 100%;
   max-width: 500px;
@@ -195,15 +190,14 @@ const PostCard = styled(Card)`
 `;
 
 const PostText = styled.p`
-  font-size: 1em; /* Adjust font size for the post text */
-  color: ${({ theme }) => theme.quinary}; /* Text color from theme */
-  line-height: 1.5; /* Line height for better readability */
-  margin: 0 0 15px; /* Add margin to space out the post text from other elements */
-  word-wrap: break-word; /* Ensure long text wraps within the container */
-  text-align: left; /* Align text to the left (adjust if needed) */
+  font-size: 1em;
+  color: ${({ theme }) => theme.quinary};
+  line-height: 1.5;
+  margin: 0 0 15px;
+  word-wrap: break-word;
+  text-align: left;
 `;
 
-// Style for images in posts
 const StyledImage = styled.img`
   border-radius: 3%;
 `;
@@ -223,35 +217,34 @@ const RemoveEditButtonsContainer = styled.div`
 const EditPostButton = styled.button`
   background-color: ${({ theme }) => theme.primary};
   color: ${({ theme }) => theme.button_text_deselected};
-  padding: 10px 30px; /* Default padding for larger screens */
+  padding: 10px 30px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  white-space: nowrap; /* Prevent text from wrapping */
-  font-size: 1em; /* Default font size */
+  white-space: nowrap;
+  font-size: 1em;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:hover {
-    background-color: ${({ theme }) =>
-      theme.secondary}; /* Change hover color to use theme */
+    background-color: ${({ theme }) => theme.secondary};
     color: ${({ theme }) => theme.button_text_deselected};
   }
 
   /* Medium Screen (Tablets) */
   @media (max-width: 768px) {
-    padding: 8px 20px; /* Reduced padding for medium screens */
-    font-size: 0.9em; /* Slightly smaller font for medium screens */
+    padding: 8px 20px;
+    font-size: 0.9em;
   }
 
   /* Small Screen (Mobile) */
   @media (max-width: 410px) {
-    padding: 6px 15px; /* Reduced padding for small screens */
-    font-size: 0.85em; /* Smaller font size for small screens */
+    padding: 6px 15px;
+    font-size: 0.85em;
 
     /* Hide the text and only show emoji */
     & .text {
@@ -260,41 +253,38 @@ const EditPostButton = styled.button`
   }
 `;
 
-// Remove Post Button
 const RemovePostButton = styled.button`
   background-color: ${({ theme }) => theme.primary};
   color: ${({ theme }) => theme.button_text_deselected};
-  padding: 10px 30px; /* Default padding for larger screens */
+  padding: 10px 30px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  white-space: nowrap; /* Prevent text from wrapping */
-  font-size: 1em; /* Default font size */
+  white-space: nowrap;
+  font-size: 1em;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:hover {
-    background-color: ${({ theme }) =>
-      theme.secondary}; /* Change hover color to use theme */
+    background-color: ${({ theme }) => theme.secondary};
     color: ${({ theme }) => theme.button_text_deselected};
   }
 
   /* Medium Screen (Tablets) */
   @media (max-width: 768px) {
-    padding: 8px 20px; /* Reduced padding for medium screens */
-    font-size: 0.9em; /* Slightly smaller font for medium screens */
+    padding: 8px 20px;
+    font-size: 0.9em;
   }
 
   /* Small Screen (Mobile) */
   @media (max-width: 410px) {
-    padding: 6px 15px; /* Reduced padding for small screens */
-    font-size: 0.85em; /* Smaller font size for small screens */
+    padding: 6px 15px;
+    font-size: 0.85em;
 
-    /* Hide the text and only show emoji */
     & .text {
       display: none;
     }
@@ -303,30 +293,27 @@ const RemovePostButton = styled.button`
 
 const LikesandCommentsIconContainer = styled.div`
   display: flex;
-  align-items: center; /* Center items vertically within the container */
-  justify-content: center; /* Center items horizontally within the container */
-  width: 100%; /* Ensure it spans the full width */
-  padding: 5px 0; /* Padding for spacing */
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 5px 0;
 `;
 
-// Container for the heart icon and its counter
 const HeartIconContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center; /* Center the icon within its container */
-  margin-right: 10px; /* Space between the heart and comment icon containers */
-  width: 60px; /* Adjusted width to accommodate the counter */
+  justify-content: center;
+  margin-right: 10px;
+  width: 60px;
 `;
 
-// Container for the comment icon and its counter
 const CommentIconContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center; /* Center the icon within its container */
-  width: 60px; /* Adjusted width to accommodate the counter */
+  justify-content: center;
+  width: 60px;
 `;
 
-// Heart icon with a counter
 const EmptyHeartIcon = styled(RiHeartsLine)`
   font-size: 2em;
   color: ${({ theme }) => theme.quinary};
@@ -345,44 +332,41 @@ const CommentIcon = styled(FaRegComment)`
   cursor: pointer;
 `;
 
-// Container for the heart counter
 const HeartCounterContainer = styled.div`
   display: flex;
   align-items: center;
   margin-left: 8px;
 `;
 
-// Container for the comment counter
 const CommentCounterContainer = styled.div`
   display: flex;
   align-items: center;
   margin-left: 8px;
 `;
 
-// Style for the counter number
 const CounterNumber = styled.span`
   font-size: 1em;
   color: ${({ theme }) => theme.quinary};
 `;
 
 const CommentSection = styled.div`
-  align-items: center; /* Align avatar and input vertically centered */
+  align-items: center;
   margin-top: 10px;
-  padding: 10px; /* Padding to ensure content is not touching edges */
+  padding: 10px;
 `;
 
 const CommentNameText = styled.p`
-  font-size: 1em; /* Adjust font size as needed */
-  font-weight: bold; /* Bold text for comment names */
-  color: ${({ theme }) => theme.quinary}; /* Use the theme's primary color */
-  margin: 0; /* Ensure no extra margins */
+  font-size: 1em;
+  font-weight: bold;
+  color: ${({ theme }) => theme.quinary};
+  margin: 0;
 `;
 
 const CommentText = styled.p`
-  font-size: 0.9em; /* Slightly smaller than the name */
-  color: ${({ theme }) => theme.quinary}; /* Use theme's text color */
-  margin: 0; /* Ensure no extra margins */
-  line-height: 1.4; /* Add some line spacing for readability */
+  font-size: 0.9em;
+  color: ${({ theme }) => theme.quinary};
+  margin: 0;
+  line-height: 1.4;
 `;
 
 const CommentAvatarContainer = styled.div`
@@ -399,7 +383,7 @@ const CommentAvatarContainer = styled.div`
 `;
 
 const CommentAvatar = styled.div`
-  width: 40px; /* Adjust size as needed */
+  width: 40px;
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
@@ -420,7 +404,6 @@ const CommentAvatarPlaceholder = styled(IoPersonCircleSharp)`
   color: #919bab;
 `;
 
-// Style for the publish comment button
 const PublishCommentButton = styled.button`
   background-color: ${({ theme }) => theme.primary};
   color: ${({ theme }) => theme.button_text_deselected};

@@ -114,8 +114,8 @@ const LeftColumn = styled(Col)`
 const RightColumn = styled(Col)`
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Evenly spaces out the buttons */
-  height: 100%; /* Ensures column takes full height */
+  justify-content: space-between;
+  height: 100%;
   padding: 20px 0;
 `;
 

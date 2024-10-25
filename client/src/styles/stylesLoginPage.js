@@ -55,8 +55,7 @@ const LoginButton = styled.button`
   user-select: none;
 
   &:hover {
-    background-color: ${(props) =>
-      props.theme.login_secondary}; /* Change color on hover */
+    background-color: ${(props) => props.theme.login_secondary};
   }
 
   &:active {
@@ -66,8 +65,8 @@ const LoginButton = styled.button`
   }
 
   &:focus {
-    outline: none; /* Remove default focus outline */
-    box-shadow: none; /* Remove focus shadow */
+    outline: none;
+    box-shadow: none;
     color: ${(props) => props.theme.button_text_deselected};
   }
 `;

@@ -2,12 +2,10 @@
 import styled from "styled-components";
 import { Modal, Button, Form } from "react-bootstrap";
 
-// Styled Modal with custom background and text colors
 export const StyledModal = styled(Modal)`
   .modal-content {
-    background-color: ${(props) =>
-      props.theme.modalBackground}; /* Custom background */
-    color: ${(props) => props.theme.modalText}; /* Custom text color */
+    background-color: ${(props) => props.theme.modalBackground};
+    color: ${(props) => props.theme.modalText};
   }
 
   .modal-header {
@@ -20,15 +18,13 @@ export const StyledModal = styled(Modal)`
   }
 `;
 
-// Styled version of Form.Label
 export const StyledFormLabel = styled(Form.Label)`
   color: ${(props) => props.theme.modalText};
 `;
 
-// Styled Button within the modal
 export const StyledButton = styled(Button)`
   background-color: ${(props) => props.theme.modalButtonColor};
-  color: ${(props) => props.theme.modalButtonText}; // Fixed casing here
+  color: ${(props) => props.theme.modalButtonText};
   border: none;
 
   &:hover {
