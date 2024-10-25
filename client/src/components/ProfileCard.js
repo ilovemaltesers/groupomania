@@ -59,8 +59,7 @@ const ProfileCard = () => {
         }
 
         const profileResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user/profile/role/aboutme`,
-
+          "http://localhost:3000/api/user/profile/role/aboutme",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -72,8 +71,7 @@ const ProfileCard = () => {
         setAboutMe(profileResponse.data.aboutMe);
 
         const imageResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user/profile-picture`,
-
+          "http://localhost:3000/api/user/profile-picture",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -83,7 +81,7 @@ const ProfileCard = () => {
 
         setImage(
           imageResponse.data.imageUrl
-            ? `${process.env.REACT_APP_BACKEND_URL}/${imageResponse.data.imageUrl}`
+            ? `http://localhost:3000/${imageResponse.data.imageUrl}`
             : ""
         );
       } catch (error) {
@@ -120,8 +118,7 @@ const ProfileCard = () => {
       formData.append("image", file);
 
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/upload-profile-picture`,
-
+        "http://localhost:3000/api/user/upload-profile-picture",
         formData,
         {
           headers: {
@@ -155,8 +152,7 @@ const ProfileCard = () => {
 
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/profile/role/aboutme`,
-
+        "http://localhost:3000/api/user/profile/role/aboutme",
         formData,
         {
           headers: {
@@ -187,8 +183,7 @@ const ProfileCard = () => {
 
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/user/profile/delete/account`,
-
+        "http://localhost:3000/api/user/profile/delete/account",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -225,8 +220,7 @@ const ProfileCard = () => {
 
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/profile/change-password`,
-
+        "http://localhost:3000/api/user/profile/change-password",
         { currentPassword, newPassword },
         {
           headers: {
