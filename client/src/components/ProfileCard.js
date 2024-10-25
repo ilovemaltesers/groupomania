@@ -136,7 +136,6 @@ const ProfileCard = () => {
     }
   };
 
-  // Handle profile form submission
   const titleRoleAboutMe = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -160,8 +159,8 @@ const ProfileCard = () => {
         }
       );
 
-      setSubmittedData(formData); // Store submitted data
-      setShowModal(false); // Close profile modal
+      setSubmittedData(formData);
+      setShowModal(false);
       console.log("Profile updated successfully");
     } catch (error) {
       console.error(
@@ -202,8 +201,8 @@ const ProfileCard = () => {
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    setPasswordError(""); // Reset error state
-    setPasswordSuccessMessage(""); // Reset success message
+    setPasswordError("");
+    setPasswordSuccessMessage("");
 
     if (newPassword !== confirmPassword) {
       setPasswordError("New passwords do not match.");
@@ -229,7 +228,7 @@ const ProfileCard = () => {
       );
 
       setPasswordSuccessMessage("Your password has been changed successfully!");
-      setShowPasswordModal(false); // Close password modal after success
+      setShowPasswordModal(false);
     } catch (error) {
       setPasswordError(
         error.response ? error.response.data : "Error changing password."
@@ -290,7 +289,7 @@ const ProfileCard = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  style={{ display: "none" }} // Hide the file input
+                  style={{ display: "none" }}
                 />
 
                 <ButtonSaveChanges

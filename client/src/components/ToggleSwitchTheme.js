@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { useTheme } from "../contexts/ThemeContext";
 
-// Styled-components for the toggle switch and its elements
 const ToggleWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -24,8 +23,7 @@ const ToggleInput = styled.input`
   height: 0;
 
   &:checked + span {
-    background-color: ${({ theme }) =>
-      theme.primary}; /* Use theme's primary color */
+    background-color: ${({ theme }) => theme.primary};
   }
 
   &:checked + span:before {
@@ -57,10 +55,9 @@ const ToggleSlider = styled.span`
   }
 `;
 
-// Styled-component for the toggle text, with dynamic color based on theme
 const ToggleText = styled.span`
-  margin-left: 10px; /* Add space between toggle and text */
-  color: ${({ theme }) => theme.quinary}; /* Use theme's text color */
+  margin-left: 10px;
+  color: ${({ theme }) => theme.quinary};
 `;
 
 // ThemeToggleSwitch component

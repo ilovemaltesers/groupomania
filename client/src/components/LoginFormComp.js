@@ -12,11 +12,11 @@ const LoginFormComp = () => {
   const navigate = useNavigate();
   const { login, auth } = useAuth(); // Get login and auth from context
 
-  // Log auth state when it changes (step 3)
+  // Log auth state when it changes
   useEffect(() => {
     if (auth) {
     }
-  }, [auth]); // Runs when auth changes
+  }, [auth]);
 
   const handleSubmit = async (values) => {
     try {
@@ -33,11 +33,10 @@ const LoginFormComp = () => {
       const { token, userId, givenName, familyName, email, profilePicture } =
         response.data;
 
-      // Call login from AuthContext
       login(token, userId, givenName, familyName, email, profilePicture);
 
       alert("Login successful");
-      navigate("/feed"); // Redirect to feed page on successful login
+      navigate("/feed");
     } catch (error) {
       console.error("Login error:", error);
       alert(`Login failed: ${error.response?.data || error.message}`);

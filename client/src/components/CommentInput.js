@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import styled from "styled-components";
 
-// Styled component for the textarea
 const StyledTextarea = styled.textarea`
   width: 100%;
   height: 1em;
@@ -32,8 +31,8 @@ const CommentTextarea = ({ value, onChange, ...props }) => {
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
-      textarea.style.height = "auto"; // Reset height to auto before adjusting
-      // Set height based on content but limit it to one line
+      textarea.style.height = "auto";
+
       textarea.style.height = `${Math.max(
         textarea.scrollHeight,
         1.5 * parseFloat(getComputedStyle(textarea).lineHeight)

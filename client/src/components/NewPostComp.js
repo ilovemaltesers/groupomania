@@ -101,7 +101,7 @@ const NewPost = () => {
             family_name: comment.family_name || "",
             profile_picture: comment.profile_picture || "",
           })),
-          is_owner: post.user_id === auth.userId, // Check if the logged-in user is the post owner
+          is_owner: post.user_id === auth.userId,
         }));
 
         const sortedPosts = postsWithDefaults.sort(
@@ -305,9 +305,8 @@ const NewPost = () => {
 
       // Check if the user uploaded a new image; otherwise, append the existing image URL
       if (updatedPost.image) {
-        formData.append("image", updatedPost.image); // If new image is provided, use it
+        formData.append("image", updatedPost.image);
       } else if (updatedPost.media_upload) {
-        // If no new image is uploaded, send the current image URL to retain it
         formData.append("existing_image", updatedPost.media_upload);
       }
 
@@ -328,12 +327,11 @@ const NewPost = () => {
             ? {
                 ...post,
                 ...updatedPost,
-                media_upload: response.data.post.media_upload, // Retain or update the image
+                media_upload: response.data.post.media_upload,
               }
             : post
         );
         setPosts(updatedPosts);
-        // localStorage.setItem(`posts_${userId}`, JSON.stringify(updatedPosts));
       } else {
         console.error(
           "Failed to update the post. Server returned:",
@@ -421,19 +419,13 @@ const NewPost = () => {
         posts.map((post, index) => (
           <PostCard key={post.post_id}>
             <CreatorNameContainer>
-              {/* Check if profile_picture exists, if not show DefaultAvatarIcon */}
-
               {post.profile_picture ? (
                 <Avatar
                   src={`http://localhost:3000/${post.profile_picture}`}
                   alt="Profile"
-                  // onError={(e) => {
-                  //   e.target.onerror = null; // Prevent infinite loop
-                  //   e.target.src = "/path/to/default-avatar.jpg"; // Default avatar path
-                  // }}
                 />
               ) : (
-                <DefaultAvatarIcon /> // Fallback to default avatar if no profile picture
+                <DefaultAvatarIcon />
               )}
 
               <NameAndCreatedAtContainer>
@@ -600,8 +592,8 @@ const NewPost = () => {
                         style={{
                           width: "100%",
                           height: "100%",
-                          borderRadius: "50%", // Circular image
-                          objectFit: "cover", // Ensure the image covers the container
+                          borderRadius: "50%",
+                          objectFit: "cover",
                         }}
                       />
                     ) : (

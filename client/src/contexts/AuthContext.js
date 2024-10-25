@@ -29,11 +29,10 @@ export const AuthProvider = ({ children }) => {
     } else {
       setAuth(null);
     }
-    // Set loading to false after fetching from localStorage
+
     setLoading(false);
   }, []);
 
-  // Login function
   const login = (
     token,
     userId,
@@ -52,7 +51,6 @@ export const AuthProvider = ({ children }) => {
     setAuth({ token, userId, givenName, familyName, email, profilePicture });
   };
 
-  // Logout function
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
@@ -64,7 +62,6 @@ export const AuthProvider = ({ children }) => {
     setAuth(null);
   };
 
-  // Function to update profile picture
   const updateProfilePicture = (newProfilePicture) => {
     localStorage.setItem("profilePicture", newProfilePicture);
     setAuth((prevAuth) => ({
@@ -81,7 +78,7 @@ export const AuthProvider = ({ children }) => {
       auth,
       login,
       logout,
-      updateProfilePicture, // Add the new function to the context
+      updateProfilePicture,
     }),
     [auth, isAuthenticated]
   );
