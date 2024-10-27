@@ -106,6 +106,31 @@ const Label = styled.label`
   color: ${(props) => props.theme.quinary};
 `;
 
+const StyledInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: 1px solid ${(props) => props.theme.quinary};
+  border-radius: 5px;
+
+  &:focus {
+    border-color: ${(props) => props.theme.inputFocus};
+    border: 3px solid ${(props) => props.theme.inputFocus};
+  }
+
+  /* Error state styling */
+  &.input-error {
+    border-color: ${(props) => props.theme.errorColor}; /* Define error color */
+  }
+`;
+
+const StyledError = styled.p`
+  color: ${(props) => props.theme.inputErrorMsg};
+  margin: 0;
+  margin-bottom: 10px;
+`;
+
 export {
   Label,
   Background,
@@ -114,4 +139,6 @@ export {
   TitleContainer,
   LoginLogo,
   GroupomaniaText,
+  StyledInput,
+  StyledError,
 };

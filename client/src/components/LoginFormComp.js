@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { LoginButton } from "../styles/stylesLoginPage";
 import { loginSchema } from "../schemas/index";
 import { useAuth } from "../contexts/AuthContext";
-import { Label } from "../styles/stylesLoginPage";
+import { Label, StyledInput, StyledError } from "../styles/stylesLoginPage";
 import { useEffect } from "react";
 
 const LoginFormComp = () => {
@@ -57,7 +57,7 @@ const LoginFormComp = () => {
       {/* Form inputs for email and password */}
       <div className="form-group">
         <Label htmlFor="email">Email address</Label>
-        <input
+        <StyledInput
           id="email"
           name="email"
           type="email"
@@ -70,12 +70,12 @@ const LoginFormComp = () => {
           placeholder="Enter email"
         />
         {formik.errors.email && formik.touched.email && (
-          <p className="error">{formik.errors.email}</p>
+          <StyledError>{formik.errors.email}</StyledError>
         )}
       </div>
       <div className="form-group">
         <Label htmlFor="password">Password</Label>
-        <input
+        <StyledInput
           id="password"
           name="password"
           type="password"
@@ -90,7 +90,7 @@ const LoginFormComp = () => {
           placeholder="Enter password"
         />
         {formik.errors.password && formik.touched.password && (
-          <p className="error">{formik.errors.password}</p>
+          <StyledError>{formik.errors.password}</StyledError>
         )}
       </div>
       {/* Login button */}
