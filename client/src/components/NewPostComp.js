@@ -602,7 +602,7 @@ const NewPost = () => {
                   </div>
 
                   {/* Comment Textarea */}
-                  <div style={{ marginLeft: "10px", flexGrow: 1 }}>
+                  <div style={{ marginLeft: "18px", flexGrow: 1 }}>
                     <CommentTextarea
                       value={content}
                       onChange={handleCommentChange}

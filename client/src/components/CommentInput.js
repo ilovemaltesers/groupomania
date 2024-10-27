@@ -6,7 +6,7 @@ const StyledTextarea = styled.textarea`
   height: 1em;
 
   padding-top: 10px;
-  padding-left: 10px;
+  padding-left: 15px;
   border: 1px solid #bdebff;
   border-radius: 15px;
   resize: none;
@@ -19,9 +19,8 @@ const StyledTextarea = styled.textarea`
   text-align: left;
 
   &:focus {
-    border-color: #007bff; /* Change to your desired color */
-    outline: none; /* Remove default outline to use custom border color */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Optional: Add a shadow to highlight focus */
+    border-color: ${(props) => props.theme.inputFocus};
+    outline: none;
   }
 `;
 
