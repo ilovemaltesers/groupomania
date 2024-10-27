@@ -1,7 +1,11 @@
 import React from "react";
 import { useFormik } from "formik";
 import axios from "axios";
-import { SignupButton, StyledInput } from "../styles/stylesSignupPage";
+import {
+  SignupButton,
+  StyledInput,
+  StyledError,
+} from "../styles/stylesSignupPage";
 import { signupSchema } from "../schemas/index";
 import { useNavigate } from "react-router-dom";
 import { Label } from "../styles/stylesSignupPage";
@@ -59,7 +63,7 @@ function SignupFormComp() {
           placeholder="Enter family name"
         />
         {formik.touched.familyName && formik.errors.familyName && (
-          <p className="error">{formik.errors.familyName}</p>
+          <StyledError>{formik.errors.givenName}</StyledError>
         )}
       </div>
       {/* Given Name Field */}
@@ -77,7 +81,7 @@ function SignupFormComp() {
           placeholder="Enter given name"
         />
         {formik.touched.givenName && formik.errors.givenName && (
-          <p className="error">{formik.errors.givenName}</p>
+          <StyledError>{formik.errors.givenName}</StyledError>
         )}
       </div>
 
@@ -94,7 +98,7 @@ function SignupFormComp() {
           placeholder="Enter email"
         />
         {formik.touched.email && formik.errors.email && (
-          <p className="error">{formik.errors.email}</p>
+          <StyledError>{formik.errors.email}</StyledError>
         )}
       </div>
 
@@ -113,7 +117,7 @@ function SignupFormComp() {
           placeholder="Enter password"
         />
         {formik.touched.password && formik.errors.password && (
-          <p className="error">{formik.errors.password}</p>
+          <StyledError>{formik.errors.password}</StyledError>
         )}
       </div>
 
@@ -132,7 +136,7 @@ function SignupFormComp() {
           placeholder="Confirm password"
         />
         {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-          <p className="error">{formik.errors.confirmPassword}</p>
+          <StyledError>{formik.errors.confirmPassword}</StyledError>
         )}
       </div>
 
