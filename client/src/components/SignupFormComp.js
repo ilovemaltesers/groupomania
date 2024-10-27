@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormik } from "formik";
 import axios from "axios";
-import { SignupButton } from "../styles/stylesSignupPage";
+import { SignupButton, StyledInput } from "../styles/stylesSignupPage";
 import { signupSchema } from "../schemas/index";
 import { useNavigate } from "react-router-dom";
 import { Label } from "../styles/stylesSignupPage";
@@ -45,29 +45,27 @@ function SignupFormComp() {
 
   return (
     <form onSubmit={formik.handleSubmit} autoComplete="off">
-      {/* Family Name Field */}
       <div className="form-group">
         <Label htmlFor="familyName">Family Name</Label>
-        <input
+        <StyledInput
           id="familyName"
           type="text"
           {...formik.getFieldProps("familyName")}
-          className={`form-control ${
+          className={
             formik.touched.familyName && formik.errors.familyName
               ? "input-error"
               : ""
-          }`}
+          }
           placeholder="Enter family name"
         />
         {formik.touched.familyName && formik.errors.familyName && (
           <p className="error">{formik.errors.familyName}</p>
         )}
       </div>
-
       {/* Given Name Field */}
       <div className="form-group">
         <Label htmlFor="givenName">Given Name</Label>
-        <input
+        <StyledInput
           id="givenName"
           type="text"
           {...formik.getFieldProps("givenName")}
@@ -86,7 +84,7 @@ function SignupFormComp() {
       {/* Email Field */}
       <div className="form-group">
         <Label htmlFor="email">Email address</Label>
-        <input
+        <StyledInput
           id="email"
           type="email"
           {...formik.getFieldProps("email")}
@@ -103,7 +101,7 @@ function SignupFormComp() {
       {/* Password Field */}
       <div className="form-group">
         <Label htmlFor="password">Password</Label>
-        <input
+        <StyledInput
           id="password"
           type="password"
           {...formik.getFieldProps("password")}
@@ -122,7 +120,7 @@ function SignupFormComp() {
       {/* Confirm Password Field */}
       <div className="form-group">
         <Label htmlFor="confirmPassword">Confirm Password</Label>
-        <input
+        <StyledInput
           id="confirmPassword"
           type="password"
           {...formik.getFieldProps("confirmPassword")}

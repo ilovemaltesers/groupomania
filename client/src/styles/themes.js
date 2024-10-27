@@ -5,13 +5,13 @@ export const lightTheme = {
 
   button_text_deselected: "black",
   text: "black",
-  avatarBackground: "#f0f0f0",
+  avatarBackground: "#f0f0f0", //light grey
   primary: "#bdebff", //baby blue
   secondary: "bisque", //bisque
   tertiary: "fuchsia", //fuchsia
   quaternary: "#afe4ec", //light blue
-  quinary: "#5a5a5a",
-  boxShadow: "#bdebff",
+  quinary: "#5a5a5a", //slate
+  boxShadow: "#bdebff", //baby blue
   login_primary: "#74abb5", //blue
   login_secondary: "#afe4ec", //light blue
   modalBackground: "white",
@@ -22,6 +22,8 @@ export const lightTheme = {
   modalButtonSelected: "bisque",
   logoBackground: "white",
   logoOutline: "#74abb5",
+  inputFocus: "fushsia",
+  inputErrorMsg: "bisque",
 };
 
 export const darkTheme = {
@@ -49,4 +51,6 @@ export const darkTheme = {
   modalButtonSelected: "#86ae12", // lime
   logoBackground: "#5a5a5a", //slate
   logoOutline: "#86ae12", // lime
+  inputFocus: "#86ae12", // lime
+  inputErrorMsg: "#86ae12", // lime
 };

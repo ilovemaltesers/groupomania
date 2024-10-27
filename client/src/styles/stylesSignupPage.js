@@ -140,4 +140,29 @@ export const Label = styled.label`
   color: ${(props) => props.theme.quinary};
 `;
 
+export const StyledInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  border: 1px solid ${(props) => props.theme.quinary};
+  border-radius: 5px;
+
+  &:focus {
+    border-color: ${(props) => props.theme.inputFocus};
+    border: 3px solid ${(props) => props.theme.inputFocus};
+  }
+
+  /* Error state styling */
+  &.input-error {
+    border-color: ${(props) => props.theme.errorColor}; /* Define error color */
+  }
+`;
+
+export const StyledError = styled.p`
+  color: ${(props) => props.theme.inputErrorMsg};
+  margin: 0;
+  margin-bottom: 10px;
+`;
+
 export { SignupButton };
