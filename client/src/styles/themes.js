@@ -23,7 +23,7 @@ export const lightTheme = {
   logoBackground: "white",
   logoOutline: "#74abb5",
   inputFocus: "fushsia",
-  inputErrorMsg: "bisque",
+  inputErrorMsg: "#74abb5", //blue
   toggleText: "#5a5a5a", //slate
 };
 
