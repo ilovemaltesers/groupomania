@@ -24,6 +24,7 @@ export const lightTheme = {
   logoOutline: "#74abb5",
   inputFocus: "fushsia",
   inputErrorMsg: "bisque",
+  toggleText: "#5a5a5a", //slate
 };
 
 export const darkTheme = {
@@ -53,4 +54,5 @@ export const darkTheme = {
   logoOutline: "#86ae12", // lime
   inputFocus: "#86ae12", // lime
   inputErrorMsg: "#86ae12", // lime
+  toggleText: "#dbdbdb", //silver
 };

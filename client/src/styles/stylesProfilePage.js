@@ -109,6 +109,7 @@ const LeftColumn = styled(Col)`
   justify-content: center;
   align-items: center;
   text-align: center; /* Center text horizontally */
+  padding-right: 25px;
 `;
 
 const RightColumn = styled(Col)`

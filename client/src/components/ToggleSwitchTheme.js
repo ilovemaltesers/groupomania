@@ -57,7 +57,7 @@ const ToggleSlider = styled.span`
 
 const ToggleText = styled.span`
   margin-left: 10px;
-  color: ${({ theme }) => theme.quinary};
+  color: ${({ theme }) => theme.toggleText};
 `;
 
 // ThemeToggleSwitch component
