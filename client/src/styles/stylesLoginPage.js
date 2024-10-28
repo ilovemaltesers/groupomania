@@ -76,6 +76,7 @@ const TitleContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+  margin-top: 20px;
   color: ${(props) => props.theme.secondary};
 `;
 
