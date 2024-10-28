@@ -22,7 +22,7 @@ export const lightTheme = {
   modalButtonSelected: "bisque",
   logoBackground: "white",
   logoOutline: "#74abb5",
-  inputFocus: "fushsia",
+  inputFocus: "#74abb5",
   inputErrorMsg: "#74abb5", //blue
   toggleText: "#5a5a5a", //slate
 };
