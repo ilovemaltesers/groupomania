@@ -80,6 +80,7 @@ export const SignupLogo = styled.svg`
   max-width: 70px;
   height: 70px;
   margin-bottom: 0;
+  margin-top: 20px;
 `;
 
 export const GroupomaniaText = styled.h1`
