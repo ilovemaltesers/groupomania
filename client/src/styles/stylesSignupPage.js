@@ -16,12 +16,12 @@ export const Background = styled.div`
 
 export const SignupBox = styled.div`
   background-color: ${(props) => props.theme.card_background};
-  padding: 15px;
+  padding: 15px; /* Padding for the card */
   padding-bottom: 40px;
   border-radius: 15px;
   box-shadow: 0 8px 8px rgba(0, 56, 28, 0.5);
   max-width: 350px;
-  max-height: 80%; /* Change to percentage for more flexibility */
+  max-height: 70%; /* Change to percentage for more flexibility */
   overflow-y: auto; /* Enable scroll within card if content overflows */
   display: flex;
   flex-direction: column;
@@ -69,33 +69,27 @@ export const AlreadyAccountLink = styled(Link)`
 
 export const TitleContainer = styled.div`
   display: flex;
-
-  align-items: center;
-
-  padding-bottom: 25px;
-  padding: 0 10px;
-
+  flex-direction: column; /* Stack logo and title vertically */
+  align-items: center; /* Center align logo and title */
+  padding: 0; /* Remove padding */
   width: 100%;
   box-sizing: border-box;
-
-  @media (max-width: 768px) {
-    padding: 0 15px;
-  }
 `;
 
 export const SignupLogo = styled.svg`
-  max-width: 70px;
+  max-width: 70px; /* Maintain size */
   height: auto;
-  margin-bottom: 8px;
+  margin-bottom: 0; /* No margin for no space below logo */
 `;
 
 export const GroupomaniaText = styled.h1`
   color: ${(props) => props.theme.login_primary};
-  font-size: 1.8rem;
+  font-size: 1.8rem; /* Slightly larger title for prominence */
   font-weight: bold;
   text-align: center;
-  margin: 0;
-  line-height: 1.2;
+  margin: 0; /* No margin for a tighter look */
+  line-height: 1; /* Adjusted to reduce vertical space */
+  padding-bottom: 20px;
 `;
 
 export const Label = styled.label`
