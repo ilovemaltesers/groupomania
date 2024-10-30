@@ -65,7 +65,7 @@ Navigate to the client folder and create a .env file to configure the server’s
 
 If the backend server runs on localhost port 3000, configure the client to point to that address:
 
-REACT_APP_API_URL=http://localhost:3000/api
+REACT_APP_API_URL=http://localhost:3000/
 
 If using a different port, adjust the URL accordingly.
 
