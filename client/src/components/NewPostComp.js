@@ -79,7 +79,7 @@ const NewPost = () => {
   const fetchPosts = useCallback(async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/post`,
+        `${process.env.REACT_APP_API_URL}api/post`,
         {
           headers: {
             Authorization: `Bearer ${auth.token}`,
@@ -144,7 +144,7 @@ const NewPost = () => {
         }
 
         const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}/post`,
+          `${process.env.REACT_APP_API_URL}api/post`,
           formData,
           {
             headers: {
@@ -203,7 +203,7 @@ const NewPost = () => {
       const token = auth.token;
 
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/comment/${post_id}`,
+        `${process.env.REACT_APP_API_URL}api/comment/${post_id}`,
         { comment_text: newComment.comment_text },
         {
           headers: {
@@ -253,7 +253,7 @@ const NewPost = () => {
       });
 
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/comment/${commentId}`,
+        `${process.env.REACT_APP_API_URL}api/comment/${commentId}`,
         {
           headers: {
             Authorization: `Bearer ${auth.token}`,
@@ -271,7 +271,7 @@ const NewPost = () => {
   const handleRemovePost = async (postId) => {
     try {
       const response = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/post/${postId}`,
+        `${process.env.REACT_APP_API_URL}api/post/${postId}`,
         {
           headers: {
             Authorization: `Bearer ${auth.token}`,
@@ -311,7 +311,7 @@ const NewPost = () => {
       }
 
       const response = await axios.put(
-        `${process.env.REACT_APP_API_URL}/post/${updatedPost.post_id}`,
+        `${process.env.REACT_APP_API_URL}api/post/${updatedPost.post_id}`,
         formData,
         {
           headers: {
@@ -346,7 +346,7 @@ const NewPost = () => {
   const handleLikeToggle = async (postId) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/like/${postId}`,
+        `${process.env.REACT_APP_API_URL}api/like/${postId}`,
         {},
         {
           headers: {
@@ -421,7 +421,7 @@ const NewPost = () => {
             <CreatorNameContainer>
               {post.profile_picture ? (
                 <Avatar
-                  src={`http://localhost:3000/${post.profile_picture}`}
+                  src={`${process.env.REACT_APP_API_URL}${post.profile_picture}`}
                   alt="Profile"
                 />
               ) : (
@@ -531,7 +531,7 @@ const NewPost = () => {
                         >
                           {comment.profile_picture ? (
                             <img
-                              src={`http://localhost:3000/${comment.profile_picture}`}
+                              src={`${process.env.REACT_APP_API_URL}${comment.profile_picture}`}
                               alt="User Profile"
                               style={{
                                 width: "100%",
@@ -587,7 +587,7 @@ const NewPost = () => {
                   >
                     {profilePicture ? (
                       <img
-                        src={`http://localhost:3000/${profilePicture}`}
+                        src={`${process.env.REACT_APP_API_URL}${profilePicture}`}
                         alt="User Profile"
                         style={{
                           width: "100%",

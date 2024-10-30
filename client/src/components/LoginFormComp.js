@@ -21,7 +21,7 @@ const LoginFormComp = () => {
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/login`,
+        `${process.env.REACT_APP_API_URL}api/user/login`,
 
         {
           email: values.email,

@@ -176,7 +176,7 @@ const ButtonDeleteAccount = styled(Button)`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   &:hover {
     background-color: ${(props) => props.theme.secondary};
-    color: white;
+    color: black;
   }
 `;
 

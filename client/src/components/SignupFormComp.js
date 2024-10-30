@@ -15,7 +15,7 @@ function SignupFormComp() {
   const onSubmit = async (values, actions) => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/signup`,
+        `${process.env.REACT_APP_API_URL}api/user/signup`,
 
         values
       );
@@ -55,11 +55,11 @@ function SignupFormComp() {
           id="familyName"
           type="text"
           {...formik.getFieldProps("familyName")}
-          className={
+          className={`form-control ${
             formik.touched.familyName && formik.errors.familyName
               ? "input-error"
               : ""
-          }
+          }`}
           placeholder="Enter family name"
         />
         {formik.touched.familyName && formik.errors.familyName && (
@@ -74,9 +74,7 @@ function SignupFormComp() {
           type="text"
           {...formik.getFieldProps("givenName")}
           className={`form-control ${
-            formik.touched.givenName && formik.errors.givenName
-              ? "input-error"
-              : ""
+            formik.touched.email && formik.errors.email ? "input-error" : ""
           }`}
           placeholder="Enter given name"
         />

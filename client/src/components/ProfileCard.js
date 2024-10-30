@@ -57,7 +57,7 @@ const ProfileCard = () => {
         }
 
         const profileResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user/profile/role/aboutme`,
+          `${process.env.REACT_APP_API_URL}api/user/profile/role/aboutme`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ const ProfileCard = () => {
         setAboutMe(profileResponse.data.aboutMe);
 
         const imageResponse = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user/profile-picture`,
+          `${process.env.REACT_APP_API_URL}api/user/profile-picture`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -79,7 +79,7 @@ const ProfileCard = () => {
 
         setImage(
           imageResponse.data.imageUrl
-            ? `http://localhost:3000/${imageResponse.data.imageUrl}`
+            ? `${process.env.REACT_APP_API_URL}${imageResponse.data.imageUrl}`
             : ""
         );
       } catch (error) {
@@ -116,7 +116,7 @@ const ProfileCard = () => {
       formData.append("image", file);
 
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/upload-profile-picture`,
+        `${process.env.REACT_APP_API_URL}api/user/upload-profile-picture`,
         formData,
         {
           headers: {
@@ -149,7 +149,7 @@ const ProfileCard = () => {
 
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/profile/role/aboutme`,
+        `${process.env.REACT_APP_API_URL}api/user/profile/role/aboutme`,
         formData,
         {
           headers: {
@@ -180,7 +180,7 @@ const ProfileCard = () => {
 
     try {
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/user/profile/delete/account`,
+        `${process.env.REACT_APP_API_URL}api/user/profile/delete/account`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -217,7 +217,7 @@ const ProfileCard = () => {
 
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/user/profile/change-password`,
+        `${process.env.REACT_APP_API_URL}api/user/profile/change-password`,
         { currentPassword, newPassword },
         {
           headers: {
