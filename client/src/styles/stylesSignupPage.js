@@ -70,8 +70,8 @@ const SignupButton = styled.button`
   }
 
   &:focus {
-    outline: none; /* Remove default focus outline */
-    box-shadow: none; /* Remove focus shadow */
+    outline: none;
+    box-shadow: none;
     color: ${(props) => props.theme.button_text_deselected};
   }
 `;

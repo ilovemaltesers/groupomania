@@ -1,4 +1,7 @@
-// App.js
+// Represents the main component of a React application
+// that uses React Router for navigation
+// and context providers for managing authentication and theming.
+
 import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import SignupPage from "./pages/SignupPage";
