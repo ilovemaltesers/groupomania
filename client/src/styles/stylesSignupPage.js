@@ -6,12 +6,12 @@ export const Background = styled.div`
   background-image: url(${BackgroundImage});
   background-size: cover;
   background-position: center;
-  height: 100vh; /* Maintain full viewport height */
+  height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Align items to the start to allow scrolling */
-  overflow-y: auto; /* Enable vertical scrolling */
-  padding: 20px; /* Optional: Add padding if needed */
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: 20px;
 `;
 
 export const SignupBox = styled.div`
@@ -51,15 +51,12 @@ const SignupButton = styled.button`
   cursor: pointer;
   border-radius: 5px;
 
-  /* Disable default browser appearance */
   appearance: none;
   -webkit-appearance: none;
   border: none;
 
-  /* Disable WebKit tap highlight color */
   -webkit-tap-highlight-color: transparent;
 
-  /* Prevent text selection */
   user-select: none;
 
   &:hover {
@@ -96,13 +93,13 @@ export const AlreadyAccountLink = styled(Link)`
 
 export const TitleContainer = styled.div`
   display: flex;
-  flex-direction: column; /* Ensure items stack vertically on smaller screens */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
 
   @media (max-width: 768px) {
-    padding: 0 20px; /* Add padding for smaller screens */
+    padding: 0 20px;
   }
 `;
 
@@ -110,7 +107,7 @@ export const SignupLogo = styled.svg`
   max-width: 100px;
   height: auto;
   margin-bottom: 10px;
-  position: relative; /* Position the entire SVG for z-index control */
+  position: relative;
 
   /* Background Rectangle */
   rect {
@@ -134,19 +131,19 @@ export const SignupLogo = styled.svg`
 
 export const GroupomaniaText = styled.h1`
   color: ${(props) => props.theme.login_primary} !important;
-  font-size: 3rem; /* Base font size */
+  font-size: 3rem;
   font-weight: bold;
   text-align: center;
-  max-width: 90%; /* Ensure it doesn't stretch too wide */
-  margin: 0 auto; /* Center it */
+  max-width: 90%;
+  margin: 0 auto;
 
   /* Responsive adjustments */
   @media (max-width: 768px) {
-    font-size: 2.5rem; /* Reduce font size on smaller screens */
+    font-size: 2.5rem;
   }
 
   @media (max-width: 480px) {
-    font-size: 2rem; /* Further reduce for very small screens */
+    font-size: 2rem;
   }
 `;
 
@@ -169,7 +166,7 @@ export const StyledInput = styled.input`
 
   /* Error state styling */
   &.input-error {
-    border-color: ${(props) => props.theme.errorColor}; /* Define error color */
+    border-color: ${(props) => props.theme.errorColor};
   }
 `;
 
