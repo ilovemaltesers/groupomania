@@ -12,20 +12,21 @@ Before you start, ensure the following software is installed on your machine:
 
 ## Getting Started
 
-### 1. Clone the Repository
+# Clone the Repository
 
 First, clone the Groupomania repository to your local machine using the command below:
 
 git clone https://github.com/ilovemaltesers/groupomania.git
 
-2. Install Dependencies
-   Navigate to the project directory and install the necessary dependencies for both the frontend and backend.
+# Install Dependencies
+
+Navigate to the project directory and install the necessary dependencies for both the frontend and backend.
 
 # Go to the project directory
 
 cd Groupomania
 
-# Install client dependencies
+Install client dependencies
 
 cd client
 npm install
@@ -35,20 +36,23 @@ npm install
 cd server
 npm install
 
-3. Set Up the PostgreSQL Database
-   Create a New Database:
-   Open PostgreSQL and create a new database to store the application's data.
-   Restore the Database from Backup:
-   In the root of the project, there is an SQL folder containing a SQL dump file. Use this file to populate your database with initial data:
-   Open PostgreSQL.
-   Restore the newly created database by selecting the SQL file from the SQL folder in the project.
-4. Configure Environment Variables
-   To connect the application to your database and specify other configurations, create .env files in both the server and client directories.
+# Set Up the PostgreSQL Database
+
+Create a New Database:
+Open PostgreSQL and create a new database to store the application's data.
+Restore the Database from Backup:
+In the root of the project, there is an SQL folder containing a SQL dump file. Use this file to populate your database.
+Open PostgreSQL.
+Restore the newly created database by selecting the SQL file from the SQL folder in the project.
+
+# Configure Environment Variables
+
+To connect the application to your database and specify other configurations, create .env files in both the server and client directories.
 
 Server .env File
 Navigate to the server folder and create a new .env file with the following details:
 
-# Server port configuration
+Server port configuration
 
 PORT=3000 # Change to your preferred port, e.g., 3000
 
@@ -69,7 +73,7 @@ REACT_APP_API_URL=http://localhost:3000/
 
 If using a different port, adjust the URL accordingly.
 
-5. Start the Application
+# Start the Application
 
 Start the Backend Server
 In the server directory, run the following command:
